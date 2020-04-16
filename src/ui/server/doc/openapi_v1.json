@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Zoonotify Server",
+    "description": "This is the api of the Zoonotify server",
+    "contact": {
+      "email": "zoonotify@bfr.bund.de"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.2.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about the Zoonotify",
+    "url": "https://zoonotify.bfr.bund.de/content/faq"
+  },
+  "servers": [
+    {
+      "url": "https://zoonotify.bfr.bund.de/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Util",
+      "description": "Access to Server Utiliy functions"
+    }
+  ],
+  "paths": {
+    "/info": {
+      "get": {
+        "operationId": "getSystemInfo",
+        "tags": ["Util"],
+        "summary": "Retrieve server information",
+        "description": "Returns current server version number as well as the date of the last server update.",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInformation"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          }
+        }
+      },
+      "ErrorCode": {
+        "type": "number",
+        "description": "- 1: Unknown error\n- 2: Authorization error\n- 3: Authentication error\n- 4: Input error\n- 5: Invalid input\n- 6: Autocorrected input",
+        "enum": [1, 2, 3, 4, 5, 6]
+      },
+      "SystemInformation": {
+        "required": ["lastChange", "version", "supportContact"],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Server version number"
+          },
+          "supportContact": {
+            "type": "string",
+            "description": "Email of the Zoonotify support"
+          },
+          "lastChange": {
+            "type": "string",
+            "description": "Date of last code change",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "responses": {
+      "InvalidInputErrorResponse": {
+        "description": "The supplied sample contains validation errors or autocorrections",
+        "content": {
+          "application/json:": {
+            "schema": {
+              "$ref": "#/components/schemas/SampleDataError"
+            }
+          }
+        }
+      },
+      "Standard500ErrorResponse": {
+        "description": "An unexpected error occured",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Standard400ErrorResponse": {
+        "description": "Invalid request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {},
+    "requestBodies": {},
+    "securitySchemes": {}
+  }
+}

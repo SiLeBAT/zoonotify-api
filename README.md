@@ -1,1 +1,3 @@
-# zoonotify-server
+# Zoonotify Server
+
+The Zoonotify Server
