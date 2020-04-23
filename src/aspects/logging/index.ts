@@ -10,12 +10,19 @@ const logConfiguration: LogConfiguration = config.get('general');
 /*
  *
  * Log levels are:
- *   error: 0,
- *   warn: 1,
- *   info: 2,
+ *   error: 0 - Any error which is fatal to the operation, but not the service *   or application (can't open a required file, missing data, etc.). These
+ *   errors will force user (administrator, or direct user) intervention. *  *   These are usually reserved (in my apps) for incorrect connection strings, *   missing services, etc.,
+ *
+ *   warn: 1 - Anything that can potentially cause application oddities, but *  *   for which I am automatically recovering. (Such as switching from a primary *   to backup server, retrying an operation, missing secondary data, etc.),
+ *
+ *   info: 2- Generally useful information to log (service start/stop, *    *   *   configuration assumptions, etc). Info I want to always have available but *   usually don't care about under normal circumstances. This is my
+ *   out-of-the-box config level,
+ *
  *   verbose: 3,
- *   debug: 4,
- *   trace: 5
+ *
+ *   debug: 4  - Information that is diagnostically helpful to people more than *   just developers (IT, sysadmins, etc.),
+ *
+ *   trace: 5  - Only when I would be "tracing" the code and trying to find one *   part of a function specifically
  *
  */
 export class Logger {
@@ -78,6 +85,17 @@ export class Logger {
         }
     }
 
+    /**
+     * Maps config file log levels to Morgan output strings
+     *
+     * combined:
+     * :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"
+     *
+     * dev:
+     * :method :url :status :response-time ms - :res[content-length]
+     *
+     * @param level
+     */
     static mapLevelToMorganFormat(level: string): string {
         switch (level) {
             case 'trace':
@@ -95,7 +113,7 @@ export class Logger {
             case 'debug':
                 return 'dev';
             default:
-                return 'info';
+                return 'combined';
         }
     }
 

@@ -6,14 +6,8 @@ import {
 class MockConfigurationService implements ConfigurationService {
     getApplicationConfiguration(): ApplicationConfiguration {
         return {
-            login: {
-                threshold: 5,
-                secondsDelay: 300
-            },
             appName: 'Mock',
-            jobRecipient: 'test@test.com',
             supportContact: 'test',
-            jwtSecret: 'test',
             apiUrl: 'test'
         };
     }

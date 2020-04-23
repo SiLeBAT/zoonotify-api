@@ -41,7 +41,6 @@
   "private": true,
   "dependencies": {
     "app-root-dir": "^1.0.2",
-    "body-parser": "^1.18.1",
     "compression": "^1.7.3",
     "config": "^1.29.4",
     "core-js": "^2.5.3",
@@ -65,7 +64,6 @@
   },
   "devDependencies": {
     "@types/app-root-dir": "^0.1.0",
-    "@types/body-parser": "^1.16.8",
     "@types/compression": "0.0.36",
     "@types/config": "0.0.34",
     "@types/cors": "^2.8.3",

@@ -2,7 +2,6 @@ import * as path from 'path';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as compression from 'compression';
-import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as morgan from 'morgan';
 import * as swaggerUi from 'swagger-ui-express';
@@ -48,9 +47,9 @@ export class DefaultAppServer implements AppServer {
             app.set('port', serverConfig.port);
             app.set('logger', logger);
 
-            app.use(bodyParser.json({ limit: '50mb' }));
+            app.use(express.json({ limit: '50mb' }));
             app.use(
-                bodyParser.urlencoded({
+                express.urlencoded({
                     extended: false
                 })
             );
@@ -79,7 +78,6 @@ export class DefaultAppServer implements AppServer {
                     swaggerUrl: ROUTE.VERSION
                 })
             );
-
         });
 
         this.server.setErrorConfig(app => {

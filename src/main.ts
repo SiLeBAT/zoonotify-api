@@ -2,11 +2,7 @@ import * as config from 'config';
 import { logger, getContainer } from './aspects';
 import { createServer, getServerContainerModule } from './ui/server/ports';
 
-import {
-    createApplication,
-    ZoonotifyApplication,
-    getApplicationContainerModule
-} from './app/ports';
+import { getApplicationContainerModule } from './app/ports';
 import {
     SystemConfigurationService,
     GeneralConfiguration,
@@ -15,7 +11,6 @@ import {
 } from './main.model';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
-
     private generalConfigurationDefaults: GeneralConfiguration = {
         logLevel: 'info',
         supportContact: ''
@@ -37,8 +32,7 @@ export class DefaultConfigurationService implements SystemConfigurationService {
         if (!config.has('general')) {
             generalConfiguration = {
                 logLevel: this.generalConfigurationDefaults.logLevel,
-                supportContact: this.generalConfigurationDefaults
-                    .supportContact
+                supportContact: this.generalConfigurationDefaults.supportContact
             };
         }
 
@@ -56,8 +50,8 @@ async function init() {
     const generalConfig: GeneralConfiguration = configurationService.getGeneralConfiguration();
     const appConfiguration: AppConfiguration = configurationService.getApplicationConfiguration();
 
-    logger.info(`Starting Zoonotify. appName=${appConfiguration.appName}`);
-
+    logger.info(`Starting ${appConfiguration.appName}.`);
+    logger.info(`Log level: ${generalConfig.logLevel}.`);
     const container = getContainer({ defaultScope: 'Singleton' });
 
     container.load(
@@ -72,9 +66,6 @@ async function init() {
             supportContact: generalConfig.supportContact
         })
     );
-
-    const application: ZoonotifyApplication = createApplication(container);
-
 
     const server = createServer(container);
     server.startServer();

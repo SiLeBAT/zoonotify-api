@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import * as _ from 'lodash';
-import { logger } from '../../../aspects';
 import { VersionRootController } from '../model/controller.model';
 import { ROUTE } from '../model/enums';
 import { AbstractController } from './abstract.controller';
@@ -29,18 +28,9 @@ export class DefaultVersionRootController extends AbstractController
     }
     @httpGet('/')
     async getAPIDefinition(@response() res: Response) {
-        logger.info(
-            `${this.constructor.name}.${this.getAPIDefinition.name}, Request received`
-        );
         try {
-            logger.info(
-                `${this.constructor.name}.${this.getAPIDefinition.name}, Response sent`
-            );
             this.ok(res, this.publicAPI);
         } catch (error) {
-            logger.info(
-                `${this.constructor.name}.${this.getAPIDefinition.name} has thrown an error. ${error}`
-            );
             this.handleError(res, error);
         }
     }
