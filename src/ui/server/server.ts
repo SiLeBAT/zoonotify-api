@@ -91,7 +91,7 @@ export class DefaultAppServer implements AppServer {
                 ) => {
                     if (err.status === 401) {
                         app.get('logger').warn(
-                            `Log caused error with status 401. error=${err}`
+                            `Error with status 401. error=${err}`
                         );
                         res.status(401)
                             .send({
