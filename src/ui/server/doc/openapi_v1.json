@@ -50,6 +50,31 @@
           }
         }
       }
+    },
+    "/filterconfig": {
+      "get": {
+        "operationId": "getFilterConfig",
+        "tags": [
+          "Util"
+        ],
+        "summary": "Retrieve information about filter",
+        "description": "Returns filterconfig as JSON.",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterconfigInformation"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -87,6 +112,36 @@
             "type": "string",
             "description": "Date of last code change",
             "format": "date-time"
+          }
+        }
+      },
+      "FilterconfigInformation": {
+        "required": [
+          "filter",
+          "subfilter"
+        ],
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "object",
+            "description": "Poperties for one mainfilter",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID of the mainfilter"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the mainfilter"
+              },
+              "parent": {
+                "type": "array",
+                "description": "List of corresponding subfilter-IDs",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
