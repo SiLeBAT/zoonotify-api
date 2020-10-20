@@ -124,19 +124,19 @@
         "properties": {
           "filter": {
             "type": "object",
-            "description": "Poperties for one mainfilter",
+            "description": "Poperties for one filter",
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Unique ID of the mainfilter"
+                "description": "Unique ID of the filter"
               },
               "name": {
                 "type": "string",
-                "description": "Name of the mainfilter"
+                "description": "Name of the filter"
               },
               "parent": {
                 "type": "array",
-                "description": "List of corresponding subfilter-IDs",
+                "description": "List of corresponding mainfilter-IDs",
                 "items": {
                   "type": "string"
                 }
