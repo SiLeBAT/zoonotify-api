@@ -1,3 +1,4 @@
+import { FilterService } from './query/model/filter.model';
 import { ContainerModule, interfaces } from 'inversify';
 import {
     ConfigurationService,
@@ -5,6 +6,7 @@ import {
 } from './core/model/configuration.model';
 import { DefaultConfigurationService } from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
+import { DefaultFilterService } from './query/application/filter.service';
 
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
@@ -18,6 +20,10 @@ export function getApplicationContainerModule(
             bind<ConfigurationService>(
                 APPLICATION_TYPES.ConfigurationService
             ).to(DefaultConfigurationService);
+
+            bind<FilterService>(APPLICATION_TYPES.FilterService).to(
+                DefaultFilterService
+            );
         }
     );
 }

@@ -10,3 +10,14 @@ export interface SystemInformationDTO {
     lastChange: string;
     supportContact: string;
 }
+
+export interface GetFilterConfigurationContainerDTO {
+    filters: FilterConfigurationDTO[];
+}
+
+export interface FilterConfigurationDTO {
+    id: string;
+    name: string;
+    parent?: string;
+    values: string[];
+}

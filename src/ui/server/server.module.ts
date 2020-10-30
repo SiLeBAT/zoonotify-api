@@ -1,8 +1,10 @@
+import { DefaultFilterConfigController } from './controllers/filterconfig.controller';
 import { ContainerModule, interfaces } from 'inversify';
 import {
     SystemInfoController,
     MockDataController,
-    VersionRootController
+    VersionRootController,
+    FilterConfigController
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
@@ -30,6 +32,10 @@ export function getServerContainerModule(
             bind<VersionRootController>(SERVER_TYPES.VersionRootController).to(
                 DefaultVersionRootController
             );
+
+            bind<FilterConfigController>(
+                SERVER_TYPES.FilterConfigController
+            ).to(DefaultFilterConfigController);
         }
     );
 }

@@ -7,8 +7,12 @@ import {
     SystemConfigurationService,
     GeneralConfiguration,
     ServerConfiguration,
-    AppConfiguration
+    AppConfiguration,
+    DataStoreConfiguration,
+    APIConfiguration
 } from './main.model';
+import { createDataStore } from './infrastructure/persistence/datastore/sqlite/sqlite';
+import { getPersistenceContainerModule } from './infrastructure/persistence/persistence.module';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
     private generalConfigurationDefaults: GeneralConfiguration = {
@@ -20,10 +24,18 @@ export class DefaultConfigurationService implements SystemConfigurationService {
         return config.get('server');
     }
 
+    getAPIConfiguration(): APIConfiguration {
+        return config.get('api');
+    }
+
     getApplicationConfiguration(): AppConfiguration {
         const appConfiguration: AppConfiguration = config.get('application');
 
         return appConfiguration;
+    }
+
+    getDataStoreConfiguration(): DataStoreConfiguration {
+        return config.get('dataStore');
     }
 
     getGeneralConfiguration(): GeneralConfiguration {
@@ -48,23 +60,32 @@ async function init() {
     const configurationService = new DefaultConfigurationService();
     const serverConfig: ServerConfiguration = configurationService.getServerConfiguration();
     const generalConfig: GeneralConfiguration = configurationService.getGeneralConfiguration();
+    const dataStoreConfig: DataStoreConfiguration = configurationService.getDataStoreConfiguration();
     const appConfiguration: AppConfiguration = configurationService.getApplicationConfiguration();
+    const apiConfiguration: APIConfiguration = configurationService.getAPIConfiguration();
 
     logger.info(`Starting ${appConfiguration.appName}.`);
     logger.info(`Log level: ${generalConfig.logLevel}.`);
-    const container = getContainer({ defaultScope: 'Singleton' });
 
+    const dataStore = createDataStore({
+        connectionString: dataStoreConfig.connectionString
+    });
+
+    const db = await dataStore.init();
+
+    const container = getContainer({ defaultScope: 'Singleton' });
     container.load(
         getApplicationContainerModule({
             ...appConfiguration,
             supportContact: generalConfig.supportContact
         }),
-
         getServerContainerModule({
             ...serverConfig,
+            publicAPIDoc: apiConfiguration.publicAPIDoc,
             logLevel: generalConfig.logLevel,
             supportContact: generalConfig.supportContact
-        })
+        }),
+        getPersistenceContainerModule(db)
     );
 
     const server = createServer(container);
