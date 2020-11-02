@@ -36,7 +36,7 @@ export class DefaultFilterService implements FilterService {
                         );
                         return [];
                     }),
-            relation: 'erreger'
+            id: 'erreger'
         },
         {
             valueProvider: () =>
@@ -49,7 +49,7 @@ export class DefaultFilterService implements FilterService {
                         );
                         return [];
                     }),
-            relation: 'probenahmegrund'
+            id: 'probenahmegrund'
         },
         {
             valueProvider: () =>
@@ -64,8 +64,7 @@ export class DefaultFilterService implements FilterService {
                         );
                         return [];
                     }),
-            relation: 'isolat',
-            column: 'programm_beschreibung'
+            id: 'programm_beschreibung'
         }
     ];
 
@@ -84,8 +83,8 @@ export class DefaultFilterService implements FilterService {
     ): Promise<FilterConfiguration> {
         const values = await definition.valueProvider();
         return {
-            id: definition.column || definition.relation,
-            name: definition.column || definition.relation,
+            id: definition.id,
+            name: definition.id,
             values
         };
     }

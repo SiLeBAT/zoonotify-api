@@ -12,8 +12,7 @@ export interface FilterConfiguration {
 
 export interface FilterDefinition {
     valueProvider: FilterValueProvider;
-    relation: string;
-    column?: string;
+    id: string;
 }
 
 export interface FilterValueProvider {
