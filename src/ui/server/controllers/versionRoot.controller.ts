@@ -21,6 +21,7 @@ export class DefaultVersionRootController extends AbstractController
         configuration: AppServerConfiguration
     ) {
         super();
+
         this.publicAPI = this.documentationRevealer(
             openAPI,
             configuration.publicAPIDoc

@@ -15,6 +15,10 @@ export interface SystemInfoController extends Controller {
     getSystemInfo(res: Response): Promise<void>;
 }
 
+export interface FilterConfigController extends Controller {
+    getFilterConfiguration(res: Response): Promise<void>;
+}
+
 export interface MockDataController extends Controller {
     getMockData(res: Response): Promise<void>;
 }

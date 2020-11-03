@@ -31,7 +31,9 @@
     "/info": {
       "get": {
         "operationId": "getSystemInfo",
-        "tags": ["Util"],
+        "tags": [
+          "Util"
+        ],
         "summary": "Retrieve server information",
         "description": "Returns current server version number as well as the date of the last server update.",
         "responses": {
@@ -65,7 +67,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FilterconfigInformation"
+                  "$ref": "#/components/schemas/FilterConfigContainer"
                 }
               }
             }
@@ -81,7 +83,10 @@
     "schemas": {
       "Error": {
         "type": "object",
-        "required": ["code", "message"],
+        "required": [
+          "code",
+          "message"
+        ],
         "properties": {
           "message": {
             "type": "string"
@@ -93,11 +98,17 @@
       },
       "ErrorCode": {
         "type": "number",
-        "description": "- 1: Unknown error\n- 2: Authorization error\n- 3: Authentication error\n- 4: Input error\n- 5: Invalid input\n- 6: Autocorrected input",
-        "enum": [1, 2, 3, 4, 5, 6]
+        "description": "- 1: Unknown error",
+        "enum": [
+          1
+        ]
       },
       "SystemInformation": {
-        "required": ["lastChange", "version", "supportContact"],
+        "required": [
+          "lastChange",
+          "version",
+          "supportContact"
+        ],
         "type": "object",
         "properties": {
           "version": {
@@ -115,48 +126,55 @@
           }
         }
       },
-      "FilterconfigInformation": {
-        "required": [
-          "filter",
-          "subfilter"
-        ],
+      "FilterConfigContainer": {
         "type": "object",
+        "required": [
+          "filters"
+        ],
         "properties": {
-          "filter": {
-            "type": "object",
-            "description": "Poperties for one filter",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique ID of the filter"
-              },
-              "name": {
-                "type": "string",
-                "description": "Name of the filter"
-              },
-              "parent": {
-                "type": "array",
-                "description": "List of corresponding mainfilter-IDs",
-                "items": {
-                  "type": "string"
-                }
-              }
+          "filters": {
+            "$ref": "#/components/schemas/FilterConfigList"
+          }
+        }
+      },
+      "FilterConfigList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FilterConfigInformation"
+        }
+      },
+      "FilterConfigInformation": {
+        "type": "object",
+        "description": "Poperties for one filter",
+        "required": [
+          "id",
+          "name",
+          "values"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID of the filter"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the filter"
+          },
+          "parent": {
+            "type": "string",
+            "description": "Id of corresponding mainfilter-IDs"
+          },
+          "values": {
+            "type": "array",
+            "description": "List of filter values",
+            "items": {
+              "type": "string"
             }
           }
         }
       }
     },
     "responses": {
-      "InvalidInputErrorResponse": {
-        "description": "The supplied sample contains validation errors or autocorrections",
-        "content": {
-          "application/json:": {
-            "schema": {
-              "$ref": "#/components/schemas/SampleDataError"
-            }
-          }
-        }
-      },
       "Standard500ErrorResponse": {
         "description": "An unexpected error occured",
         "content": {

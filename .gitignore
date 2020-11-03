@@ -25,6 +25,7 @@
 
 # misc
 npm-debug.log
+local/*
 
 # System Files
 .DS_Store
