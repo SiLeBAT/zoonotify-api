@@ -8,8 +8,6 @@
     "debug": "npx nodemon -e ts --exec \"npm run debug:pipe\"",
     "serve:pipe": "npm run build && node ./lib/main.js",
     "debug:pipe": "npm run build && node --inspect-brk ./lib/main.js",
-    "dependency-check:production": "npx npm-auditor-ci --threshold low -ignoreDev",
-    "dependency-check:qa": "npx npm-auditor-ci --threshold low",
     "cp:json": "npx copyfiles -u 1 ./src/**/*.json ./lib",
     "cp:all": "npm run cp:json",
     "tsc": "tsc",
