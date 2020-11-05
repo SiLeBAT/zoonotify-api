@@ -1,11 +1,10 @@
 // npm
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
-
 import { IsolatRepository } from './../model/isolat.model';
 import { ProbenahmegrundRepository } from './../model/probenahmegrund.model';
-import { PERSISTENCE_TYPES } from './../../../infrastructure/persistence/persistence.types';
 import { ErregerRepository } from '../model/erreger.model';
+import { APPLICATION_TYPES } from './../../application.types';
 import {
     FilterConfiguration,
     FilterDefinition,
@@ -16,11 +15,11 @@ import { logger } from '../../../aspects';
 @injectable()
 export class DefaultFilterService implements FilterService {
     constructor(
-        @inject(PERSISTENCE_TYPES.ErregerRepository)
+        @inject(APPLICATION_TYPES.ErregerRepository)
         private erregerRepository: ErregerRepository,
-        @inject(PERSISTENCE_TYPES.ProbenahmegrundRepository)
+        @inject(APPLICATION_TYPES.ProbenahmegrundRepository)
         private probenahmegrundRepository: ProbenahmegrundRepository,
-        @inject(PERSISTENCE_TYPES.IsolatRepository)
+        @inject(APPLICATION_TYPES.IsolatRepository)
         private isolatRepository: IsolatRepository
     ) {}
 

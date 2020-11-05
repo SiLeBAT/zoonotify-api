@@ -5,7 +5,8 @@ import { SQLiteErregerRepository } from './repositories/erreger.repository';
 import {
     IsolatRepository,
     ErregerRepository,
-    ProbenahmegrundRepository
+    ProbenahmegrundRepository,
+    APPLICATION_TYPES
 } from '../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
 import { Database } from 'sqlite';
@@ -13,15 +14,15 @@ import { Database } from 'sqlite';
 export function getPersistenceContainerModule(db: Database): ContainerModule {
     return new ContainerModule(
         (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-            bind<IsolatRepository>(PERSISTENCE_TYPES.IsolatRepository).to(
+            bind<IsolatRepository>(APPLICATION_TYPES.IsolatRepository).to(
                 SQLiteIsolatRepository
             );
 
             bind<ProbenahmegrundRepository>(
-                PERSISTENCE_TYPES.ProbenahmegrundRepository
+                APPLICATION_TYPES.ProbenahmegrundRepository
             ).to(SQLiteProbenahmegrundRepository);
 
-            bind<ErregerRepository>(PERSISTENCE_TYPES.ErregerRepository).to(
+            bind<ErregerRepository>(APPLICATION_TYPES.ErregerRepository).to(
                 SQLiteErregerRepository
             );
 
