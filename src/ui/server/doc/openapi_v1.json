@@ -77,6 +77,56 @@
           }
         }
       }
+    },
+    "/Statistic": {
+      "get": {
+        "operationId": "getNumberOfIsolates",
+        "tags": [
+          "Util"
+        ],
+        "summary": "Retrieve the staistic about the dataset",
+        "description": "Returns object with the total number of isolaets and statistic table",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Statistic"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/selectedSettings": {
+      "put": {
+        "operationId": "putCurrentFilter",
+        "tags": [
+          "Util"
+        ],
+        "summary": "Put selected filters and row/columns",
+        "description": "Update informations about the selected filter settings and displayed features",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SelectedSettings"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -167,6 +217,88 @@
           "values": {
             "type": "array",
             "description": "List of filter values",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Statistic": {
+        "type": "object",
+        "properties": {
+          "totalNumberOfIsolates": {
+            "type": "number"
+          },
+          "table": {
+            "$ref": "#/components/schemas/StatisticTable"
+          }
+        }
+      },
+      "StatisticTable": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "$ref": "#/components/schemas/StatisticTableColumns"
+          },
+          "rows": {
+            "$ref": "#/components/schemas/StatisticTableRowsList"
+          }
+        }
+      },
+      "StatisticTableColumns": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "StatisticTableRowsList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/StatisticTableRowsInformation"
+        }
+      },
+      "StatisticTableRowsInformation": {
+        "type": "object",
+        "properties": {
+          "rowname": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SelectedSettings": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/SelectedFilterSettingsList"
+          },
+          "row": {
+            "type": "string"
+          },
+          "column": {
+            "type": "string"
+          }
+        }
+      },
+      "SelectedFilterSettingsList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SelectedFilterSettingsInformation"
+        }
+      },
+      "SelectedFilterSettingsInformation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
             "items": {
               "type": "string"
             }
