@@ -78,14 +78,14 @@
         }
       }
     },
-    "/Statistic": {
+    "/statistic": {
       "get": {
         "operationId": "getNumberOfIsolates",
         "tags": [
           "Util"
         ],
         "summary": "Retrieve the staistic about the dataset",
-        "description": "Returns object with the total number of isolaets and statistic table",
+        "description": "Returns object with the total number of isolates and statistic table",
         "responses": {
           "200": {
             "description": "successful operation",
@@ -103,7 +103,7 @@
         }
       }
     },
-    "/selectedSettings": {
+    "/selected-settings": {
       "put": {
         "operationId": "putCurrentFilter",
         "tags": [
