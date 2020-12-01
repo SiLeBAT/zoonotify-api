@@ -1,7 +1,7 @@
+import { MatrixRepository } from './../model/matrix.model';
 // npm
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
-import { IsolatRepository } from './../model/isolat.model';
 import { ProbenahmegrundRepository } from './../model/probenahmegrund.model';
 import { ErregerRepository } from '../model/erreger.model';
 import { APPLICATION_TYPES } from './../../application.types';
@@ -19,8 +19,8 @@ export class DefaultFilterService implements FilterService {
         private erregerRepository: ErregerRepository,
         @inject(APPLICATION_TYPES.ProbenahmegrundRepository)
         private probenahmegrundRepository: ProbenahmegrundRepository,
-        @inject(APPLICATION_TYPES.IsolatRepository)
-        private isolatRepository: IsolatRepository
+        @inject(APPLICATION_TYPES.MatrixRepository)
+        private matrixRepository: MatrixRepository
     ) {}
 
     private filterDefinitions: FilterDefinition[] = [
@@ -52,18 +52,16 @@ export class DefaultFilterService implements FilterService {
         },
         {
             valueProvider: () =>
-                this.isolatRepository
+                this.matrixRepository
                     .retrieve()
-                    .then(isolat =>
-                        _.uniq(isolat.map(p => p.programm_beschreibung))
-                    )
+                    .then(matrix => matrix.map(m => m.name))
                     .catch(err => {
                         logger.error(
                             `Could not retrieve filter values: ${err}`
                         );
                         return [];
                     }),
-            id: 'programm_beschreibung'
+            id: 'matrix'
         }
     ];
 

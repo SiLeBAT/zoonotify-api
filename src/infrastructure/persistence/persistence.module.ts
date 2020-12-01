@@ -6,10 +6,12 @@ import {
     IsolatRepository,
     ErregerRepository,
     ProbenahmegrundRepository,
-    APPLICATION_TYPES
+    APPLICATION_TYPES,
+    MatrixRepository
 } from '../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
 import { Database } from 'sqlite';
+import { SQLiteMatrixRepository } from './repositories/matrix.repository';
 
 export function getPersistenceContainerModule(db: Database): ContainerModule {
     return new ContainerModule(
@@ -26,6 +28,10 @@ export function getPersistenceContainerModule(db: Database): ContainerModule {
                 SQLiteErregerRepository
             );
 
+            bind<MatrixRepository>(APPLICATION_TYPES.MatrixRepository).to(
+                SQLiteMatrixRepository
+            );
+
             bind<Database>(PERSISTENCE_TYPES.Sqlite).toConstantValue(db);
 
             bind<string>(PERSISTENCE_TYPES.ErregerRelation).toConstantValue(
@@ -39,6 +45,10 @@ export function getPersistenceContainerModule(db: Database): ContainerModule {
             bind<string>(
                 PERSISTENCE_TYPES.ProbenahmegrundRelation
             ).toConstantValue('probenahmegrund');
+
+            bind<string>(PERSISTENCE_TYPES.MatrixRelation).toConstantValue(
+                'matrix'
+            );
         }
     );
 }
