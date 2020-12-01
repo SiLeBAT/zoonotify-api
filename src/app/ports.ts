@@ -12,6 +12,7 @@ export { APPLICATION_TYPES } from './application.types';
  */
 export { FilterPort } from './query/model/filter.model';
 export { ErregerRepository, Erreger } from './query/model/erreger.model';
+export { MatrixRepository } from './query/model/matrix.model';
 export { IsolatRepository, Isolat } from './query/model/isolat.model';
 export {
     ProbenahmegrundRepository,
