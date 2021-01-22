@@ -25,6 +25,10 @@
     {
       "name": "Util",
       "description": "Access to Server Utiliy functions"
+    },
+    {
+      "name": "Isolate",
+      "description": "Access to Isolat functions"
     }
   ],
   "paths": {
@@ -63,14 +67,7 @@
         "description": "Returns filterconfig as JSON.",
         "responses": {
           "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FilterConfigContainer"
-                }
-              }
-            }
+            "$ref": "#/components/responses/GetFilterConfigurationSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -78,24 +75,28 @@
         }
       }
     },
-    "/statistic": {
+    "/isolate": {
       "get": {
-        "operationId": "getNumberOfIsolates",
+        "operationId": "getIsolates",
         "tags": [
-          "Util"
+          "Isolate"
         ],
-        "summary": "Retrieve the staistic about the dataset",
-        "description": "Returns object with the total number of isolates and statistic table",
+        "summary": "Get the isolates",
+        "description": "Retrieve the isolate dataset",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PathogenQuery"
+          },
+          {
+            "$ref": "#/components/parameters/MatrixQuery"
+          },
+          {
+            "$ref": "#/components/parameters/SamplingLocationQuery"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Statistic"
-                }
-              }
-            }
+            "$ref": "#/components/responses/GetIsolatesSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -103,24 +104,34 @@
         }
       }
     },
-    "/selected-settings": {
-      "put": {
-        "operationId": "putCurrentFilter",
+    "/isolate/counted": {
+      "get": {
+        "operationId": "getCountOfIsolates",
         "tags": [
-          "Util"
+          "Isolate"
         ],
-        "summary": "Put selected filters and row/columns",
-        "description": "Update informations about the selected filter settings and displayed features",
+        "summary": "Retrieve the count of isolates in the dataset",
+        "description": "Returns object with the total number of isolates and count distribution",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PathogenQuery"
+          },
+          {
+            "$ref": "#/components/parameters/MatrixQuery"
+          },
+          {
+            "$ref": "#/components/parameters/SamplingLocationQuery"
+          },
+          {
+            "$ref": "#/components/parameters/RowSettings"
+          },
+          {
+            "$ref": "#/components/parameters/ColumnSettings"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SelectedSettings"
-                }
-              }
-            }
+            "$ref": "#/components/responses/GetCountedIsolatesSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -131,6 +142,170 @@
   },
   "components": {
     "schemas": {
+      "AntiBioticResistence": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AntiBioticResistenceTypes"
+        }
+      },
+      "AntiBioticResistenceTypes": {
+        "type": "string",
+        "enum": [
+          "amp",
+          "azi",
+          "chl",
+          "cip",
+          "cli",
+          "col",
+          "dap",
+          "ery",
+          "etp",
+          "fep",
+          "fop",
+          "fox",
+          "fus",
+          "f_c",
+          "gen",
+          "imi",
+          "kan",
+          "lzd",
+          "mero",
+          "mup",
+          "nal",
+          "pen",
+          "rif",
+          "smx",
+          "str",
+          "syn",
+          "taz",
+          "tec",
+          "tet",
+          "tgc",
+          "tia",
+          "tmp",
+          "trm",
+          "t_c",
+          "van"
+        ]
+      },
+      "FilterArray": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FilterValues"
+        }
+      },
+      "FilterValues": {
+        "type": "string",
+        "description": "Includes the appropriate selectable data values",
+        "enum": [
+          "alle Werte",
+          "<filter specific values>"
+        ],
+        "default": "alle Werte"
+      },
+      "GetIsolatesSuccessResponseData": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/IsolatDTO"
+        }
+      },
+      "IsolatDTO": {
+        "type": "object",
+        "required": [
+          "id",
+          "pathogen",
+          "state",
+          "year",
+          "samplingReason",
+          "samplingLocation",
+          "samplingOrigin",
+          "supercategory",
+          "production",
+          "matrix",
+          "matrixDetail",
+          "characteristics",
+          "resistences"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pathogen": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "samplingReason": {
+            "type": "string"
+          },
+          "samplingLocation": {
+            "type": "string"
+          },
+          "samplingOrigin": {
+            "type": "string"
+          },
+          "matrix": {
+            "type": "string"
+          },
+          "matrixDetail": {
+            "type": "string"
+          },
+          "supercategory": {
+            "type": "string"
+          },
+          "production": {
+            "type": "string"
+          },
+          "characteristics": {
+            "$ref": "#/components/schemas/MicrobialCharacteristics"
+          },
+          "resistences": {
+            "$ref": "#/components/schemas/AntiBioticResistence"
+          }
+        }
+      },
+      "MicrobialCharacteristics": {
+        "type": "object",
+        "properties": {
+          "sepecies": {
+            "type": "string"
+          },
+          "serovar": {
+            "type": "string"
+          },
+          "serotype": {
+            "type": "string"
+          },
+          "spa_typ": {
+            "type": "string"
+          },
+          "o_group": {
+            "type": "string"
+          },
+          "h_group": {
+            "type": "string"
+          },
+          "stx1": {
+            "type": "string"
+          },
+          "stx2": {
+            "type": "string"
+          },
+          "eae": {
+            "type": "string"
+          },
+          "e_hly": {
+            "type": "string"
+          },
+          "ampc_carba_phenotype": {
+            "type": "string"
+          }
+        }
+      },
       "Error": {
         "type": "object",
         "required": [
@@ -176,7 +351,7 @@
           }
         }
       },
-      "FilterConfigContainer": {
+      "GetFilterConfigurationSuccessResponseData": {
         "type": "object",
         "required": [
           "filters"
@@ -223,78 +398,47 @@
           }
         }
       },
-      "Statistic": {
+      "GetCountedIsolatesSuccessResponseData": {
         "type": "object",
+        "required": [
+          "totalNumberOfIsolates"
+        ],
         "properties": {
           "totalNumberOfIsolates": {
             "type": "number"
           },
           "table": {
-            "$ref": "#/components/schemas/StatisticTable"
+            "$ref": "#/components/schemas/CountTable"
           }
         }
       },
-      "StatisticTable": {
+      "CountTable": {
         "type": "object",
         "properties": {
           "columns": {
-            "$ref": "#/components/schemas/StatisticTableColumns"
+            "$ref": "#/components/schemas/CountTableColumns"
           },
           "rows": {
-            "$ref": "#/components/schemas/StatisticTableRowsList"
+            "$ref": "#/components/schemas/CountTableRowsList"
           }
         }
       },
-      "StatisticTableColumns": {
+      "CountTableColumns": {
         "type": "array",
         "items": {
           "type": "string"
         }
       },
-      "StatisticTableRowsList": {
+      "CountTableRowsList": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/StatisticTableRowsInformation"
+          "$ref": "#/components/schemas/CountTableRowsEntries"
         }
       },
-      "StatisticTableRowsInformation": {
+      "CountTableRowsEntries": {
         "type": "object",
         "properties": {
           "rowname": {
-            "type": "string"
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "SelectedSettings": {
-        "type": "object",
-        "properties": {
-          "filters": {
-            "$ref": "#/components/schemas/SelectedFilterSettingsList"
-          },
-          "row": {
-            "type": "string"
-          },
-          "column": {
-            "type": "string"
-          }
-        }
-      },
-      "SelectedFilterSettingsList": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/SelectedFilterSettingsInformation"
-        }
-      },
-      "SelectedFilterSettingsInformation": {
-        "type": "object",
-        "properties": {
-          "name": {
             "type": "string"
           },
           "values": {
@@ -326,9 +470,77 @@
             }
           }
         }
+      },
+      "GetIsolatesSuccessResponse": {
+        "description": "Successful Dataset retrieval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetIsolatesSuccessResponseData"
+            }
+          }
+        }
+      },
+      "GetCountedIsolatesSuccessResponse": {
+        "description": "Successful Dataset description retrieval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetCountedIsolatesSuccessResponseData"
+            }
+          }
+        }
+      },
+      "GetFilterConfigurationSuccessResponse": {
+        "description": "Successful filter configuration retrieval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetFilterConfigurationSuccessResponseData"
+            }
+          }
+        }
       }
     },
-    "parameters": {},
+    "parameters": {
+      "SamplingLocationQuery": {
+        "name": "sLocation",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/FilterArray"
+        }
+      },
+      "PathogenQuery": {
+        "name": "pathogen",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/FilterArray"
+        }
+      },
+      "MatrixQuery": {
+        "name": "matrix",
+        "in": "query",
+        "schema": {
+          "$ref": "#/components/schemas/FilterArray"
+        }
+      },
+      "RowSettings": {
+        "name": "row",
+        "in": "query",
+        "description": "The applied row setting",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ColumnSettings": {
+        "name": "column",
+        "in": "query",
+        "description": "The applied column setting",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
     "requestBodies": {},
     "securitySchemes": {}
   }
