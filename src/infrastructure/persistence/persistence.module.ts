@@ -1,54 +1,38 @@
-import { SQLiteProbenahmegrundRepository } from './repositories/probenahmegrund.repository';
+import { DAOHash } from './dao/dao-provider.service';
+import { MatrixGateway } from './gateway/matrix.gateway';
+import { MicroorganismGateway } from './gateway/microorganism.gateway';
+import { SamplingContextGateway } from './gateway/sampling-context.gateway';
+import { IsolateGateway } from './gateway/isolate.gateway';
 import { ContainerModule, interfaces } from 'inversify';
-import { SQLiteIsolatRepository } from './repositories/isolat.repository';
-import { SQLiteErregerRepository } from './repositories/erreger.repository';
-import {
-    IsolatRepository,
-    ErregerRepository,
-    ProbenahmegrundRepository,
-    APPLICATION_TYPES,
-    MatrixRepository
-} from '../../app/ports';
+import { APPLICATION_TYPES } from '../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
-import { Database } from 'sqlite';
-import { SQLiteMatrixRepository } from './repositories/matrix.repository';
 
-export function getPersistenceContainerModule(db: Database): ContainerModule {
-    return new ContainerModule(
-        (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-            bind<IsolatRepository>(APPLICATION_TYPES.IsolatRepository).to(
-                SQLiteIsolatRepository
-            );
+export function getPersistenceContainerModule(
+    daoHash: DAOHash
+): ContainerModule {
+    return new ContainerModule((bind: interfaces.Bind) => {
+        bind(PERSISTENCE_TYPES.MicroorganismModel).toConstantValue(
+            daoHash['microorganism']
+        );
 
-            bind<ProbenahmegrundRepository>(
-                APPLICATION_TYPES.ProbenahmegrundRepository
-            ).to(SQLiteProbenahmegrundRepository);
+        bind(PERSISTENCE_TYPES.MatrixModel).toConstantValue(daoHash['matrix']);
 
-            bind<ErregerRepository>(APPLICATION_TYPES.ErregerRepository).to(
-                SQLiteErregerRepository
-            );
+        bind(PERSISTENCE_TYPES.SamplingContextModel).toConstantValue(
+            daoHash['samplingContext']
+        );
 
-            bind<MatrixRepository>(APPLICATION_TYPES.MatrixRepository).to(
-                SQLiteMatrixRepository
-            );
+        bind(PERSISTENCE_TYPES.IsolateModel).toConstantValue(
+            daoHash['isolate']
+        );
 
-            bind<Database>(PERSISTENCE_TYPES.Sqlite).toConstantValue(db);
+        bind(APPLICATION_TYPES.IsolateGateway).to(IsolateGateway);
 
-            bind<string>(PERSISTENCE_TYPES.ErregerRelation).toConstantValue(
-                'erreger'
-            );
+        bind(APPLICATION_TYPES.MicroorganismGateway).to(MicroorganismGateway);
 
-            bind<string>(PERSISTENCE_TYPES.IsolatRelation).toConstantValue(
-                'isolat'
-            );
+        bind(APPLICATION_TYPES.SamplingReasonGateway).to(
+            SamplingContextGateway
+        );
 
-            bind<string>(
-                PERSISTENCE_TYPES.ProbenahmegrundRelation
-            ).toConstantValue('probenahmegrund');
-
-            bind<string>(PERSISTENCE_TYPES.MatrixRelation).toConstantValue(
-                'matrix'
-            );
-        }
-    );
+        bind(APPLICATION_TYPES.MatrixGateway).to(MatrixGateway);
+    });
 }
