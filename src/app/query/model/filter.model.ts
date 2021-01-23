@@ -1,8 +1,8 @@
-export interface FilterPort {
+export interface FilterConfigurationPort {
     getFilterConfiguration(): Promise<FilterConfiguration[]>;
 }
 
-export interface FilterService extends FilterPort {}
+export interface FilterConfigurationService extends FilterConfigurationPort {}
 
 export interface FilterConfiguration {
     id: string;

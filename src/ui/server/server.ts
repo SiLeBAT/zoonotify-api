@@ -78,6 +78,7 @@ export class DefaultAppServer implements AppServer {
                     swaggerUrl: ROUTE.VERSION
                 })
             );
+            app.set('query parser', 'simple');
         });
 
         this.server.setErrorConfig(app => {

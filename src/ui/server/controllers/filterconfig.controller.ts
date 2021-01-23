@@ -1,5 +1,5 @@
 import { FilterConfiguration } from './../../../app/query/model/filter.model';
-import { FilterPort } from './../../../app/ports';
+import { FilterConfigurationPort } from './../../../app/ports';
 import {
     GetFilterConfigurationContainerDTO,
     FilterConfigurationDTO
@@ -19,8 +19,8 @@ enum FILTER_CONFIG_ROUTE {
 export class DefaultFilterConfigController extends AbstractController
     implements FilterConfigController {
     constructor(
-        @inject(APPLICATION_TYPES.FilterService)
-        private filterService: FilterPort
+        @inject(APPLICATION_TYPES.FilterConfigurationService)
+        private filterService: FilterConfigurationPort
     ) {
         super();
     }

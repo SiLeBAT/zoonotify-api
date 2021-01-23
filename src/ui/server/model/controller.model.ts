@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 export interface Controller {}
 
@@ -21,4 +21,8 @@ export interface FilterConfigController extends Controller {
 
 export interface MockDataController extends Controller {
     getMockData(res: Response): Promise<void>;
+}
+
+export interface IsolateController extends Controller {
+    getIsolate(req: Request, res: Response): Promise<void>;
 }

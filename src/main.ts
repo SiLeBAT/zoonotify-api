@@ -1,7 +1,6 @@
 import * as config from 'config';
 import { logger, getContainer } from './aspects';
 import { createServer, getServerContainerModule } from './ui/server/ports';
-
 import { getApplicationContainerModule } from './app/ports';
 import {
     SystemConfigurationService,
@@ -11,8 +10,10 @@ import {
     DataStoreConfiguration,
     APIConfiguration
 } from './main.model';
-import { createDataStore } from './infrastructure/persistence/datastore/sqlite/sqlite';
-import { getPersistenceContainerModule } from './infrastructure/persistence/persistence.module';
+import {
+    getPersistenceContainerModule,
+    SequelizeDatabaseService
+} from './infrastructure/ports';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
     private generalConfigurationDefaults: GeneralConfiguration = {
@@ -67,12 +68,17 @@ async function init() {
     logger.info(`Starting ${appConfiguration.appName}.`);
     logger.info(`Log level: ${generalConfig.logLevel}.`);
 
-    const dataStore = createDataStore({
+    const dbService = new SequelizeDatabaseService();
+    const dataStore = dbService.createDataStore({
         connectionString: dataStoreConfig.connectionString
     });
 
-    const db = await dataStore.init();
+    if (!(await dataStore.isConnectionEstablished())) {
+        throw new Error('Unable to connect to Database.');
+    }
 
+    const daoProvider = dbService.getDAOProvider();
+    const daos = daoProvider.getDAOHash();
     const container = getContainer({ defaultScope: 'Singleton' });
     container.load(
         getApplicationContainerModule({
@@ -85,7 +91,7 @@ async function init() {
             logLevel: generalConfig.logLevel,
             supportContact: generalConfig.supportContact
         }),
-        getPersistenceContainerModule(db)
+        getPersistenceContainerModule(daos)
     );
 
     const server = createServer(container);

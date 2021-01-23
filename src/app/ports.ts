@@ -10,11 +10,15 @@ export { APPLICATION_TYPES } from './application.types';
 /**
  * query exports
  */
-export { FilterPort } from './query/model/filter.model';
-export { ErregerRepository, Erreger } from './query/model/erreger.model';
-export { MatrixRepository } from './query/model/matrix.model';
-export { IsolatRepository, Isolat } from './query/model/isolat.model';
+export { FederalState } from './query/domain/federal-state.entity';
+export { FilterConfigurationPort } from './query/model/filter.model';
+export { Microorganism } from './query/model/microorganism.model';
+export { Matrix } from './query/model/matrix.model';
 export {
-    ProbenahmegrundRepository,
-    Probenahmegrund
-} from './query/model/probenahmegrund.model';
+    Isolate,
+    IsolatePort,
+    IsolateCharacteristics,
+    IsolateResistance
+} from './query/model/isolate.model';
+export { SamplingContext } from './query/model/sampling-context.model';
+export { EntityGateway } from './query/model/shared.model';

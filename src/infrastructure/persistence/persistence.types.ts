@@ -1,7 +1,9 @@
 export const PERSISTENCE_TYPES = {
-    Sqlite: Symbol.for('Sqlite'),
-    ErregerRelation: Symbol.for('ErregerRelation'),
-    MatrixRelation: Symbol.for('MatrixRelation'),
-    ProbenahmegrundRelation: Symbol.for('ProbenahmegrundRelation'),
-    IsolatRelation: Symbol.for('IsolatRelation')
+    IsolateModel: Symbol.for('IsolateModel'),
+    MicroorganismModel: Symbol.for('MicroorganismModel'),
+    IsolateCharacteristicModel: Symbol.for('IsolateCharacteristicModel'),
+    IsolateResistanceModel: Symbol.for('IsolateResistanceModel'),
+    MatrixModel: Symbol.for('MatrixModel'),
+    SamplingContextModel: Symbol.for('SamplingContextModel'),
+    FilterConverterService: Symbol.for('FilterConverterService')
 };

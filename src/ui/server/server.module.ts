@@ -4,13 +4,15 @@ import {
     SystemInfoController,
     MockDataController,
     VersionRootController,
-    FilterConfigController
+    FilterConfigController,
+    IsolateController
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
 import { DefaultMockDataController } from './controllers/mockdata.controller';
 import { DefaultVersionRootController } from './controllers/versionRoot.controller';
 import { AppServerConfiguration } from './model/server.model';
+import { DefaultIsolateController } from './controllers/isolate.controller';
 
 export function getServerContainerModule(
     serverCongfiguration: AppServerConfiguration
@@ -36,6 +38,10 @@ export function getServerContainerModule(
             bind<FilterConfigController>(
                 SERVER_TYPES.FilterConfigController
             ).to(DefaultFilterConfigController);
+
+            bind<IsolateController>(SERVER_TYPES.IsolateController).to(
+                DefaultIsolateController
+            );
         }
     );
 }
