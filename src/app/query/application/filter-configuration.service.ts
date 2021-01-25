@@ -31,14 +31,14 @@ export class DefaultFilterConfigurationService
                 this.microorganismGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'erreger'
+            id: 'microorganism'
         },
         {
             valueProvider: () =>
                 this.samplingReasonGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'probenahmegrund'
+            id: 'sLocation'
         },
         {
             valueProvider: () =>
