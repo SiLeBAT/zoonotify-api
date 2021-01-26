@@ -2,14 +2,12 @@ import { DefaultFilterConfigController } from './controllers/filterconfig.contro
 import { ContainerModule, interfaces } from 'inversify';
 import {
     SystemInfoController,
-    MockDataController,
     VersionRootController,
     FilterConfigController,
     IsolateController
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
-import { DefaultMockDataController } from './controllers/mockdata.controller';
 import { DefaultVersionRootController } from './controllers/versionRoot.controller';
 import { AppServerConfiguration } from './model/server.model';
 import { DefaultIsolateController } from './controllers/isolate.controller';
@@ -25,10 +23,6 @@ export function getServerContainerModule(
 
             bind<SystemInfoController>(SERVER_TYPES.InfoController).to(
                 DefaultSystemInfoController
-            );
-
-            bind<MockDataController>(SERVER_TYPES.MockDataController).to(
-                DefaultMockDataController
             );
 
             bind<VersionRootController>(SERVER_TYPES.VersionRootController).to(

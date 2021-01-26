@@ -91,7 +91,7 @@
             "$ref": "#/components/parameters/MatrixQuery"
           },
           {
-            "$ref": "#/components/parameters/SamplingLocationQuery"
+            "$ref": "#/components/parameters/SamplingContextQuery"
           }
         ],
         "responses": {
@@ -120,7 +120,7 @@
             "$ref": "#/components/parameters/MatrixQuery"
           },
           {
-            "$ref": "#/components/parameters/SamplingLocationQuery"
+            "$ref": "#/components/parameters/SamplingContextQuery"
           },
           {
             "$ref": "#/components/parameters/RowSettings"
@@ -303,7 +303,7 @@
           "matrix",
           "matrixDetail",
           "characteristics",
-          "resistences"
+          "resistances"
         ],
         "properties": {
           "id": {
@@ -315,16 +315,16 @@
           "state": {
             "type": "string"
           },
-          "year": {
+          "samplingYear": {
             "type": "string"
           },
-          "samplingReason": {
+          "samplingStage": {
             "type": "string"
           },
-          "samplingLocation": {
+          "samplingContext": {
             "type": "string"
           },
-          "samplingOrigin": {
+          "origin": {
             "type": "string"
           },
           "matrix": {
@@ -333,16 +333,16 @@
           "matrixDetail": {
             "type": "string"
           },
-          "supercategory": {
+          "category": {
             "type": "string"
           },
-          "production": {
+          "productionType": {
             "type": "string"
           },
           "characteristics": {
             "$ref": "#/components/schemas/MicrobialCharacteristics"
           },
-          "resistences": {
+          "resistances": {
             "$ref": "#/components/schemas/AntiBioticResistence"
           }
         }
@@ -350,7 +350,7 @@
       "MicrobialCharacteristics": {
         "type": "object",
         "properties": {
-          "sepecies": {
+          "species": {
             "type": "string"
           },
           "serovar": {
@@ -582,8 +582,8 @@
       }
     },
     "parameters": {
-      "SamplingLocationQuery": {
-        "name": "sLocation",
+      "SamplingContextQuery": {
+        "name": "sContext",
         "in": "query",
         "schema": {
           "$ref": "#/components/schemas/FilterArray"

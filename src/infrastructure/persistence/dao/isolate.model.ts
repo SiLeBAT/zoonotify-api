@@ -8,11 +8,11 @@ import { IsolateResistanceModel } from './isolate-resistance.model';
 
 export interface IsolateAttributes {
     id: number;
-    microorganism: MicroorganismModel;
-    federalState: FederalStateModel;
-    program: ProgramModel;
-    isolateCharacteristics: IsolateCharacteristicModel[];
-    isolateResistances: IsolateResistanceModel[];
+    toMicroorganism: MicroorganismModel;
+    toFederalState: FederalStateModel;
+    toProgram: ProgramModel;
+    toIsolateCharacteristics: IsolateCharacteristicModel[];
+    toIsolateResistances: IsolateResistanceModel[];
 }
 
 export interface IsolateModel

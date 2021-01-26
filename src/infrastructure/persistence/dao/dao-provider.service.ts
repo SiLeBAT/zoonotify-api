@@ -27,9 +27,15 @@ export interface DAOProvider {
 
 @injectable()
 export class SequelizeDAOProvider implements DAOProvider {
-    constructor(private db: Database<Sequelize>) {}
+    private daoHash: DAOHash;
+    constructor(private db: Database<Sequelize>) {
+        this.daoHash = this.createDAOS();
+    }
 
     getDAOHash() {
+        return this.daoHash;
+    }
+    private createDAOS() {
         const Microorganism = microorganismModelFactory(this.db.getDatastore());
         const Matrix = matrixModelFactory(this.db.getDatastore());
         const SamplingContext = samplingContextModelFactory(
@@ -60,67 +66,83 @@ export class SequelizeDAOProvider implements DAOProvider {
         const Resistance = resistanceModelFactory(this.db.getDatastore());
 
         Isolate.belongsTo(Microorganism, {
-            foreignKey: 'erreger'
+            foreignKey: 'erreger',
+            as: 'toMicroorganism'
         });
 
         Microorganism.hasMany(Isolate, {
-            foreignKey: 'erreger'
+            foreignKey: 'erreger',
+            as: 'toIsolates'
         });
 
         Isolate.belongsTo(FederalState, {
-            foreignKey: 'bundesland'
+            foreignKey: 'bundesland',
+            as: 'toFederalState'
         });
 
         FederalState.hasMany(Isolate, {
-            foreignKey: 'bundesland'
+            foreignKey: 'bundesland',
+            as: 'toIsolates'
         });
 
         Isolate.belongsTo(Program, {
-            foreignKey: 'programm'
+            foreignKey: 'programm',
+            as: 'toProgram'
         });
 
         Program.hasMany(Isolate, {
-            foreignKey: 'programm'
+            foreignKey: 'programm',
+            as: 'toIsolates'
         });
 
         Program.belongsTo(SamplingContext, {
-            foreignKey: 'probenahmegrund'
+            foreignKey: 'probenahmegrund',
+            as: 'toSamplingContext'
         });
 
         SamplingContext.hasMany(Program, {
-            foreignKey: 'probenahmegrund'
+            foreignKey: 'probenahmegrund',
+            as: 'toPrograms'
         });
 
         Program.belongsTo(SamplingStage, {
-            foreignKey: 'probenahmeort'
+            foreignKey: 'probenahmeort',
+            as: 'toSamplingStage'
         });
 
         SamplingStage.hasMany(Program, {
-            foreignKey: 'probenahmeort'
+            foreignKey: 'probenahmeort',
+            as: 'toPrograms'
         });
 
         Program.belongsTo(ProductionType, {
-            foreignKey: 'produktionsrichtung'
+            foreignKey: 'produktionsrichtung',
+            as: 'toProductionType'
         });
 
         ProductionType.hasMany(Program, {
-            foreignKey: 'produktionsrichtung'
+            foreignKey: 'produktionsrichtung',
+            as: 'toPrograms'
         });
 
         Program.belongsTo(CompleteMatrix, {
-            foreignKey: 'matrix_komplet'
+            foreignKey: 'matrix_komplet',
+            as: 'toCompleteMatrix'
         });
 
         CompleteMatrix.hasMany(Program, {
-            foreignKey: 'matrix_komplet'
+            foreignKey: 'matrix_komplet',
+            as: 'toPrograms'
         });
 
         ProductionType.belongsTo(Category, {
-            foreignKey: 'oberkategorie'
+            foreignKey: 'oberkategorie',
+            as: 'toCategory'
         });
 
         Category.hasMany(ProductionType, {
-            foreignKey: 'oberkategorie'
+            foreignKey: 'oberkategorie',
+            as: 'toProductionTypes'
         });
 
         CompleteMatrix.belongsTo(Matrix, {
@@ -129,55 +151,68 @@ export class SequelizeDAOProvider implements DAOProvider {
         });
 
         Matrix.hasMany(CompleteMatrix, {
-            foreignKey: 'matrix'
+            foreignKey: 'matrix',
+            as: 'toCompleteMatrices'
         });
 
         CompleteMatrix.belongsTo(MatrixDetail, {
-            foreignKey: 'matrixdetail'
+            foreignKey: 'matrixdetail',
+            as: 'toMatrixDetail'
         });
 
         MatrixDetail.hasMany(CompleteMatrix, {
-            foreignKey: 'matrixdetail'
+            foreignKey: 'matrixdetail',
+            as: 'toCompleteMatrices'
         });
 
         Matrix.belongsTo(Origin, {
-            foreignKey: 'probenherkunft'
+            foreignKey: 'probenherkunft',
+            as: 'toOrigin'
         });
 
         Origin.hasMany(Matrix, {
-            foreignKey: 'probenherkunft'
+            foreignKey: 'probenherkunft',
+            as: 'toMatrices'
         });
 
         IsolateCharacteristic.belongsTo(Isolate, {
-            foreignKey: 'isolat'
+            foreignKey: 'isolat',
+            as: 'toIsolate'
         });
 
         Isolate.hasMany(IsolateCharacteristic, {
-            foreignKey: 'isolat'
+            foreignKey: 'isolat',
+            as: 'toIsolateCharacteristics'
         });
 
         IsolateCharacteristic.belongsTo(Characteristic, {
-            foreignKey: 'merkmal'
+            foreignKey: 'merkmal',
+            as: 'toCharacteristic'
         });
 
         Characteristic.hasMany(IsolateCharacteristic, {
-            foreignKey: 'merkmal'
+            foreignKey: 'merkmal',
+            as: 'toIsolateCharacteristics'
         });
 
         IsolateResistance.belongsTo(Isolate, {
-            foreignKey: 'isolat'
+            foreignKey: 'isolat',
+            as: 'toIsolate'
         });
 
         Isolate.hasMany(IsolateResistance, {
-            foreignKey: 'isolat'
+            foreignKey: 'isolat',
+            as: 'toIsolateResistances'
         });
 
         IsolateResistance.belongsTo(Resistance, {
-            foreignKey: 'resistenz'
+            foreignKey: 'resistenz',
+            as: 'toResistance'
         });
 
         Resistance.hasMany(IsolateResistance, {
-            foreignKey: 'resistenz'
+            foreignKey: 'resistenz',
+            as: 'toIsolateResistances'
         });
 
         return {

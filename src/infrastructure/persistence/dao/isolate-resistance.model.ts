@@ -6,9 +6,9 @@ import { ModelStatic } from './shared.model';
 
 export interface IsolateResistanceAttributes {
     id: number;
-    isolate: IsolateModel;
+    toIsolate: IsolateModel;
     active: boolean;
-    resistance: ResistanceModel;
+    toResistance: ResistanceModel;
     value: string;
 }
 

@@ -2,11 +2,6 @@ import { Response, Request } from 'express';
 
 export interface Controller {}
 
-export interface ControllerFactory {
-    // tslint:disable-next-line: no-any
-    getController(controllerName: string): any;
-}
-
 export interface VersionRootController extends Controller {
     getAPIDefinition(res: Response): Promise<void>;
 }
@@ -25,4 +20,5 @@ export interface MockDataController extends Controller {
 
 export interface IsolateController extends Controller {
     getIsolate(req: Request, res: Response): Promise<void>;
+    getIsolateCount(req: Request, res: Response): Promise<void>;
 }

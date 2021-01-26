@@ -1,13 +1,15 @@
+export type FilterConfigurationCollection = FilterConfiguration[];
 export interface FilterConfigurationPort {
-    getFilterConfiguration(): Promise<FilterConfiguration[]>;
+    getFilterConfiguration(): Promise<FilterConfigurationCollection>;
 }
 
 export interface FilterConfigurationService extends FilterConfigurationPort {}
 
+export type FilterValueCollection = string[];
 export interface FilterConfiguration {
     id: string;
     name: string;
-    values: string[];
+    values: FilterValueCollection;
 }
 
 export interface FilterDefinition {
@@ -15,6 +17,7 @@ export interface FilterDefinition {
     id: string;
 }
 
+export type FilterDefinitionCollection = FilterDefinition[];
 export interface FilterValueProvider {
-    (): Promise<string[]>;
+    (): Promise<FilterValueCollection>;
 }

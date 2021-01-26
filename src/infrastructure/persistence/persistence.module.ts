@@ -1,8 +1,8 @@
 import { DAOHash } from './dao/dao-provider.service';
-import { MatrixGateway } from './gateway/matrix.gateway';
-import { MicroorganismGateway } from './gateway/microorganism.gateway';
-import { SamplingContextGateway } from './gateway/sampling-context.gateway';
-import { IsolateGateway } from './gateway/isolate.gateway';
+import { SequelizeMatrixGateway } from './gateway/matrix.gateway';
+import { SequelizeMicroorganismGateway } from './gateway/microorganism.gateway';
+import { SequelizeSamplingContextGateway } from './gateway/sampling-context.gateway';
+import { SequelizeIsolateGateway } from './gateway/isolate.gateway';
 import { ContainerModule, interfaces } from 'inversify';
 import { APPLICATION_TYPES } from '../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
@@ -25,14 +25,16 @@ export function getPersistenceContainerModule(
             daoHash['isolate']
         );
 
-        bind(APPLICATION_TYPES.IsolateGateway).to(IsolateGateway);
+        bind(APPLICATION_TYPES.IsolateGateway).to(SequelizeIsolateGateway);
 
-        bind(APPLICATION_TYPES.MicroorganismGateway).to(MicroorganismGateway);
-
-        bind(APPLICATION_TYPES.SamplingReasonGateway).to(
-            SamplingContextGateway
+        bind(APPLICATION_TYPES.MicroorganismGateway).to(
+            SequelizeMicroorganismGateway
         );
 
-        bind(APPLICATION_TYPES.MatrixGateway).to(MatrixGateway);
+        bind(APPLICATION_TYPES.SamplingReasonGateway).to(
+            SequelizeSamplingContextGateway
+        );
+
+        bind(APPLICATION_TYPES.MatrixGateway).to(SequelizeMatrixGateway);
     });
 }

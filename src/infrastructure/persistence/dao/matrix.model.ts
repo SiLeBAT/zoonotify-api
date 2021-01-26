@@ -5,7 +5,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface MatrixAttributes {
     id: number;
     name: string;
-    origin: OriginModel;
+    toOrigin: OriginModel;
 }
 
 export interface MatrixModel

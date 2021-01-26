@@ -1,3 +1,4 @@
+import { EntityGateway } from './shared.model';
 import { FederalState } from '../domain/federal-state.entity';
 
 export interface Isolate {
@@ -16,6 +17,7 @@ export interface Isolate {
     id: number;
 }
 
+export type IsolateCollection = Isolate[];
 export interface IsolateCharacteristics {
     species?: string;
     serovar?: string;
@@ -35,7 +37,14 @@ interface ResistanceProfile {
 }
 export type IsolateResistance = Record<string, ResistanceProfile>;
 export interface IsolatePort {
-    getIsolates(): Promise<Isolate[]>;
+    getIsolates(): Promise<IsolateCollection>;
+    getIsolateCount(): Promise<IsolateCount>;
 }
 
 export interface IsolateService extends IsolatePort {}
+
+export interface IsolateGateway extends EntityGateway<Isolate> {
+    getCount(): Promise<IsolateCount>;
+}
+
+export type IsolateCount = number;

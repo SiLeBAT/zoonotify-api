@@ -1,5 +1,14 @@
-import { APPLICATION_TYPES, Isolate, IsolatePort } from '../../../app/ports';
-import { GetIsolatesContainerDTO, IsolateDTO } from '../model/response.model';
+import {
+    APPLICATION_TYPES,
+    Isolate,
+    IsolatePort,
+    IsolateCollection
+} from '../../../app/ports';
+import {
+    GetCountedIsolatesSuccessResponse,
+    GetIsolatesSuccessResponse,
+    IsolateDTO
+} from '../model/response.model';
 import { IsolateController } from '../model/controller.model';
 import { Response, Request } from 'express';
 import { AbstractController } from './abstract.controller';
@@ -11,6 +20,7 @@ import {
 } from 'inversify-express-utils';
 import { ROUTE } from '../model/enums';
 import { inject } from 'inversify';
+import { logger } from './../../../aspects';
 
 enum ISOLATE_ROUTE {
     ROOT = '/isolate'
@@ -28,10 +38,25 @@ export class DefaultIsolateController extends AbstractController
     @httpGet('/')
     async getIsolate(@request() req: Request, @response() res: Response) {
         try {
-            const isolates: Isolate[] = await this.isolateService.getIsolates();
+            const isolates: IsolateCollection = await this.isolateService.getIsolates();
 
-            const dto: GetIsolatesContainerDTO = {
+            const dto: GetIsolatesSuccessResponse = {
                 isolates: isolates.map(isolate => this.isolateToDTO(isolate))
+            };
+            this.ok(res, dto);
+        } catch (error) {
+            logger.error('Unable to send response: ', error);
+            this.handleError(res);
+        }
+    }
+
+    @httpGet('/counted')
+    async getIsolateCount(@request() req: Request, @response() res: Response) {
+        try {
+            const isolateCount = await this.isolateService.getIsolateCount();
+
+            const dto: GetCountedIsolatesSuccessResponse = {
+                totalNumberOfIsolates: isolateCount
             };
             this.ok(res, dto);
         } catch (error) {
