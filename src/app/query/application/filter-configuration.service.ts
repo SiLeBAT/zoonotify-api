@@ -1,4 +1,7 @@
-import { Microorganism } from '../model/microorganism.model';
+import { FilterDefinitionCollection } from './../model/filter.model';
+import { SamplingContextGateway } from './../model/sampling-context.model';
+import { MatrixGateway } from './../model/matrix.model';
+import { MicroorganismGateway } from './../model/microorganism.model';
 
 // npm
 import { inject, injectable } from 'inversify';
@@ -6,26 +9,24 @@ import * as _ from 'lodash';
 import {
     FilterConfiguration,
     FilterDefinition,
-    FilterConfigurationService
+    FilterConfigurationService,
+    FilterConfigurationCollection
 } from '../model/filter.model';
 import { APPLICATION_TYPES } from '../../application.types';
-import { Matrix } from '../model/matrix.model';
-import { SamplingContext } from '../model/sampling-context.model';
-import { EntityGateway } from '../model/shared.model';
 
 @injectable()
 export class DefaultFilterConfigurationService
     implements FilterConfigurationService {
     constructor(
         @inject(APPLICATION_TYPES.MicroorganismGateway)
-        private microorganismGateway: EntityGateway<Microorganism>,
+        private microorganismGateway: MicroorganismGateway,
         @inject(APPLICATION_TYPES.MatrixGateway)
-        private matrixGateway: EntityGateway<Matrix>,
+        private matrixGateway: MatrixGateway,
         @inject(APPLICATION_TYPES.SamplingReasonGateway)
-        private samplingReasonGateway: EntityGateway<SamplingContext>
+        private samplingContextGateway: SamplingContextGateway
     ) {}
 
-    private filterDefinitions: FilterDefinition[] = [
+    private filterDefinitions: FilterDefinitionCollection = [
         {
             valueProvider: () =>
                 this.microorganismGateway
@@ -35,10 +36,10 @@ export class DefaultFilterConfigurationService
         },
         {
             valueProvider: () =>
-                this.samplingReasonGateway
+                this.samplingContextGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'sLocation'
+            id: 'sContext'
         },
         {
             valueProvider: () =>
@@ -47,8 +48,8 @@ export class DefaultFilterConfigurationService
         }
     ];
 
-    async getFilterConfiguration() {
-        const filterConfiguration: FilterConfiguration[] = [];
+    async getFilterConfiguration(): Promise<FilterConfigurationCollection> {
+        const filterConfiguration: FilterConfigurationCollection = [];
         for (let index = 0; index < this.filterDefinitions.length; index++) {
             const configuration = await this.fromDefinitionToConfiguration(
                 this.filterDefinitions[index]

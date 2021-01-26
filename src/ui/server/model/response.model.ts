@@ -11,19 +11,27 @@ export interface SystemInformationDTO {
     supportContact: string;
 }
 
+export type FilterConfigurationCollectionDTO = FilterConfigurationDTO[];
+
 export interface GetFilterConfigurationContainerDTO {
-    filters: FilterConfigurationDTO[];
+    filters: FilterConfigurationCollectionDTO;
 }
 
+export type FilterValueCollectionDTO = string[];
 export interface FilterConfigurationDTO {
     id: string;
     name: string;
     parent?: string;
-    values: string[];
+    values: FilterValueCollectionDTO;
 }
 
-export interface GetIsolatesContainerDTO {
-    isolates: IsolateDTO[];
+export type IsolateCollectionDTO = IsolateDTO[];
+export interface GetIsolatesSuccessResponse {
+    isolates: IsolateCollectionDTO;
+}
+
+export interface GetCountedIsolatesSuccessResponse {
+    totalNumberOfIsolates: number;
 }
 
 export interface IsolateDTO {
@@ -38,7 +46,7 @@ export interface IsolateDTO {
     matrix: string;
     matrixDetail: string;
     characteristics: IsolateCharacteristicsDTO;
-    resistance: IsolateResistanceDTO; // TODO: Type
+    resistance: IsolateResistanceDTO;
 }
 
 interface ResistanceProfileDTO {

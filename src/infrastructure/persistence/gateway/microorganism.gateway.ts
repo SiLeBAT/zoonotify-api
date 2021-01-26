@@ -3,10 +3,10 @@ import { MicroorganismModel } from '../dao/microorganism.model';
 
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
-import { Microorganism, EntityGateway } from '../../../app/ports';
+import { Microorganism, MicroorganismGateway } from '../../../app/ports';
 
 @injectable()
-export class MicroorganismGateway implements EntityGateway<Microorganism> {
+export class SequelizeMicroorganismGateway implements MicroorganismGateway {
     constructor(
         @inject(PERSISTENCE_TYPES.MicroorganismModel)
         private Microorganism: ModelStatic<MicroorganismModel>

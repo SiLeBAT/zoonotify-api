@@ -2,10 +2,10 @@ import { inject, injectable } from 'inversify';
 import { MatrixModel } from '../dao/matrix.model';
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
-import { Matrix, EntityGateway } from '../../../app/ports';
+import { Matrix, MatrixGateway } from '../../../app/ports';
 
 @injectable()
-export class MatrixGateway implements EntityGateway<Matrix> {
+export class SequelizeMatrixGateway implements MatrixGateway {
     constructor(
         @inject(PERSISTENCE_TYPES.MatrixModel)
         private Matrix: ModelStatic<MatrixModel>

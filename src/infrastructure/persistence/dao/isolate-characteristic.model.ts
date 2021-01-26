@@ -6,9 +6,9 @@ import { ModelStatic } from './shared.model';
 
 export interface IsolateCharacteristicAttributes {
     id: number;
-    isolate: IsolateModel;
+    toIsolate: IsolateModel;
     value: string;
-    characteristic: CharacteristicModel;
+    toCharacteristic: CharacteristicModel;
 }
 
 export interface IsolateCharacteristicModel

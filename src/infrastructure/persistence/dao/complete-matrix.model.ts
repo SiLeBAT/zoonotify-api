@@ -6,7 +6,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface CompleteMatrixAttributes {
     id: number;
     toMatrix: MatrixModel;
-    matrixDetail: MatrixDetailModel;
+    toMatrixDetail: MatrixDetailModel;
 }
 
 export interface CompleteMatrixModel
@@ -32,15 +32,13 @@ export function completeMatrixModelFactory(
             matrixdetail: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: 'matrixDetails',
-                    key: 'id'
+                    model: 'matrixDetails'
                 }
             },
             matrix: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: 'matrices',
-                    key: 'id'
+                    model: 'matrices'
                 }
             }
         },

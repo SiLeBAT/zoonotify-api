@@ -8,10 +8,10 @@ import { ModelStatic } from './shared.model';
 export interface ProgramAttributes {
     id: number;
     samplingYear: string;
-    samplingContext: SamplingContextModel;
-    samplingStage: SamplingStageModel;
-    productionType: ProductionTypeModel;
-    completeMatrix: CompleteMatrixModel;
+    toSamplingContext: SamplingContextModel;
+    toSamplingStage: SamplingStageModel;
+    toProductionType: ProductionTypeModel;
+    toCompleteMatrix: CompleteMatrixModel;
 }
 
 export interface ProgramModel
@@ -32,7 +32,7 @@ export function programModelFactory(
                 primaryKey: true
             },
             samplingYear: {
-                type: DataTypes.STRING, // TODO Should be Date
+                type: DataTypes.STRING,
                 field: 'jahr'
             },
             probenahmegrund: {

@@ -5,7 +5,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface ProductionTypeAttributes {
     id: number;
     name: string;
-    category: CategoryModel;
+    toCategory: CategoryModel;
 }
 
 export interface ProductionTypeModel
