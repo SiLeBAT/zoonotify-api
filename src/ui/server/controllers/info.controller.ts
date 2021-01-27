@@ -28,14 +28,14 @@ export class DefaultSystemInfoController extends AbstractController
     @httpGet('/')
     async getSystemInfo(@response() res: Response) {
         try {
-            if (!(pjson.version && pjson.zoonotifyConfig.lastChange)) {
+            if (!(pjson.version && pjson.znConfig.lastChange)) {
                 throw new UnknownPackageConfigurationError(
                     "Version number or date of last change can't be determined."
                 );
             }
             const dto: SystemInformationDTO = {
                 version: pjson.version,
-                lastChange: pjson.zoonotifyConfig.lastChange,
+                lastChange: pjson.znConfig.lastChange,
                 supportContact: this.supportContact
             };
             this.ok(res, dto);
