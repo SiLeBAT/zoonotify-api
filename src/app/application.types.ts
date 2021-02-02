@@ -1,10 +1,16 @@
 export const APPLICATION_TYPES = {
     ApplicationConfiguration: Symbol.for('ApplicationConfiguration'),
     ConfigurationService: Symbol.for('ConfigurationService'),
-    FilterConfigurationService: Symbol.for('FilterConfigurationService'),
+    FilterService: Symbol.for('FilterService'),
     IsolateService: Symbol.for('IsolateService'),
     IsolateGateway: Symbol.for('IsolateGateway'),
     MicroorganismGateway: Symbol.for('MicroorganismGateway'),
-    SamplingReasonGateway: Symbol.for('SamplingReasonGateway'),
-    MatrixGateway: Symbol.for('MatrixGateway')
+    SamplingContextGateway: Symbol.for('SamplingContextGateway'),
+    SamplingStageGateway: Symbol.for('SamplingStageGateway'),
+    MatrixGateway: Symbol.for('MatrixGateway'),
+    OriginGateway: Symbol.for('OriginGateway'),
+    FederalStateGateway: Symbol.for('FederalStateGateway'),
+    CategoryGateway: Symbol.for('CategoryGateway'),
+    ProductionTypeGateway: Symbol.for('ProductionTypeGateway'),
+    ResistanceGateway: Symbol.for('ResistanceGateway')
 };

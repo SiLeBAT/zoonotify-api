@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { MatrixModel } from '../dao/matrix.model';
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
-import { Matrix, MatrixGateway } from '../../../app/ports';
+import { Matrix, MatrixGateway } from '../../../../app/ports';
 
 @injectable()
 export class SequelizeMatrixGateway implements MatrixGateway {

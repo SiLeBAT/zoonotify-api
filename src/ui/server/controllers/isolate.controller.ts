@@ -2,7 +2,8 @@ import {
     APPLICATION_TYPES,
     Isolate,
     IsolatePort,
-    IsolateCollection
+    IsolateCollection,
+    FilterPort
 } from '../../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
@@ -30,7 +31,9 @@ export class DefaultIsolateController extends AbstractController
     implements IsolateController {
     constructor(
         @inject(APPLICATION_TYPES.IsolateService)
-        private isolateService: IsolatePort
+        private isolateService: IsolatePort,
+        @inject(APPLICATION_TYPES.FilterService)
+        private filterService: FilterPort
     ) {
         super();
     }
@@ -38,7 +41,13 @@ export class DefaultIsolateController extends AbstractController
     @httpGet('/')
     async getIsolate(@request() req: Request, @response() res: Response) {
         try {
-            const isolates: IsolateCollection = await this.isolateService.getIsolates();
+            const filter = await this.filterService.createFilter(
+                req.query as Record<string, string | string[]>
+            );
+
+            const isolates: IsolateCollection = await this.isolateService.getIsolates(
+                filter
+            );
 
             const dto: GetIsolatesSuccessResponse = {
                 isolates: isolates.map(isolate => this.isolateToDTO(isolate))
@@ -53,7 +62,13 @@ export class DefaultIsolateController extends AbstractController
     @httpGet('/counted')
     async getIsolateCount(@request() req: Request, @response() res: Response) {
         try {
-            const isolateCount = await this.isolateService.getIsolateCount();
+            const filter = await this.filterService.createFilter(
+                req.query as Record<string, string | string[]>
+            );
+
+            const isolateCount = await this.isolateService.getIsolateCount(
+                filter
+            );
 
             const dto: GetCountedIsolatesSuccessResponse = {
                 totalNumberOfIsolates: isolateCount

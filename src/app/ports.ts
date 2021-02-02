@@ -11,12 +11,20 @@ export { APPLICATION_TYPES } from './application.types';
  * query exports
  */
 export { FederalState } from './query/domain/federal-state.entity';
-export { FilterConfigurationPort } from './query/model/filter.model';
+export { FilterPort } from './query/model/filter.model';
+export { FederalStateGateway } from './query/model/federal-state.model';
 export {
     Microorganism,
     MicroorganismGateway
 } from './query/model/microorganism.model';
 export { Matrix, MatrixGateway } from './query/model/matrix.model';
+export { Origin, OriginGateway } from './query/model/origin.model';
+export { Category, CategoryGateway } from './query/model/category.model';
+export {
+    ProductionType,
+    ProductionTypeGateway
+} from './query/model/production-type.model';
+export { Resistance, ResistanceGateway } from './query/model/resistance.model';
 export {
     Isolate,
     IsolatePort,
@@ -30,3 +38,8 @@ export {
     SamplingContext,
     SamplingContextGateway
 } from './query/model/sampling-context.model';
+export {
+    SamplingStage,
+    SamplingStageGateway
+} from './query/model/sampling-stage.model';
+export { Filter } from './query/model/shared.model';

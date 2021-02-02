@@ -1,5 +1,4 @@
 import { IsolateService } from './query/model/isolate.model';
-import { FilterConfigurationService } from './query/model/filter.model';
 import { ContainerModule, interfaces } from 'inversify';
 import {
     ConfigurationService,
@@ -7,8 +6,9 @@ import {
 } from './core/model/configuration.model';
 import { DefaultConfigurationService } from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
-import { DefaultFilterConfigurationService } from './query/application/filter-configuration.service';
 import { DefaultIsolateService } from './query/application/isolat.service';
+import { DefaultFilterService } from './query/application/filter.service';
+import { FilterService } from './query/model/filter.model';
 
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
@@ -23,9 +23,9 @@ export function getApplicationContainerModule(
                 APPLICATION_TYPES.ConfigurationService
             ).to(DefaultConfigurationService);
 
-            bind<FilterConfigurationService>(
-                APPLICATION_TYPES.FilterConfigurationService
-            ).to(DefaultFilterConfigurationService);
+            bind<FilterService>(APPLICATION_TYPES.FilterService).to(
+                DefaultFilterService
+            );
 
             bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
                 DefaultIsolateService

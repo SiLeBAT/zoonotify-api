@@ -452,17 +452,12 @@
         "description": "Poperties for one filter",
         "required": [
           "id",
-          "name",
           "values"
         ],
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique ID of the filter"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the filter"
           },
           "parent": {
             "type": "string",

@@ -28,10 +28,12 @@ export function federalStateModelFactory(
                 primaryKey: true
             },
             name: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                unique: true
             },
             abkuerzung: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
+                unique: true
             }
         },
         {
