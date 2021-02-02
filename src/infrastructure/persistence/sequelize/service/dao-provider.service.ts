@@ -1,22 +1,22 @@
-import { Database } from './../datastore/sequelize/databse.model';
 import { injectable } from 'inversify';
 import { ModelStatic, Sequelize } from 'sequelize/types';
-import { categoryModelFactory } from './category.model';
-import { characteristicModelFactory } from './characteristic.model';
-import { completeMatrixModelFactory } from './complete-matrix.model';
-import { federalStateModelFactory } from './federal-state.model';
-import { isolateCharacteristicModelFactory } from './isolate-characteristic.model';
-import { isolateResistanceModelFactory } from './isolate-resistance.model';
-import { isolateModelFactory } from './isolate.model';
-import { matrixDetailModelFactory } from './matrix-detail.model';
-import { matrixModelFactory } from './matrix.model';
-import { microorganismModelFactory } from './microorganism.model';
-import { originModelFactory } from './origin.model';
-import { productionTypeModelFactory } from './production-type.model';
-import { programModelFactory } from './program.model';
-import { resistanceModelFactory } from './resistance.model';
-import { samplingContextModelFactory } from './sampling-context.model';
-import { samplingStageModelFactory } from './sampling-stage.model';
+import { categoryModelFactory } from '../dao/category.model';
+import { characteristicModelFactory } from '../dao/characteristic.model';
+import { completeMatrixModelFactory } from '../dao/complete-matrix.model';
+import { federalStateModelFactory } from '../dao/federal-state.model';
+import { isolateCharacteristicModelFactory } from '../dao/isolate-characteristic.model';
+import { isolateResistanceModelFactory } from '../dao/isolate-resistance.model';
+import { isolateModelFactory } from '../dao/isolate.model';
+import { matrixDetailModelFactory } from '../dao/matrix-detail.model';
+import { matrixModelFactory } from '../dao/matrix.model';
+import { microorganismModelFactory } from '../dao/microorganism.model';
+import { originModelFactory } from '../dao/origin.model';
+import { productionTypeModelFactory } from '../dao/production-type.model';
+import { programModelFactory } from '../dao/program.model';
+import { resistanceModelFactory } from '../dao/resistance.model';
+import { samplingContextModelFactory } from '../dao/sampling-context.model';
+import { samplingStageModelFactory } from '../dao/sampling-stage.model';
+import { Database } from '../datastore/databse.model';
 
 // tslint:disable-next-line:no-any
 export type DAOHash = Record<string, ModelStatic<any>>;
@@ -64,36 +64,6 @@ export class SequelizeDAOProvider implements DAOProvider {
             this.db.getDatastore()
         );
         const Resistance = resistanceModelFactory(this.db.getDatastore());
-
-        Isolate.belongsTo(Microorganism, {
-            foreignKey: 'erreger',
-            as: 'toMicroorganism'
-        });
-
-        Microorganism.hasMany(Isolate, {
-            foreignKey: 'erreger',
-            as: 'toIsolates'
-        });
-
-        Isolate.belongsTo(FederalState, {
-            foreignKey: 'bundesland',
-            as: 'toFederalState'
-        });
-
-        FederalState.hasMany(Isolate, {
-            foreignKey: 'bundesland',
-            as: 'toIsolates'
-        });
-
-        Isolate.belongsTo(Program, {
-            foreignKey: 'programm',
-            as: 'toProgram'
-        });
-
-        Program.hasMany(Isolate, {
-            foreignKey: 'programm',
-            as: 'toIsolates'
-        });
 
         Program.belongsTo(SamplingContext, {
             foreignKey: 'probenahmegrund',
@@ -175,16 +145,6 @@ export class SequelizeDAOProvider implements DAOProvider {
             as: 'toMatrices'
         });
 
-        IsolateCharacteristic.belongsTo(Isolate, {
-            foreignKey: 'isolat',
-            as: 'toIsolate'
-        });
-
-        Isolate.hasMany(IsolateCharacteristic, {
-            foreignKey: 'isolat',
-            as: 'toIsolateCharacteristics'
-        });
-
         IsolateCharacteristic.belongsTo(Characteristic, {
             foreignKey: 'merkmal',
             as: 'toCharacteristic'
@@ -193,16 +153,6 @@ export class SequelizeDAOProvider implements DAOProvider {
         Characteristic.hasMany(IsolateCharacteristic, {
             foreignKey: 'merkmal',
             as: 'toIsolateCharacteristics'
-        });
-
-        IsolateResistance.belongsTo(Isolate, {
-            foreignKey: 'isolat',
-            as: 'toIsolate'
-        });
-
-        Isolate.hasMany(IsolateResistance, {
-            foreignKey: 'isolat',
-            as: 'toIsolateResistances'
         });
 
         IsolateResistance.belongsTo(Resistance, {

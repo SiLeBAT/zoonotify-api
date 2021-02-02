@@ -1,4 +1,4 @@
-import { EntityGateway } from './shared.model';
+import { EntityGateway, Filter } from './shared.model';
 import { FederalState } from '../domain/federal-state.entity';
 
 export interface Isolate {
@@ -37,14 +37,14 @@ interface ResistanceProfile {
 }
 export type IsolateResistance = Record<string, ResistanceProfile>;
 export interface IsolatePort {
-    getIsolates(): Promise<IsolateCollection>;
-    getIsolateCount(): Promise<IsolateCount>;
+    getIsolates(filter?: Filter): Promise<IsolateCollection>;
+    getIsolateCount(filter?: Filter): Promise<IsolateCount>;
 }
 
 export interface IsolateService extends IsolatePort {}
 
 export interface IsolateGateway extends EntityGateway<Isolate> {
-    getCount(): Promise<IsolateCount>;
+    getCount(filter?: Filter): Promise<IsolateCount>;
 }
 
 export type IsolateCount = number;

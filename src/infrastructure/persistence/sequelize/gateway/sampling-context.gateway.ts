@@ -3,7 +3,7 @@ import { SamplingContextModel } from '../dao/sampling-context.model';
 
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
-import { SamplingContext, SamplingContextGateway } from '../../../app/ports';
+import { SamplingContext, SamplingContextGateway } from '../../../../app/ports';
 
 @injectable()
 export class SequelizeSamplingContextGateway implements SamplingContextGateway {

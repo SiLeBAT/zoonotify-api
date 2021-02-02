@@ -1,13 +1,13 @@
-import { SequelizeDatabase } from './database.entity';
 import { Sequelize } from 'sequelize';
 import { logger } from '../../../../aspects';
-import { SequelizeDAOProvider } from '../../dao/dao-provider.service';
+import { SequelizeDatabase } from '../datastore/database.entity';
 import {
-    ConnectionInfo,
-    Database,
     DatabaseService,
+    Database,
+    ConnectionInfo,
     SupportedDB
-} from './databse.model';
+} from '../datastore/databse.model';
+import { SequelizeDAOProvider } from './dao-provider.service';
 
 export class SequelizeDatabaseService implements DatabaseService<Sequelize> {
     private dataStore: Database<Sequelize>;

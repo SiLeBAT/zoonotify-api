@@ -1,10 +1,9 @@
 import { inject, injectable } from 'inversify';
+import { MicroorganismGateway, Microorganism } from 'src/app/ports';
+import { logger } from './../../../../aspects';
 import { MicroorganismModel } from '../dao/microorganism.model';
-
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
-import { Microorganism, MicroorganismGateway } from '../../../app/ports';
-import { logger } from './../../../aspects';
 
 @injectable()
 export class SequelizeMicroorganismGateway implements MicroorganismGateway {

@@ -1,20 +1,25 @@
+import { Filter, QueryParameters } from './shared.model';
+
 export type FilterConfigurationCollection = FilterConfiguration[];
-export interface FilterConfigurationPort {
+
+export interface FilterPort {
     getFilterConfiguration(): Promise<FilterConfigurationCollection>;
+    createFilter(queryParameters: QueryParameters): Promise<Filter>;
+    getFilterDefinitions(): FilterDefinitionCollection;
 }
 
-export interface FilterConfigurationService extends FilterConfigurationPort {}
+export interface FilterService extends FilterPort {}
 
 export type FilterValueCollection = string[];
 export interface FilterConfiguration {
     id: string;
-    name: string;
     values: FilterValueCollection;
 }
 
 export interface FilterDefinition {
     valueProvider: FilterValueProvider;
     id: string;
+    modelAttribute: string;
 }
 
 export type FilterDefinitionCollection = FilterDefinition[];
