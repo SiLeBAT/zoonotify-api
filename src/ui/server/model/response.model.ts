@@ -20,7 +20,6 @@ export interface GetFilterConfigurationContainerDTO {
 export type FilterValueCollectionDTO = string[];
 export interface FilterConfigurationDTO {
     id: string;
-    name: string;
     parent?: string;
     values: FilterValueCollectionDTO;
 }

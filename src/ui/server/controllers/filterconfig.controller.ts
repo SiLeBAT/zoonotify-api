@@ -50,7 +50,6 @@ export class DefaultFilterConfigController extends AbstractController
     ): FilterConfigurationDTO {
         return {
             id: configuration.id,
-            name: configuration.name,
             values: configuration.values
         };
     }
