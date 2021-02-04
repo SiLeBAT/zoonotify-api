@@ -291,7 +291,6 @@
       "IsolatDTO": {
         "type": "object",
         "required": [
-          "id",
           "microorganism",
           "federalState",
           "samplingYear",
@@ -306,9 +305,6 @@
           "resistances"
         ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
           "microorganism": {
             "type": "string"
           },
@@ -481,45 +477,28 @@
           "totalNumberOfIsolates": {
             "type": "number"
           },
-          "table": {
-            "$ref": "#/components/schemas/CountTable"
-          }
-        }
-      },
-      "CountTable": {
-        "type": "object",
-        "properties": {
-          "columns": {
-            "$ref": "#/components/schemas/CountTableColumns"
-          },
-          "rows": {
-            "$ref": "#/components/schemas/CountTableRowsList"
-          }
-        }
-      },
-      "CountTableColumns": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      },
-      "CountTableRowsList": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/CountTableRowsEntries"
-        }
-      },
-      "CountTableRowsEntries": {
-        "type": "object",
-        "properties": {
-          "rowname": {
-            "type": "string"
-          },
-          "values": {
+          "groups": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/CountGroup"
             }
+          }
+        }
+      },
+      "CountGroup": {
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "properties": {
+          "count": {
+            "type": "number"
+          },
+          "<firstAtributet>": {
+            "type": "string"
+          },
+          "<secondAtributet>": {
+            "type": "string"
           }
         }
       }

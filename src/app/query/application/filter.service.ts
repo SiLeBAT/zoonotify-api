@@ -1,5 +1,8 @@
 import { OriginGateway } from './../model/origin.model';
-import { FilterDefinitionCollection } from './../model/filter.model';
+import {
+    FilterDefinitionCollection,
+    FilterNamesToAttributesHash
+} from './../model/filter.model';
 import { SamplingContextGateway } from './../model/sampling-context.model';
 import { MatrixGateway } from './../model/matrix.model';
 import { MicroorganismGateway } from './../model/microorganism.model';
@@ -44,7 +47,7 @@ export class DefaultFilterService implements FilterService {
         private resistanceGateway: ResistanceGateway
     ) {}
 
-    private filterDefinitions: FilterDefinitionCollection = [
+    readonly filterDefinitions: FilterDefinitionCollection = [
         {
             valueProvider: () =>
                 this.microorganismGateway
@@ -115,8 +118,11 @@ export class DefaultFilterService implements FilterService {
         }
     ];
 
-    getFilterDefinitions(): FilterDefinitionCollection {
-        return this.filterDefinitions;
+    get filterNamesToAttributes() {
+        return this.filterDefinitions.reduce((acc, current) => {
+            acc[current.id] = current.modelAttribute;
+            return acc;
+        }, {} as FilterNamesToAttributesHash);
     }
 
     async getFilterConfiguration(): Promise<FilterConfigurationCollection> {
@@ -129,6 +135,7 @@ export class DefaultFilterService implements FilterService {
         }
         return filterConfiguration;
     }
+
     private async fromDefinitionToConfiguration(
         definition: FilterDefinition
     ): Promise<FilterConfiguration> {
@@ -142,19 +149,11 @@ export class DefaultFilterService implements FilterService {
     async createFilter(
         query: Record<string, string | string[]>
     ): Promise<Filter> {
-        const filterNamesToAttributes = this.getFilterDefinitions().reduce(
-            (acc, current) => {
-                acc[current.id] = current.modelAttribute;
-                return acc;
-            },
-            {} as { [key: string]: string }
-        );
-
         return _.chain(query)
-            .pick(Object.keys(filterNamesToAttributes))
+            .pick(Object.keys(this.filterNamesToAttributes))
             .reduce((result, value, key: string) => {
-                if (filterNamesToAttributes[key]) {
-                    result[filterNamesToAttributes[key]] = value;
+                if (this.filterNamesToAttributes[key]) {
+                    result[this.filterNamesToAttributes[key]] = value;
                 }
                 return result;
             }, {} as Filter)

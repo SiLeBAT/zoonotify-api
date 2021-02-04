@@ -6,3 +6,5 @@ export interface EntityGateway<T> {
 }
 
 export type QueryParameters = Record<string, string | string[]>;
+
+export type GroupAttributes = [string | null, string | null];

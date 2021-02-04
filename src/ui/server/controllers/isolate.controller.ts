@@ -3,7 +3,8 @@ import {
     Isolate,
     IsolatePort,
     IsolateCollection,
-    FilterPort
+    FilterPort,
+    GroupPort
 } from '../../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
@@ -33,13 +34,18 @@ export class DefaultIsolateController extends AbstractController
         @inject(APPLICATION_TYPES.IsolateService)
         private isolateService: IsolatePort,
         @inject(APPLICATION_TYPES.FilterService)
-        private filterService: FilterPort
+        private filterService: FilterPort,
+        @inject(APPLICATION_TYPES.GroupService)
+        private groupService: GroupPort
     ) {
         super();
     }
 
     @httpGet('/')
     async getIsolate(@request() req: Request, @response() res: Response) {
+        logger.trace(
+            `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
+        );
         try {
             const filter = await this.filterService.createFilter(
                 req.query as Record<string, string | string[]>
@@ -61,20 +67,32 @@ export class DefaultIsolateController extends AbstractController
 
     @httpGet('/counted')
     async getIsolateCount(@request() req: Request, @response() res: Response) {
+        logger.trace(
+            `${this.constructor.name}.${this.getIsolateCount.name}, Received: ${req}`
+        );
         try {
             const filter = await this.filterService.createFilter(
                 req.query as Record<string, string | string[]>
             );
 
+            const groupAttributes = this.groupService.getGroupAttribute(
+                req.query as Record<string, string | string[]>
+            );
+
             const isolateCount = await this.isolateService.getIsolateCount(
-                filter
+                filter,
+                groupAttributes
             );
 
             const dto: GetCountedIsolatesSuccessResponse = {
-                totalNumberOfIsolates: isolateCount
+                totalNumberOfIsolates: isolateCount.totalNumberOfIsolates
             };
+            if (isolateCount.groups) {
+                dto.groups = isolateCount.groups;
+            }
             this.ok(res, dto);
         } catch (error) {
+            logger.error('Unable to send response: ', error);
             this.handleError(res);
         }
     }

@@ -9,6 +9,8 @@ import { APPLICATION_TYPES } from './application.types';
 import { DefaultIsolateService } from './query/application/isolat.service';
 import { DefaultFilterService } from './query/application/filter.service';
 import { FilterService } from './query/model/filter.model';
+import { GroupService } from './query/model/group.model';
+import { DefaultGroupService } from './query/application/group.service';
 
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
@@ -25,6 +27,10 @@ export function getApplicationContainerModule(
 
             bind<FilterService>(APPLICATION_TYPES.FilterService).to(
                 DefaultFilterService
+            );
+
+            bind<GroupService>(APPLICATION_TYPES.GroupService).to(
+                DefaultGroupService
             );
 
             bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
