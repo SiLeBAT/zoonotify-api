@@ -7,7 +7,7 @@ import {
 import { APPLICATION_TYPES } from './../../application.types';
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
-import { Filter } from '../model/shared.model';
+import { Filter, GroupAttributes } from '../model/shared.model';
 
 @injectable()
 export class DefaultIsolateService implements IsolateService {
@@ -16,11 +16,14 @@ export class DefaultIsolateService implements IsolateService {
         private isolateGateway: IsolateGateway
     ) {}
 
-    getIsolates(filter?: Filter): Promise<IsolateCollection> {
+    getIsolates(filter: Filter): Promise<IsolateCollection> {
         return this.isolateGateway.findAll(filter);
     }
 
-    getIsolateCount(filter?: Filter): Promise<IsolateCount> {
-        return this.isolateGateway.getCount(filter);
+    getIsolateCount(
+        filter: Filter,
+        groupAttributes: GroupAttributes
+    ): Promise<IsolateCount> {
+        return this.isolateGateway.getCount(filter, groupAttributes);
     }
 }

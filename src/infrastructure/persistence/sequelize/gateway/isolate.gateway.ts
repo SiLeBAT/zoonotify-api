@@ -1,3 +1,4 @@
+import { CountGroup } from './../../../../app/query/model/isolate.model';
 import { FilterConverter } from './../service/filter-converter.service';
 import { IsolateModel } from '../dao/isolate.model';
 import { ModelStatic } from '../dao/shared.model';
@@ -10,7 +11,8 @@ import {
     IsolateCharacteristics,
     IsolateResistance,
     IsolateCount,
-    Filter
+    Filter,
+    GroupAttributes
 } from '../../../../app/ports';
 import { inject, injectable } from 'inversify';
 import { logger } from './../../../../aspects';
@@ -79,6 +81,7 @@ export class SequelizeIsolateGateway implements IsolateGateway {
             ...options,
             ...whereClause
         };
+
         return this.Isolate.findAll(options)
             .then(models => {
                 const isolates = models.reduce((acc, current) => {
@@ -111,7 +114,10 @@ export class SequelizeIsolateGateway implements IsolateGateway {
             });
     }
 
-    async getCount(filter: Filter = {}): Promise<IsolateCount> {
+    async getCount(
+        filter: Filter = {},
+        groupAttributes: GroupAttributes = [null, null]
+    ): Promise<IsolateCount> {
         logger.trace(
             `${this.constructor.name}.${this.getCount.name}, Executing with: ${filter}`
         );
@@ -119,14 +125,40 @@ export class SequelizeIsolateGateway implements IsolateGateway {
             distinct: true
         };
 
+        const groupByValues = _.compact(groupAttributes);
+        const groupBy: { group?: string[] } = {};
+
+        if (groupByValues.length > 0) {
+            groupBy.group = groupByValues;
+        }
+
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
-            ...whereClause
+            ...whereClause,
+            ...groupBy
         };
-        return this.Isolate.count(options).catch(error => {
-            logger.error(error);
-            throw error;
-        });
+        return this.Isolate.count(options)
+            .then(dbCount => {
+                const result: IsolateCount = {
+                    totalNumberOfIsolates: 0
+                };
+                if (typeof dbCount === 'number') {
+                    result.totalNumberOfIsolates = dbCount;
+                } else if (Array.isArray(dbCount)) {
+                    result.totalNumberOfIsolates = (dbCount as CountGroup[]).reduce(
+                        (acc, current) => {
+                            return current.count + acc;
+                        },
+                        0
+                    );
+                    result.groups = dbCount;
+                }
+                return result;
+            })
+            .catch(error => {
+                logger.error('Unable to retrieve count data', error);
+                throw error;
+            });
     }
 }

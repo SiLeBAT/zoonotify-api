@@ -12,6 +12,7 @@ export { APPLICATION_TYPES } from './application.types';
  */
 export { FederalState } from './query/domain/federal-state.entity';
 export { FilterPort } from './query/model/filter.model';
+export { GroupPort } from './query/model/group.model';
 export { FederalStateGateway } from './query/model/federal-state.model';
 export {
     Microorganism,
@@ -42,4 +43,4 @@ export {
     SamplingStage,
     SamplingStageGateway
 } from './query/model/sampling-stage.model';
-export { Filter } from './query/model/shared.model';
+export { Filter, GroupAttributes } from './query/model/shared.model';

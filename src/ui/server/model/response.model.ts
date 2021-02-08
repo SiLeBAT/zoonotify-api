@@ -29,8 +29,14 @@ export interface GetIsolatesSuccessResponse {
     isolates: IsolateCollectionDTO;
 }
 
+export type CountGroupDTO = {
+    [key in keyof IsolateDTO]: string;
+} & {
+    count: number;
+};
 export interface GetCountedIsolatesSuccessResponse {
     totalNumberOfIsolates: number;
+    groups?: CountGroupDTO[];
 }
 
 export interface IsolateDTO {
