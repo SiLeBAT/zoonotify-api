@@ -1,8 +1,5 @@
 import { OriginGateway } from './../model/origin.model';
-import {
-    FilterDefinitionCollection,
-    FilterNamesToAttributesHash
-} from './../model/filter.model';
+import { FilterDefinitionCollection } from './../model/filter.model';
 import { SamplingContextGateway } from './../model/sampling-context.model';
 import { MatrixGateway } from './../model/matrix.model';
 import { MicroorganismGateway } from './../model/microorganism.model';
@@ -53,77 +50,61 @@ export class DefaultFilterService implements FilterService {
                 this.microorganismGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'microorganism',
-            modelAttribute: 'microorganism'
+            id: 'microorganism'
         },
         {
             valueProvider: () =>
                 this.samplingContextGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'sContext',
-            modelAttribute: 'samplingContext'
+            id: 'samplingContext'
         },
         {
             valueProvider: () =>
                 this.matrixGateway.findAll().then(ary => ary.map(p => p.name)),
-            id: 'matrix',
-            modelAttribute: 'matrix'
+            id: 'matrix'
         },
         {
             valueProvider: () =>
                 this.federalStateGateway
                     .findAll()
                     .then(ary => ary.map(p => p.toString())),
-            id: 'fState',
-            modelAttribute: 'federalState'
+            id: 'federalState'
         },
         {
             valueProvider: () =>
                 this.samplingStageGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'sStage',
-            modelAttribute: 'samplingStage'
+            id: 'samplingStage'
         },
         {
             valueProvider: () =>
                 this.originGateway.findAll().then(ary => ary.map(p => p.name)),
-            id: 'origin',
-            modelAttribute: 'origin'
+            id: 'origin'
         },
         {
             valueProvider: () =>
                 this.categoryGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'category',
-            modelAttribute: 'category'
+            id: 'category'
         },
         {
             valueProvider: () =>
                 this.productionTypeGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'productionType',
-            modelAttribute: 'productionType'
+            id: 'productionType'
         },
         {
             valueProvider: () =>
                 this.resistanceGateway
                     .findAll()
                     .then(ary => ary.map(p => p.name)),
-            id: 'resistance',
-            modelAttribute: 'resistance'
+            id: 'resistance'
         }
     ];
-
-    get filterNamesToAttributes() {
-        return this.filterDefinitions.reduce((acc, current) => {
-            acc[current.id] = current.modelAttribute;
-            return acc;
-        }, {} as FilterNamesToAttributesHash);
-    }
 
     async getFilterConfiguration(): Promise<FilterConfigurationCollection> {
         const filterConfiguration: FilterConfigurationCollection = [];
@@ -150,11 +131,9 @@ export class DefaultFilterService implements FilterService {
         query: Record<string, string | string[]>
     ): Promise<Filter> {
         return _.chain(query)
-            .pick(Object.keys(this.filterNamesToAttributes))
+            .pick(this.filterDefinitions.map(d => d.id))
             .reduce((result, value, key: string) => {
-                if (this.filterNamesToAttributes[key]) {
-                    result[this.filterNamesToAttributes[key]] = value;
-                }
+                result[key] = value;
                 return result;
             }, {} as Filter)
             .value();

@@ -11,9 +11,7 @@ export interface FilterPort {
 export interface FilterNamesToAttributesHash {
     [key: string]: string;
 }
-export interface FilterService extends FilterPort {
-    readonly filterNamesToAttributes: FilterNamesToAttributesHash;
-}
+export interface FilterService extends FilterPort {}
 
 export type FilterValueCollection = string[];
 export interface FilterConfiguration {
@@ -24,7 +22,6 @@ export interface FilterConfiguration {
 export interface FilterDefinition {
     readonly valueProvider: FilterValueProvider;
     readonly id: string;
-    readonly modelAttribute: string;
 }
 
 export type FilterDefinitionCollection = FilterDefinition[];
