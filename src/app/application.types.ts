@@ -9,6 +9,7 @@ export const APPLICATION_TYPES = {
     SamplingContextGateway: Symbol.for('SamplingContextGateway'),
     SamplingStageGateway: Symbol.for('SamplingStageGateway'),
     MatrixGateway: Symbol.for('MatrixGateway'),
+    ProgramGateway: Symbol.for('ProgramGateway'),
     OriginGateway: Symbol.for('OriginGateway'),
     FederalStateGateway: Symbol.for('FederalStateGateway'),
     CategoryGateway: Symbol.for('CategoryGateway'),
