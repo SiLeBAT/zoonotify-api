@@ -39,6 +39,7 @@ export {
     SamplingContext,
     SamplingContextGateway
 } from './query/model/sampling-context.model';
+export { Program, ProgramGateway } from './query/model/program.model';
 export {
     SamplingStage,
     SamplingStageGateway

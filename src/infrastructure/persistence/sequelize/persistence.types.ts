@@ -11,5 +11,6 @@ export const PERSISTENCE_TYPES = {
     CategoryModel: Symbol.for('CategoryModel'),
     ProductionTypeModel: Symbol.for('ProductionTypeModel'),
     ResistanceModel: Symbol.for('ResistanceModel'),
+    ProgramModel: Symbol.for('ProgramModel'),
     FilterConverterService: Symbol.for('FilterConverterService')
 };

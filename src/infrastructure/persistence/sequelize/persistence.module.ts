@@ -13,6 +13,7 @@ import { SequelizeFederalStateGateway } from './gateway/federal-state.gateway';
 import { SequelizeOriginGateway } from './gateway/origin.gateway';
 import { SequelizeSamplingStageGateway } from './gateway/sampling-stage.gateway';
 import { SequelizeCategoryGateway } from './gateway/category.gateway';
+import { SequelizeProgramGateway } from './gateway/program.gateway';
 
 export function getPersistenceContainerModule(
     daoHash: DAOHash
@@ -52,6 +53,9 @@ export function getPersistenceContainerModule(
         bind(PERSISTENCE_TYPES.ResistanceModel).toConstantValue(
             daoHash['resistance']
         );
+        bind(PERSISTENCE_TYPES.ProgramModel).toConstantValue(
+            daoHash['program']
+        );
 
         bind(APPLICATION_TYPES.IsolateGateway).to(SequelizeIsolateGateway);
 
@@ -74,6 +78,7 @@ export function getPersistenceContainerModule(
         );
 
         bind(APPLICATION_TYPES.MatrixGateway).to(SequelizeMatrixGateway);
+        bind(APPLICATION_TYPES.ProgramGateway).to(SequelizeProgramGateway);
 
         bind(APPLICATION_TYPES.OriginGateway).to(SequelizeOriginGateway);
         bind(APPLICATION_TYPES.ResistanceGateway).to(
