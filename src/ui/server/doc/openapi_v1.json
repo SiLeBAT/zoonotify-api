@@ -57,6 +57,31 @@
         }
       }
     },
+    "/database/status": {
+      "get": {
+        "operationId": "getDatabaseStatus",
+        "tags": [
+          "Util"
+        ],
+        "summary": "Retrieve information about database status",
+        "description": "Returns current legal directive of the data as well as the date of the last update of the database.",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
     "/filterconfig": {
       "get": {
         "operationId": "getFilterConfig",
@@ -423,6 +448,23 @@
             "type": "string",
             "description": "Date of last code change",
             "format": "date-time"
+          }
+        }
+      },
+      "DatabaseStatus": {
+        "required": [
+          "date",
+          "directive"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "date of database status"
+          },
+          "directive": {
+            "type": "string",
+            "description": "directive of the data"
           }
         }
       },
