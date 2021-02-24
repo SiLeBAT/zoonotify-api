@@ -1,6 +1,7 @@
 const SERVER_TYPES = {
     AppServerConfiguration: Symbol.for('AppServerConfiguration'),
     InfoController: Symbol.for('InfoController'),
+    DatabaseController: Symbol.for('DatabaseController'),
     FilterConfigController: Symbol.for('FilterConfigController'),
     IsolateController: Symbol.for('IsolateController'),
     MockDataController: Symbol.for('MockDataController'),

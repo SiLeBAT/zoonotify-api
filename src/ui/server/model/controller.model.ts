@@ -10,6 +10,10 @@ export interface SystemInfoController extends Controller {
     getSystemInfo(res: Response): Promise<void>;
 }
 
+export interface DatabaseController extends Controller {
+    getDatabaseStatus(res: Response): Promise<void>;
+}
+
 export interface FilterConfigController extends Controller {
     getFilterConfiguration(res: Response): Promise<void>;
 }

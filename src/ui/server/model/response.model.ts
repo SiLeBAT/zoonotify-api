@@ -11,6 +11,11 @@ export interface SystemInformationDTO {
     supportContact: string;
 }
 
+export interface DatabaseStatusDTO {
+    date: string;
+    directive: string;
+}
+
 export type FilterConfigurationCollectionDTO = FilterConfigurationDTO[];
 
 export interface GetFilterConfigurationContainerDTO {
