@@ -444,7 +444,7 @@
           }
         }
       },
-      "GetDatabaseStatusResponseData": {
+      "GetDatabaseStatusResponseDTO": {
         "type": "object",
         "required": [
           "date",
@@ -452,20 +452,14 @@
         ],
         "properties": {
           "date": {
-            "$ref": "#/components/schemas/DatabaseStatusDateDTO"
+            "type": "string",
+            "description": "date of database status"
           },
           "directive": {
-            "$ref": "#/components/schemas/DatabaseStatusDirectiveDTO"
+            "type": "string",
+            "description": "directive of the data"
           }
         }
-      },
-      "DatabaseStatusDateDTO": {
-        "type": "string",
-        "description": "date of database status"
-      },
-      "DatabaseStatusDirectiveDTO": {
-        "type": "string",
-        "description": "directive of the data"
       },
       "GetFilterConfigurationSuccessResponseData": {
         "type": "object",
@@ -600,7 +594,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/GetDatabaseStatusResponseData"
+              "$ref": "#/components/schemas/GetDatabaseStatusResponseDTO"
             }
           }
         }
