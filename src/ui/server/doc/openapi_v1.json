@@ -308,7 +308,7 @@
           "microorganism": {
             "type": "string"
           },
-          "state": {
+          "federalState": {
             "type": "string"
           },
           "samplingYear": {
