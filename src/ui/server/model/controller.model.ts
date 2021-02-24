@@ -10,7 +10,7 @@ export interface SystemInfoController extends Controller {
     getSystemInfo(res: Response): Promise<void>;
 }
 
-export interface DatabaseStatusController extends Controller {
+export interface DatabaseController extends Controller {
     getDatabaseStatus(res: Response): Promise<void>;
 }
 

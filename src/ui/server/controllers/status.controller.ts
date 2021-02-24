@@ -1,16 +1,16 @@
 import { Response } from 'express';
-import { DatabaseStatusController } from '../model/controller.model';
+import { DatabaseController } from '../model/controller.model';
 import { DatabaseStatusDTO } from '../model/response.model';
 import { AbstractController } from './abstract.controller';
 import { controller, httpGet, response } from 'inversify-express-utils';
 import { ROUTE } from '../model/enums';
 
-enum STATUS_ROUTE {
+enum DATABASE_ROUTE {
     ROOT = '/database'
 }
-@controller(ROUTE.VERSION + STATUS_ROUTE.ROOT)
-export class DefaultDatabaseStatusController extends AbstractController
-    implements DatabaseStatusController {
+@controller(ROUTE.VERSION + DATABASE_ROUTE.ROOT)
+export class DefaultDatabaseController extends AbstractController
+    implements DatabaseController {
     @httpGet('/status')
     async getDatabaseStatus(@response() res: Response) {
         const dto: DatabaseStatusDTO = {

@@ -67,14 +67,7 @@
         "description": "Returns current legal directive of the data as well as the date of the last update of the database.",
         "responses": {
           "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DatabaseStatus"
-                }
-              }
-            }
+            "$ref": "#/components/responses/GetDatabaseStatusSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -451,22 +444,28 @@
           }
         }
       },
-      "DatabaseStatus": {
+      "GetDatabaseStatusResponseData": {
+        "type": "object",
         "required": [
           "date",
           "directive"
         ],
-        "type": "object",
         "properties": {
           "date": {
-            "type": "string",
-            "description": "date of database status"
+            "$ref": "#/components/schemas/DatabaseStatusDateDTO"
           },
           "directive": {
-            "type": "string",
-            "description": "directive of the data"
+            "$ref": "#/components/schemas/DatabaseStatusDirectiveDTO"
           }
         }
+      },
+      "DatabaseStatusDateDTO": {
+        "type": "string",
+        "description": "date of database status"
+      },
+      "DatabaseStatusDirectiveDTO": {
+        "type": "string",
+        "description": "directive of the data"
       },
       "GetFilterConfigurationSuccessResponseData": {
         "type": "object",
@@ -592,6 +591,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/GetFilterConfigurationSuccessResponseData"
+            }
+          }
+        }
+      },
+      "GetDatabaseStatusSuccessResponse": {
+        "description": "Successful Database status retrieval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetDatabaseStatusResponseData"
             }
           }
         }
