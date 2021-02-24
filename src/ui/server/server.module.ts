@@ -9,7 +9,7 @@ import {
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
-import { DefaultDatabaseController } from './controllers/status.controller';
+import { DefaultDatabaseController } from './controllers/database.controller';
 import { DefaultVersionRootController } from './controllers/versionRoot.controller';
 import { AppServerConfiguration } from './model/server.model';
 import { DefaultIsolateController } from './controllers/isolate.controller';
