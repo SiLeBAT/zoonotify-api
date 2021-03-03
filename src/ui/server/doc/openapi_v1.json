@@ -529,10 +529,10 @@
           "count": {
             "type": "number"
           },
-          "<firstAtributet>": {
+          "<firstAttribute>": {
             "type": "string"
           },
-          "<secondAtributet>": {
+          "<secondAttribute>": {
             "type": "string"
           }
         }
