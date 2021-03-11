@@ -55,7 +55,7 @@ export function isolateResistanceModelFactory(
             }
         },
         {
-            tableName: 'isolatResistenz',
+            tableName: 'isolat_resistenz',
             timestamps: false
         }
     );

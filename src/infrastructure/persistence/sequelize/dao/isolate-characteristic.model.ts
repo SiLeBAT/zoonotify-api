@@ -50,7 +50,7 @@ export function isolateCharacteristicModelFactory(
             }
         },
         {
-            tableName: 'isolatMerkmal',
+            tableName: 'isolat_merkmal',
             timestamps: false
         }
     );
