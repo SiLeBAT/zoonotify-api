@@ -42,7 +42,7 @@ export function programModelFactory(
                     key: 'id'
                 }
             },
-            probenahmeort: {
+            stufe: {
                 type: DataTypes.INTEGER,
                 references: {
                     model: 'samplingStages',

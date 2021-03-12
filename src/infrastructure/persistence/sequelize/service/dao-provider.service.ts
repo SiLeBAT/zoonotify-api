@@ -76,12 +76,12 @@ export class SequelizeDAOProvider implements DAOProvider {
         });
 
         Program.belongsTo(SamplingStage, {
-            foreignKey: 'probenahmeort',
+            foreignKey: 'stufe',
             as: 'toSamplingStage'
         });
 
         SamplingStage.hasMany(Program, {
-            foreignKey: 'probenahmeort',
+            foreignKey: 'stufe',
             as: 'toPrograms'
         });
 
