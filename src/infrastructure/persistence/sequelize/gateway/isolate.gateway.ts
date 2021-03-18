@@ -124,41 +124,43 @@ export class SequelizeIsolateGateway implements IsolateGateway {
         let options = {
             distinct: true
         };
-
-        const groupByValues = _.compact(groupAttributes);
-        const groupBy: { group?: string[] } = {};
-
-        if (groupByValues.length > 0) {
-            groupBy.group = groupByValues;
-        }
-
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
-            ...whereClause,
-            ...groupBy
+            ...whereClause
         };
-        return this.Isolate.count(options)
+
+        const result: IsolateCount = await this.Isolate.count(options)
             .then(dbCount => {
-                const result: IsolateCount = {
-                    totalNumberOfIsolates: 0
+                return {
+                    totalNumberOfIsolates: dbCount
                 };
-                if (typeof dbCount === 'number') {
-                    result.totalNumberOfIsolates = dbCount;
-                } else if (Array.isArray(dbCount)) {
-                    result.totalNumberOfIsolates = (dbCount as CountGroup[]).reduce(
-                        (acc, current) => {
-                            return current.count + acc;
-                        },
-                        0
-                    );
-                    result.groups = dbCount;
-                }
-                return result;
             })
             .catch(error => {
                 logger.error('Unable to retrieve count data', error);
                 throw error;
             });
+
+        const groupByValues = _.compact(groupAttributes);
+
+        if (groupByValues.length > 0) {
+            const groupBy = {
+                group: groupByValues
+            };
+            options = {
+                ...options,
+                ...groupBy
+            };
+            const groupings: CountGroup[] = await this.Isolate.count(options)
+                .then(dbCount => {
+                    return (dbCount as unknown) as CountGroup[];
+                })
+                .catch(error => {
+                    logger.error('Unable to retrieve count data', error);
+                    throw error;
+                });
+            result.groups = groupings;
+        }
+        return result;
     }
 }
