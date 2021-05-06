@@ -13,7 +13,6 @@ export interface SystemInformationDTO {
 
 export interface DatabaseStatusDTO {
     date: string;
-    directive: string;
 }
 
 export type FilterConfigurationCollectionDTO = FilterConfigurationDTO[];

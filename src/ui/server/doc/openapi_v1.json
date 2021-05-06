@@ -64,7 +64,7 @@
           "Util"
         ],
         "summary": "Retrieve information about database status",
-        "description": "Returns current legal directive of the data as well as the date of the last update of the database.",
+        "description": "Returns date of the last update of the database.",
         "responses": {
           "200": {
             "$ref": "#/components/responses/GetDatabaseStatusSuccessResponse"
@@ -447,17 +447,12 @@
       "GetDatabaseStatusResponseDTO": {
         "type": "object",
         "required": [
-          "date",
-          "directive"
+          "date"
         ],
         "properties": {
           "date": {
             "type": "string",
             "description": "date of database status"
-          },
-          "directive": {
-            "type": "string",
-            "description": "directive of the data"
           }
         }
       },
