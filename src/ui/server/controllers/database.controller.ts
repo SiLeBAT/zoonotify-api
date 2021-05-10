@@ -14,8 +14,7 @@ export class DefaultDatabaseController extends AbstractController
     @httpGet('/status')
     async getDatabaseStatus(@response() res: Response) {
         const dto: DatabaseStatusDTO = {
-            date: '31.12.20',
-            directive: 'RL 99/2003/EU'
+            date: '31.12.20'
         };
         this.ok(res, dto);
     }
