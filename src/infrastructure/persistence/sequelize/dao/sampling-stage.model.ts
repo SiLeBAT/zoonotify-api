@@ -32,7 +32,7 @@ export function samplingStageModelFactory(
             }
         },
         {
-            tableName: 'stufe',
+            tableName: 'probenahmestelle',
             timestamps: false
         }
     );
