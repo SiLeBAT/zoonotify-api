@@ -32,7 +32,7 @@ export function microorganismModelFactory(
             }
         },
         {
-            tableName: 'erreger',
+            tableName: 'mikroorganismus',
             timestamps: false
         }
     );
