@@ -16,7 +16,7 @@ import { programModelFactory } from '../dao/program.model';
 import { resistanceModelFactory } from '../dao/resistance.model';
 import { samplingContextModelFactory } from '../dao/sampling-context.model';
 import { samplingStageModelFactory } from '../dao/sampling-stage.model';
-import { Database } from '../datastore/databse.model';
+import { Database } from '../datastore/database.model';
 
 // tslint:disable-next-line:no-any
 export type DAOHash = Record<string, ModelStatic<any>>;

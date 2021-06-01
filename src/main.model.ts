@@ -1,8 +1,7 @@
+import { ConnectionInfo } from './infrastructure/persistence/sequelize/datastore/database.model';
 import { APIDocConfig } from './ui/server/ports';
 
-export interface DataStoreConfiguration {
-    connectionString: string;
-}
+export type DataStoreConfiguration = ConnectionInfo;
 
 export interface ServerConfiguration {
     port: number;

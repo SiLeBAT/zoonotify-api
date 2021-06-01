@@ -1,8 +1,13 @@
 export interface ConnectionInfo {
-    connectionString: string;
+    host: string;
+    dataBase: string;
+    dialect: SupportedDB;
+    username: string;
+    password: string;
+    port: number;
 }
 
-export type SupportedDB = 'sqlite';
+export type SupportedDB = 'postgres' | "sqlite";
 
 export interface DatabaseService<T> {
     createDataStore(connectionInfo: ConnectionInfo): Database<T>;
