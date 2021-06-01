@@ -69,9 +69,7 @@ async function init() {
     logger.info(`Log level: ${generalConfig.logLevel}.`);
 
     const dbService = new SequelizeDatabaseService();
-    const dataStore = dbService.createDataStore({
-        connectionString: dataStoreConfig.connectionString
-    });
+    const dataStore = dbService.createDataStore(dataStoreConfig);
 
     if (!(await dataStore.isConnectionEstablished())) {
         throw new Error('Unable to connect to Database.');

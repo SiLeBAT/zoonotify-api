@@ -4,9 +4,8 @@ import { SequelizeDatabase } from '../datastore/database.entity';
 import {
     DatabaseService,
     Database,
-    ConnectionInfo,
-    SupportedDB
-} from '../datastore/databse.model';
+    ConnectionInfo
+} from '../datastore/database.model';
 import { SequelizeDAOProvider } from './dao-provider.service';
 
 export class SequelizeDatabaseService implements DatabaseService<Sequelize> {
@@ -14,15 +13,24 @@ export class SequelizeDatabaseService implements DatabaseService<Sequelize> {
 
     createDataStore(connectionInfo: ConnectionInfo): Database<Sequelize> {
         logger.info('Creating datastore');
-        const [dialect, storage]: [
-            SupportedDB,
-            string
-        ] = connectionInfo.connectionString.split(':') as [SupportedDB, string];
-        const sequelize = new Sequelize({
-            storage,
-            dialect
-        });
-
+        let sequelize;
+        switch(connectionInfo.dialect) {
+            case 'postgres':
+                sequelize = new Sequelize(connectionInfo.dataBase, connectionInfo.username, connectionInfo.password, {
+                    host: connectionInfo.host,
+                    dialect: 'postgres',
+                    port: connectionInfo.port
+                });
+                break;
+            case 'sqlite':
+                sequelize = new Sequelize({
+                    storage: connectionInfo.dataBase,
+                    dialect: 'sqlite'
+                });
+                break;
+            default:
+                throw new Error('Database dialect not supported.  Must be one of: postgres, sqlite');
+        }
         this.dataStore = new SequelizeDatabase(sequelize);
         return this.dataStore;
     }

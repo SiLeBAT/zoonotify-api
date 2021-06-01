@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { logger } from './../../../../aspects';
-import { Database } from './databse.model';
+import { Database } from './database.model';
 
 export class SequelizeDatabase implements Database<Sequelize> {
     constructor(private dataStore: Sequelize) {}
