@@ -75,17 +75,17 @@
         }
       }
     },
-    "/filterconfig": {
+    "/query-options": {
       "get": {
-        "operationId": "getFilterConfig",
+        "operationId": "getQueryOptions",
         "tags": [
           "Util"
         ],
-        "summary": "Retrieve information about filter",
-        "description": "Returns filterconfig as JSON.",
+        "summary": "Retrieve the query options",
+        "description": "Returns valid query options for the isolate endpoints. These queries can be formed by multiple key=value pairs.",
         "responses": {
           "200": {
-            "$ref": "#/components/responses/GetFilterConfigurationSuccessResponse"
+            "$ref": "#/components/responses/GetQueryOptionsSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -141,10 +141,7 @@
             "$ref": "#/components/parameters/SamplingContextQuery"
           },
           {
-            "$ref": "#/components/parameters/RowSettings"
-          },
-          {
-            "$ref": "#/components/parameters/ColumnSettings"
+            "$ref": "#/components/parameters/GroupBySettings"
           }
         ],
         "responses": {
@@ -161,123 +158,26 @@
   "components": {
     "schemas": {
       "AntiBioticResistence": {
-        "type": "object",
-        "properties": {
-          "amp": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "azi": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "chl": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "cip": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "cli": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "col": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "dap": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "ery": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "etp": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "fep": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "fop": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "fox": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "fus": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "f_c": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "gen": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "imi": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "kan": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "lzd": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "mero": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "mup": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "nal": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "pen": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "rif": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "smx": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "str": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "syn": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "taz": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "tec": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "tet": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "tgc": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "tia": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "tmp": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "trm": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "t_c": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          },
-          "van": {
-            "$ref": "#/components/schemas/AntiBioticResistenceProfile"
-          }
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AntiBioticResistenceEntry"
         }
+      },
+      "AntiBioticResistenceEntry": {
+        "$ref": "#/components/schemas/AntiBioticResistenceProfile"
       },
       "AntiBioticResistenceProfile": {
         "type": "object",
         "required": [
-          "value",
+          "antibiotic",
+          "cutOff",
           "active"
         ],
         "properties": {
-          "value": {
+          "antibiotic": {
+            "type": "string"
+          },
+          "cutOff": {
             "type": "string"
           },
           "active": {
@@ -309,7 +209,7 @@
       "IsolatDTO": {
         "type": "object",
         "required": [
-          "microorganism",
+          "microbialProfile",
           "federalState",
           "samplingYear",
           "samplingContext",
@@ -318,14 +218,9 @@
           "category",
           "productionType",
           "matrix",
-          "matrixDetail",
-          "characteristics",
-          "resistances"
+          "matrixDetail"
         ],
         "properties": {
-          "microorganism": {
-            "type": "string"
-          },
           "federalState": {
             "type": "string"
           },
@@ -353,17 +248,20 @@
           "productionType": {
             "type": "string"
           },
-          "characteristics": {
-            "$ref": "#/components/schemas/MicrobialCharacteristics"
-          },
-          "resistances": {
-            "$ref": "#/components/schemas/AntiBioticResistence"
+          "microbialProfile": {
+            "$ref": "#/components/schemas/MicrobialProfile"
           }
         }
       },
-      "MicrobialCharacteristics": {
+      "MicrobialProfile": {
         "type": "object",
+        "required": [
+          "microorganism"
+        ],
         "properties": {
+          "microorganism": {
+            "type": "string"
+          },
           "species": {
             "type": "string"
           },
@@ -396,6 +294,9 @@
           },
           "ampc_carba_phenotype": {
             "type": "string"
+          },
+          "resistanceProfile": {
+            "$ref": "#/components/schemas/AntiBioticResistence"
           }
         }
       },
@@ -447,35 +348,35 @@
       "GetDatabaseStatusResponseDTO": {
         "type": "object",
         "required": [
-          "date"
+          "lastUpdate"
         ],
         "properties": {
-          "date": {
+          "lastUpdate": {
             "type": "string",
-            "description": "date of database status"
+            "description": "date of last database update"
           }
         }
       },
-      "GetFilterConfigurationSuccessResponseData": {
+      "GetQueryOptionsSuccessResponseData": {
         "type": "object",
         "required": [
-          "filters"
+          "queryOptions"
         ],
         "properties": {
-          "filters": {
-            "$ref": "#/components/schemas/FilterConfigList"
+          "queryOptions": {
+            "$ref": "#/components/schemas/QueryOptionsList"
           }
         }
       },
-      "FilterConfigList": {
+      "QueryOptionsList": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/FilterConfigInformation"
+          "$ref": "#/components/schemas/QueryOptionInformation"
         }
       },
-      "FilterConfigInformation": {
+      "QueryOptionInformation": {
         "type": "object",
-        "description": "Poperties for one filter",
+        "description": "Key for one query option",
         "required": [
           "id",
           "values"
@@ -501,10 +402,10 @@
       "GetCountedIsolatesSuccessResponseData": {
         "type": "object",
         "required": [
-          "totalNumberOfIsolates"
+          "totalCount"
         ],
         "properties": {
-          "totalNumberOfIsolates": {
+          "totalCount": {
             "type": "number"
           },
           "groups": {
@@ -524,10 +425,34 @@
           "count": {
             "type": "number"
           },
-          "<firstAttribute>": {
+          "microorganism": {
             "type": "string"
           },
-          "<secondAttribute>": {
+          "federalState": {
+            "type": "string"
+          },
+          "samplingYear": {
+            "type": "string"
+          },
+          "samplingContext": {
+            "type": "string"
+          },
+          "samplingStage": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "productionType": {
+            "type": "string"
+          },
+          "matrix": {
+            "type": "string"
+          },
+          "abResistance": {
             "type": "string"
           }
         }
@@ -574,12 +499,12 @@
           }
         }
       },
-      "GetFilterConfigurationSuccessResponse": {
-        "description": "Successful filter configuration retrieval",
+      "GetQueryOptionsSuccessResponse": {
+        "description": "Successful query options retrieval",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/GetFilterConfigurationSuccessResponseData"
+              "$ref": "#/components/schemas/GetQueryOptionsSuccessResponseData"
             }
           }
         }
@@ -597,7 +522,7 @@
     },
     "parameters": {
       "SamplingContextQuery": {
-        "name": "sContext",
+        "name": "sampling-context",
         "in": "query",
         "schema": {
           "$ref": "#/components/schemas/FilterArray"
@@ -617,18 +542,10 @@
           "$ref": "#/components/schemas/FilterArray"
         }
       },
-      "RowSettings": {
-        "name": "row",
+      "GroupBySettings": {
+        "name": "group-by",
         "in": "query",
-        "description": "The applied row setting",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "ColumnSettings": {
-        "name": "column",
-        "in": "query",
-        "description": "The applied column setting",
+        "description": "The applied group by setting",
         "schema": {
           "type": "string"
         }
