@@ -12,6 +12,7 @@ import { matrixModelFactory } from '../dao/matrix.model';
 import { microorganismModelFactory } from '../dao/microorganism.model';
 import { originModelFactory } from '../dao/origin.model';
 import { productionTypeModelFactory } from '../dao/production-type.model';
+import { programSamplingContextModelFactory } from '../dao/program-sampling-context.model';
 import { programModelFactory } from '../dao/program.model';
 import { resistanceModelFactory } from '../dao/resistance.model';
 import { samplingContextModelFactory } from '../dao/sampling-context.model';
@@ -64,15 +65,27 @@ export class SequelizeDAOProvider implements DAOProvider {
             this.db.getDatastore()
         );
         const Resistance = resistanceModelFactory(this.db.getDatastore());
+        const ProgramSamplingContext = programSamplingContextModelFactory(this.db.getDatastore());
 
-        Program.belongsTo(SamplingContext, {
-            foreignKey: 'probenahmegrund',
-            as: 'toSamplingContext'
+
+        Program.hasMany(ProgramSamplingContext, {
+            foreignKey: 'programm',
+            as: 'toProgramSamplingContext'
         });
 
-        SamplingContext.hasMany(Program, {
-            foreignKey: 'probenahmegrund',
+        ProgramSamplingContext.belongsTo(Program, {
+            foreignKey: 'programm',
             as: 'toPrograms'
+        });
+
+        SamplingContext.hasMany(ProgramSamplingContext, {
+            foreignKey: 'probenahmegrund',
+            as: 'toProgramSamplingContext'
+        });
+
+        ProgramSamplingContext.belongsTo(SamplingContext, {
+            foreignKey: 'probenahmegrund',
+            as: 'toSamplingContext'
         });
 
         Program.belongsTo(SamplingStage, {

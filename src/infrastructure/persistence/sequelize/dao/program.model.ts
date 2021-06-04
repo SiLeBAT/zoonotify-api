@@ -35,13 +35,6 @@ export function programModelFactory(
                 type: DataTypes.STRING,
                 field: 'jahr'
             },
-            probenahmegrund: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'samplingContexts',
-                    key: 'id'
-                }
-            },
             probenahmestelle: {
                 type: DataTypes.INTEGER,
                 references: {
