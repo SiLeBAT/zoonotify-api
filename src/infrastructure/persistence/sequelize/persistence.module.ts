@@ -4,7 +4,7 @@ import { DAOHash } from './service/dao-provider.service';
 import { SequelizeMatrixGateway } from './gateway/matrix.gateway';
 import { SequelizeMicroorganismGateway } from './gateway/microorganism.gateway';
 import { SequelizeSamplingContextGateway } from './gateway/sampling-context.gateway';
-import { SequelizeIsolateGateway } from './gateway/isolate.gateway';
+import { SequelizeIsolateViewGateway } from './gateway/isolate-view.gateway';
 import { ContainerModule, interfaces } from 'inversify';
 import { APPLICATION_TYPES } from '../../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
@@ -13,7 +13,7 @@ import { SequelizeFederalStateGateway } from './gateway/federal-state.gateway';
 import { SequelizeOriginGateway } from './gateway/origin.gateway';
 import { SequelizeSamplingStageGateway } from './gateway/sampling-stage.gateway';
 import { SequelizeCategoryGateway } from './gateway/category.gateway';
-import { SequelizeProgramGateway } from './gateway/program.gateway';
+import { SequelizeIsolateGateway } from './gateway/isolate.gateway';
 
 export function getPersistenceContainerModule(
     daoHash: DAOHash
@@ -53,9 +53,8 @@ export function getPersistenceContainerModule(
         bind(PERSISTENCE_TYPES.ResistanceModel).toConstantValue(
             daoHash['resistance']
         );
-        bind(PERSISTENCE_TYPES.ProgramModel).toConstantValue(
-            daoHash['program']
-        );
+
+        bind(APPLICATION_TYPES.IsolateViewGateway).to(SequelizeIsolateViewGateway);
 
         bind(APPLICATION_TYPES.IsolateGateway).to(SequelizeIsolateGateway);
 
@@ -78,7 +77,6 @@ export function getPersistenceContainerModule(
         );
 
         bind(APPLICATION_TYPES.MatrixGateway).to(SequelizeMatrixGateway);
-        bind(APPLICATION_TYPES.ProgramGateway).to(SequelizeProgramGateway);
 
         bind(APPLICATION_TYPES.OriginGateway).to(SequelizeOriginGateway);
         bind(APPLICATION_TYPES.ResistanceGateway).to(

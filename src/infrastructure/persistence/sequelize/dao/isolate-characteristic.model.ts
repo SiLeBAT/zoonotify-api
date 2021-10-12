@@ -1,12 +1,12 @@
 import { CharacteristicModel } from './characteristic.model';
-import { IsolateModel } from './isolate.model';
+import { IsolateViewModel } from './isolate-view.model';
 
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { ModelStatic } from './shared.model';
 
 export interface IsolateCharacteristicAttributes {
     id: number;
-    toIsolate: IsolateModel;
+    toIsolate: IsolateViewModel;
     value: string;
     toCharacteristic: CharacteristicModel;
 }
