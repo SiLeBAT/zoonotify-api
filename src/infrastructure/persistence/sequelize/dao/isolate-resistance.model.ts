@@ -1,12 +1,12 @@
 import { ResistanceModel } from './resistance.model';
-import { IsolateModel } from './isolate.model';
+import { IsolateViewModel } from './isolate-view.model';
 
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { ModelStatic } from './shared.model';
 
 export interface IsolateResistanceAttributes {
     id: number;
-    toIsolate: IsolateModel;
+    toIsolate: IsolateViewModel;
     active: boolean;
     toResistance: ResistanceModel;
     value: string;

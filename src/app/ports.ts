@@ -27,10 +27,12 @@ export {
 } from './query/model/production-type.model';
 export { Resistance, ResistanceGateway } from './query/model/resistance.model';
 export {
+    IsolateView,
     Isolate,
     IsolatePort,
     IsolateCharacteristics,
     IsolateResistance,
+    IsolateViewGateway,
     IsolateGateway,
     IsolateCollection,
     IsolateCount
@@ -39,7 +41,6 @@ export {
     SamplingContext,
     SamplingContextGateway
 } from './query/model/sampling-context.model';
-export { Program, ProgramGateway } from './query/model/program.model';
 export {
     SamplingStage,
     SamplingStageGateway

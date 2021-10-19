@@ -1,28 +1,26 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import { ModelStatic } from './shared.model';
 
+
+// TODO: Are these needed? + orginaleinsendenummer (sourceID) + bfr_isolat_nr (bfrID)
+
 export interface IsolateAttributes {
     isolateId: number;
     microorganism: string;
     federalState: string;
     samplingYear: string;
+    matrixRichtung: string;
     samplingContext: string;
-    samplingStage: string;
-    productionType: string;
-    category: string;
-    matrix: string;
-    origin: string;
-    matrixDetail: string;
-    characteristic: string;
-    characteristicValue: string;
-    resistance: string;
-    resistanceActive: boolean;
-    resistanceValue: string;
+    isolatCharacteristic: string;
+    isolatResistance: string;
+    sourceID: string;
+    bfrID: string;
+
 }
 
 export interface IsolateModel
     extends Model<IsolateAttributes>,
-        IsolateAttributes {}
+    IsolateAttributes {}
 
 export class IsolateDAO extends Model<IsolateModel, IsolateAttributes> {}
 
@@ -53,48 +51,29 @@ export function isolateModelFactory(
                 type: DataTypes.STRING,
                 field: 'sampling_context'
             },
-            samplingStage: {
+            matrixRichtung: {
                 type: DataTypes.STRING,
-                field: 'sampling_stage'
-            },
-            productionType: {
-                type: DataTypes.STRING,
-                field: 'production_type'
-            },
-            category: {
-                type: DataTypes.STRING
-            },
-            matrix: {
-                type: DataTypes.STRING
-            },
-            origin: {
-                type: DataTypes.STRING
-            },
-            matrixDetail: {
-                type: DataTypes.STRING,
-                field: 'matrix_detail'
+                field: 'matrix_richtung'
             },
             characteristic: {
-                type: DataTypes.STRING
-            },
-            characteristicValue: {
                 type: DataTypes.STRING,
-                field: 'characteristic_value'
-            },
-            resistance: {
-                type: DataTypes.STRING
+                field: 'isolat_characteristic'
             },
             resistanceActive: {
-                type: DataTypes.BOOLEAN,
-                field: 'resistance_active'
-            },
-            resistanceValue: {
                 type: DataTypes.STRING,
-                field: 'resistance_value'
+                field: 'isolat_resistance'
+            },
+            sourceId: {
+                type: DataTypes.STRING,
+                field: 'orginaleinsendenummer'
+            },
+            bfrId: {
+                type: DataTypes.STRING,
+                field: 'bfr_isolat_nr'
             }
         },
         {
-            tableName: 'v_isolat',
+            tableName: 'isolat',
             timestamps: false
         }
     );

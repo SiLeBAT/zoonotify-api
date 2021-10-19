@@ -1,10 +1,10 @@
 import {
     APPLICATION_TYPES,
-    Isolate,
     IsolatePort,
     IsolateCollection,
     FilterPort,
-    GroupPort
+    GroupPort,
+    IsolateView
 } from '../../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
@@ -101,7 +101,7 @@ export class DefaultIsolateController extends AbstractController
         this.fail(res);
     }
 
-    private isolateToDTO(isolate: Isolate): IsolateDTO {
+    private isolateToDTO(isolate: IsolateView): IsolateDTO {
         return {
             microorganism: isolate.microorganism,
             samplingYear: isolate.samplingYear,

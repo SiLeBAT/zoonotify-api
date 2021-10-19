@@ -1,7 +1,7 @@
 import { EntityGateway, Filter, GroupAttributes } from './shared.model';
 import { FederalState } from '../domain/federal-state.entity';
 
-export interface Isolate {
+export interface IsolateView {
     federalState: FederalState;
     microorganism: string;
     samplingYear: string;
@@ -17,7 +17,18 @@ export interface Isolate {
     id: number;
 }
 
-export type IsolateCollection = Isolate[];
+export interface Isolate {
+    federalState: FederalState;
+    microorganism: string;
+    samplingYear: string;
+    samplingContext: string;
+    matrixRichtung: string;
+    isolateCharacteristics: string;
+    isolateResistance: string;
+    id: number;
+}
+
+export type IsolateCollection = IsolateView[];
 export interface IsolateCharacteristics {
     species?: string;
     serovar?: string;
@@ -46,20 +57,22 @@ export interface IsolatePort {
 
 export interface IsolateService extends IsolatePort {}
 
-export interface IsolateGateway extends EntityGateway<Isolate> {
+export interface IsolateViewGateway extends EntityGateway<IsolateView> {
     getCount(
         filter: Filter,
         groupAttributes: GroupAttributes
     ): Promise<IsolateCount>;
 }
 
+export interface IsolateGateway extends EntityGateway<Isolate> {
+}
 export interface IsolateCount {
     totalNumberOfIsolates: number;
     groups?: CountGroup[];
 }
 
 export type CountGroup = {
-    [key in keyof Isolate]: string;
+    [key in keyof IsolateView]: string;
 } & {
     count: number;
 };

@@ -6,14 +6,12 @@ import { completeMatrixModelFactory } from '../dao/complete-matrix.model';
 import { federalStateModelFactory } from '../dao/federal-state.model';
 import { isolateCharacteristicModelFactory } from '../dao/isolate-characteristic.model';
 import { isolateResistanceModelFactory } from '../dao/isolate-resistance.model';
-import { isolateModelFactory } from '../dao/isolate.model';
+import { isolateViewModelFactory } from '../dao/isolate-view.model';
 import { matrixDetailModelFactory } from '../dao/matrix-detail.model';
 import { matrixModelFactory } from '../dao/matrix.model';
 import { microorganismModelFactory } from '../dao/microorganism.model';
 import { originModelFactory } from '../dao/origin.model';
 import { productionTypeModelFactory } from '../dao/production-type.model';
-import { programSamplingContextModelFactory } from '../dao/program-sampling-context.model';
-import { programModelFactory } from '../dao/program.model';
 import { resistanceModelFactory } from '../dao/resistance.model';
 import { samplingContextModelFactory } from '../dao/sampling-context.model';
 import { samplingStageModelFactory } from '../dao/sampling-stage.model';
@@ -42,9 +40,8 @@ export class SequelizeDAOProvider implements DAOProvider {
         const SamplingContext = samplingContextModelFactory(
             this.db.getDatastore()
         );
-        const Isolate = isolateModelFactory(this.db.getDatastore());
+        const Isolate = isolateViewModelFactory(this.db.getDatastore());
         const FederalState = federalStateModelFactory(this.db.getDatastore());
-        const Program = programModelFactory(this.db.getDatastore());
         const SamplingStage = samplingStageModelFactory(this.db.getDatastore());
         const ProductionType = productionTypeModelFactory(
             this.db.getDatastore()
@@ -65,58 +62,7 @@ export class SequelizeDAOProvider implements DAOProvider {
             this.db.getDatastore()
         );
         const Resistance = resistanceModelFactory(this.db.getDatastore());
-        const ProgramSamplingContext = programSamplingContextModelFactory(this.db.getDatastore());
 
-
-        Program.hasMany(ProgramSamplingContext, {
-            foreignKey: 'programm',
-            as: 'toProgramSamplingContext'
-        });
-
-        ProgramSamplingContext.belongsTo(Program, {
-            foreignKey: 'programm',
-            as: 'toPrograms'
-        });
-
-        SamplingContext.hasMany(ProgramSamplingContext, {
-            foreignKey: 'probenahmegrund',
-            as: 'toProgramSamplingContext'
-        });
-
-        ProgramSamplingContext.belongsTo(SamplingContext, {
-            foreignKey: 'probenahmegrund',
-            as: 'toSamplingContext'
-        });
-
-        Program.belongsTo(SamplingStage, {
-            foreignKey: 'probenahmestelle',
-            as: 'toSamplingStage'
-        });
-
-        SamplingStage.hasMany(Program, {
-            foreignKey: 'probenahmestelle',
-            as: 'toPrograms'
-        });
-
-        Program.belongsTo(ProductionType, {
-            foreignKey: 'produktionsrichtung',
-            as: 'toProductionType'
-        });
-
-        ProductionType.hasMany(Program, {
-            foreignKey: 'produktionsrichtung',
-            as: 'toPrograms'
-        });
-
-        Program.belongsTo(CompleteMatrix, {
-            foreignKey: 'matrix_komplet',
-            as: 'toCompleteMatrix'
-        });
-
-        CompleteMatrix.hasMany(Program, {
-            foreignKey: 'matrix_komplet',
-            as: 'toPrograms'
-        });
 
         ProductionType.belongsTo(Category, {
             foreignKey: 'oberkategorie',
@@ -184,7 +130,6 @@ export class SequelizeDAOProvider implements DAOProvider {
             samplingContext: SamplingContext,
             isolate: Isolate,
             federalState: FederalState,
-            program: Program,
             samplingStage: SamplingStage,
             productionType: ProductionType,
             category: Category,

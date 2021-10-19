@@ -1,4 +1,4 @@
-import { ProgramGateway } from './../model/program.model';
+import { IsolateGateway } from './../model/isolate.model';
 import { OriginGateway } from './../model/origin.model';
 import { FilterDefinitionCollection } from './../model/filter.model';
 import { SamplingContextGateway } from './../model/sampling-context.model';
@@ -43,14 +43,14 @@ export class DefaultFilterService implements FilterService {
         private productionTypeGateway: ProductionTypeGateway,
         @inject(APPLICATION_TYPES.ResistanceGateway)
         private resistanceGateway: ResistanceGateway,
-        @inject(APPLICATION_TYPES.ProgramGateway)
-        private programGateway: ProgramGateway
+        @inject(APPLICATION_TYPES.IsolateGateway)
+        private isolateGateway: IsolateGateway
     ) {}
 
     readonly filterDefinitions: FilterDefinitionCollection = [
         {
             valueProvider: () =>
-                this.programGateway
+                this.isolateGateway
                     .findAll()
                     .then(ary => _.uniq(ary.map(p => p.samplingYear))),
             id: 'samplingYear'

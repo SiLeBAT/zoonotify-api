@@ -1,6 +1,6 @@
 import {
     IsolateCollection,
-    IsolateGateway,
+    IsolateViewGateway,
     IsolateCount,
     IsolateService
 } from './../model/isolate.model';
@@ -12,8 +12,8 @@ import { Filter, GroupAttributes } from '../model/shared.model';
 @injectable()
 export class DefaultIsolateService implements IsolateService {
     constructor(
-        @inject(APPLICATION_TYPES.IsolateGateway)
-        private isolateGateway: IsolateGateway
+        @inject(APPLICATION_TYPES.IsolateViewGateway)
+        private isolateGateway: IsolateViewGateway
     ) {}
 
     getIsolates(filter: Filter): Promise<IsolateCollection> {
