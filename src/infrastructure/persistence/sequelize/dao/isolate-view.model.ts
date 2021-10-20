@@ -30,7 +30,7 @@ export function isolateViewModelFactory(
     sequelize: Sequelize
 ): ModelStatic<IsolateViewModel> {
     return sequelize.define(
-        'isolates',
+        'v_isolates',
         {
             isolateId: {
                 type: DataTypes.INTEGER,

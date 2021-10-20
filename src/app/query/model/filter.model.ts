@@ -13,7 +13,7 @@ export interface FilterNamesToAttributesHash {
 }
 export interface FilterService extends FilterPort {}
 
-export type FilterValueCollection = string[];
+export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration {
     readonly id: string;
     readonly values: FilterValueCollection;
@@ -24,7 +24,7 @@ export interface FilterDefinition {
     readonly id: string;
 }
 
-export type FilterDefinitionCollection = FilterDefinition[];
+export type FilterDefinitionCollection = string[];
 export interface FilterValueProvider {
     (): Promise<FilterValueCollection>;
 }
