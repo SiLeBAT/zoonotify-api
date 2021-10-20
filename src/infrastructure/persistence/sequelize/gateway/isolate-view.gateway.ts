@@ -1,3 +1,4 @@
+import { IsolateViewAttributes } from './../dao/isolate-view.model';
 import { CountGroup } from '../../../../app/query/model/isolate.model';
 import { FilterConverter } from '../service/filter-converter.service';
 import { IsolateViewModel } from '../dao/isolate-view.model';
@@ -65,8 +66,8 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     }
 
     constructor(
-        @inject(PERSISTENCE_TYPES.IsolateModel)
-        private Isolate: ModelStatic<IsolateViewModel>,
+        @inject(PERSISTENCE_TYPES.IsolateViewModel)
+        private IsolateView: ModelStatic<IsolateViewModel>,
         @inject(PERSISTENCE_TYPES.FilterConverterService)
         private filterConverter: FilterConverter
     ) {}
@@ -82,7 +83,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             ...whereClause
         };
 
-        return this.Isolate.findAll(options)
+        return this.IsolateView.findAll(options)
             .then(models => {
                 const isolates = models.reduce((acc, current) => {
                     let entity: IsolateView = acc[current.isolateId];
@@ -130,7 +131,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             ...whereClause
         };
 
-        const result: IsolateCount = await this.Isolate.count(options)
+        const result: IsolateCount = await this.IsolateView.count(options)
             .then(dbCount => {
                 return {
                     totalNumberOfIsolates: dbCount
@@ -151,7 +152,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
                 ...options,
                 ...groupBy
             };
-            const groupings: CountGroup[] = await this.Isolate.count(options)
+            const groupings: CountGroup[] = await this.IsolateView.count(options)
                 .then(dbCount => {
                     return (dbCount as unknown) as CountGroup[];
                 })
@@ -162,5 +163,16 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             result.groups = groupings;
         }
         return result;
+    }
+
+    getUniqueAttributeValues(property: keyof IsolateViewAttributes): Promise<(string | number | boolean)[]> {
+        return this.IsolateView.findAll({
+            attributes: [property],
+            group: property
+        }).then(data => {
+            return data.map(d => {
+                return d[property]
+            })
+        })
     }
 }

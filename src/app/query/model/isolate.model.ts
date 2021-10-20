@@ -17,17 +17,6 @@ export interface IsolateView {
     id: number;
 }
 
-export interface Isolate {
-    federalState: FederalState;
-    microorganism: string;
-    samplingYear: string;
-    samplingContext: string;
-    matrixRichtung: string;
-    isolateCharacteristics: string;
-    isolateResistance: string;
-    id: number;
-}
-
 export type IsolateCollection = IsolateView[];
 export interface IsolateCharacteristics {
     species?: string;
@@ -62,9 +51,7 @@ export interface IsolateViewGateway extends EntityGateway<IsolateView> {
         filter: Filter,
         groupAttributes: GroupAttributes
     ): Promise<IsolateCount>;
-}
-
-export interface IsolateGateway extends EntityGateway<Isolate> {
+    getUniqueAttributeValues(property: string): Promise<(string | number | boolean)[]>
 }
 export interface IsolateCount {
     totalNumberOfIsolates: number;

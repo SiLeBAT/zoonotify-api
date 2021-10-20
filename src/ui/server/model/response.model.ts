@@ -21,7 +21,7 @@ export interface GetFilterConfigurationContainerDTO {
     filters: FilterConfigurationCollectionDTO;
 }
 
-export type FilterValueCollectionDTO = string[];
+export type FilterValueCollectionDTO = (string | number | boolean)[];
 export interface FilterConfigurationDTO {
     id: string;
     parent?: string;
