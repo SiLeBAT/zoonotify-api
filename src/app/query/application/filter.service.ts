@@ -32,11 +32,18 @@ export class DefaultFilterService implements FilterService {
          'resistance'
     ];
 
-    async getFilterConfiguration(): Promise<FilterConfigurationCollection> {
+    async getFilterConfiguration(filterName: string, filter?: Filter): Promise<FilterConfiguration> {
+        return this.fromDefinitionToConfiguration(
+            filterName as keyof IsolateView,
+            filter
+        );
+    }
+
+    async getAllFilterConfiguration(): Promise<FilterConfigurationCollection> {
         const filterConfiguration: FilterConfigurationCollection = [];
         for (let index = 0; index < this.filterDefinitions.length; index++) {
-            const configuration = await this.fromDefinitionToConfiguration(
-                this.filterDefinitions[index] as keyof IsolateView
+            const configuration = await this.getFilterConfiguration(
+                this.filterDefinitions[index]
             );
             filterConfiguration.push(configuration);
         }
@@ -44,9 +51,9 @@ export class DefaultFilterService implements FilterService {
     }
 
     private async fromDefinitionToConfiguration(
-        definition: keyof IsolateView
+        definition: keyof IsolateView, filter?: Filter
     ): Promise<FilterConfiguration> {
-        const values = await this.isolateViewGateway.getUniqueAttributeValues(definition)
+        const values = await this.isolateViewGateway.getUniqueAttributeValues(definition, filter)
         return {
             id: definition,
             values

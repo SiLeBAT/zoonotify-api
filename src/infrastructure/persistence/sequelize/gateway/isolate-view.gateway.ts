@@ -165,14 +165,23 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         return result;
     }
 
-    getUniqueAttributeValues(property: keyof IsolateViewAttributes): Promise<(string | number | boolean)[]> {
-        return this.IsolateView.findAll({
+    getUniqueAttributeValues(property: keyof IsolateViewAttributes, filter: Filter = {}): Promise<(string | number | boolean)[]> {
+
+        let options = {
             attributes: [property],
             group: property
-        }).then(data => {
+        };
+        const whereClause = this.filterConverter.convertFilter(filter);
+        options = {
+            ...options,
+            ...whereClause
+        };
+
+        // Here we need to filter out null values due to the way the IsolatView is constructed (via multiple joins)
+        return this.IsolateView.findAll(options).then(data => {
             return data.map(d => {
                 return d[property]
-            })
+            }).filter(d => !_.isNil(d)).sort()
         })
     }
 }

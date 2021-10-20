@@ -3,7 +3,8 @@ import { Filter, QueryParameters } from './shared.model';
 export type FilterConfigurationCollection = FilterConfiguration[];
 
 export interface FilterPort {
-    getFilterConfiguration(): Promise<FilterConfigurationCollection>;
+    getFilterConfiguration(filterName: string, filter?: Filter): Promise<FilterConfiguration>;
+    getAllFilterConfiguration(): Promise<FilterConfigurationCollection>;
     createFilter(queryParameters: QueryParameters): Promise<Filter>;
     readonly filterDefinitions: FilterDefinitionCollection;
 }
