@@ -51,7 +51,7 @@ export interface IsolateViewGateway extends EntityGateway<IsolateView> {
         filter: Filter,
         groupAttributes: GroupAttributes
     ): Promise<IsolateCount>;
-    getUniqueAttributeValues(property: string): Promise<(string | number | boolean)[]>
+    getUniqueAttributeValues(property: string, filter?: Filter): Promise<(string | number | boolean)[]>
 }
 export interface IsolateCount {
     totalNumberOfIsolates: number;
