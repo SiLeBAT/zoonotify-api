@@ -56,7 +56,9 @@ export class DefaultFilterConfigController extends AbstractController
                 req.query as Record<string, string | string[]>
             );
 
-            const filterConfig = await this.filterService.getFilterConfiguration(id, filter);
+            const filterConfig = await this.filterService.getFilterConfiguration(   id,
+                filter
+            );
 
             const dto: GetFilterConfigurationContainerDTO = {
                 filters: [this.filterConfigurationToDTO(filterConfig)]
@@ -75,9 +77,6 @@ export class DefaultFilterConfigController extends AbstractController
     private filterConfigurationToDTO(
         configuration: FilterConfiguration
     ): FilterConfigurationDTO {
-        return {
-            id: configuration.id,
-            values: configuration.values
-        };
+        return {...configuration};
     }
 }

@@ -25,6 +25,7 @@ export type FilterValueCollectionDTO = (string | number | boolean)[];
 export interface FilterConfigurationDTO {
     id: string;
     parent?: string;
+    trigger?: string;
     values: FilterValueCollectionDTO;
 }
 
