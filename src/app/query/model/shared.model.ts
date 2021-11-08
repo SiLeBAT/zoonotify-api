@@ -1,8 +1,8 @@
-export interface Filter {
+export interface QueryFilter {
     [key: string]: string | string[];
 }
 export interface EntityGateway<T> {
-    findAll(filter?: Filter): Promise<T[]>;
+    findAll(filter?: QueryFilter): Promise<T[]>;
 }
 
 export type QueryParameters = Record<string, string | string[]>;

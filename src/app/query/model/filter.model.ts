@@ -1,12 +1,11 @@
-import { Filter, QueryParameters } from './shared.model';
+import { QueryFilter, QueryParameters } from './shared.model';
 
 export type FilterConfigurationCollection = FilterConfiguration[];
 
 export interface FilterPort {
-    getFilterConfiguration(filterName: string, filter?: Filter): Promise<FilterConfiguration>;
+    getFilterConfiguration(id: string, filter?: QueryFilter): Promise<FilterConfiguration>;
     getAllFilterConfiguration(): Promise<FilterConfigurationCollection>;
-    createFilter(queryParameters: QueryParameters): Promise<Filter>;
-    readonly filterDefinitions: FilterDefinitionCollection;
+    createFilter(queryParameters: QueryParameters): Promise<QueryFilter>;
 }
 
 export interface FilterNamesToAttributesHash {
@@ -17,15 +16,25 @@ export interface FilterService extends FilterPort {}
 export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration {
     readonly id: string;
+    readonly parent?: string;
+    readonly trigger?: string;
     readonly values: FilterValueCollection;
 }
 
 export interface FilterDefinition {
-    readonly valueProvider: FilterValueProvider;
     readonly id: string;
+    readonly attribute: string;
 }
 
-export type FilterDefinitionCollection = string[];
+export interface SubfilterDefinition extends FilterDefinition {
+    readonly parent: string;
+    readonly trigger: string;
+    readonly target: string;
+    readonly targetValue: string | string[];
+}
+
+export type FilterDefinitionCollection = FilterDefinition[];
+export type SubfilterDefinitionCollection = SubfilterDefinition[];
 export interface FilterValueProvider {
     (): Promise<FilterValueCollection>;
 }

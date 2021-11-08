@@ -12,7 +12,7 @@ import {
     IsolateCharacteristics,
     IsolateResistance,
     IsolateCount,
-    Filter,
+    QueryFilter,
     GroupAttributes
 } from '../../../../app/ports';
 import { inject, injectable } from 'inversify';
@@ -72,7 +72,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         private filterConverter: FilterConverter
     ) {}
 
-    findAll(filter: Filter = {}): Promise<IsolateCollection> {
+    findAll(filter: QueryFilter = {}): Promise<IsolateCollection> {
         logger.trace(
             `${this.constructor.name}.${this.findAll.name}, Executing`
         );
@@ -116,7 +116,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     }
 
     async getCount(
-        filter: Filter = {},
+        filter: QueryFilter = {},
         groupAttributes: GroupAttributes = [null, null]
     ): Promise<IsolateCount> {
         logger.trace(
@@ -165,7 +165,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         return result;
     }
 
-    getUniqueAttributeValues(property: keyof IsolateViewAttributes, filter: Filter = {}): Promise<(string | number | boolean)[]> {
+    getUniqueAttributeValues(property: keyof IsolateViewAttributes, filter: QueryFilter = {}): Promise<(string | number | boolean)[]> {
 
         let options = {
             attributes: [property],
