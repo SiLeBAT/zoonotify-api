@@ -5,7 +5,7 @@ import {
     FilterPort,
     GroupPort,
     IsolateView
-} from '../../../app/ports';
+} from '../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
@@ -22,7 +22,7 @@ import {
 } from 'inversify-express-utils';
 import { ROUTE } from '../model/enums';
 import { inject } from 'inversify';
-import { logger } from './../../../aspects';
+import { logger } from '../../aspects';
 
 enum ISOLATE_ROUTE {
     ROOT = '/isolate'

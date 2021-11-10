@@ -1,17 +1,17 @@
-import { FilterConfiguration } from './../../../app/query/model/filter.model';
-import { FilterPort } from './../../../app/ports';
+import { FilterConfiguration } from '../../app/query/model/filter.model';
+import { FilterPort } from '../../app/ports';
 import {
     GetFilterConfigurationContainerDTO,
     FilterConfigurationDTO
-} from './../model/response.model';
-import { FilterConfigController } from './../model/controller.model';
+} from '../model/response.model';
+import { FilterConfigController } from '../model/controller.model';
 import { Response, Request } from 'express';
 import { AbstractController } from './abstract.controller';
 import { controller, httpGet, request, requestParam, response } from 'inversify-express-utils';
 import { ROUTE } from '../model/enums';
 import { inject } from 'inversify';
-import { APPLICATION_TYPES } from '../../../app/application.types';
-import { logger } from './../../../aspects';
+import { APPLICATION_TYPES } from '../../app/application.types';
+import { logger } from '../../aspects';
 
 enum FILTER_CONFIG_ROUTE {
     ROOT = '/filterconfig'

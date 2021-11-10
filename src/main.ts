@@ -1,6 +1,6 @@
 import * as config from 'config';
 import { logger, getContainer } from './aspects';
-import { createServer, getServerContainerModule } from './ui/server/ports';
+import { getServerContainerModule } from './ui/ports';
 import { getApplicationContainerModule } from './app/ports';
 import {
     SystemConfigurationService,
@@ -14,6 +14,9 @@ import {
     getPersistenceContainerModule,
     SequelizeDatabaseService
 } from './infrastructure/ports';
+
+import { ROUTE } from './ui/model/enums';
+import { createServer, ServerConfiguration as ExpressServerConfiguration } from '@SiLeBAT/fg43-ne-server';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
     private generalConfigurationDefaults: GeneralConfiguration = {
@@ -92,7 +95,21 @@ async function init() {
         getPersistenceContainerModule(daos)
     );
 
-    const server = createServer(container);
+    const expressServerConfiguration: ExpressServerConfiguration = {
+        container,
+        api:{
+            port: serverConfig.port,
+            root:'',
+            version: ROUTE.VERSION,
+            docPath: '/api-docs'
+        },
+        logging: {
+            logger,
+            logLevel: generalConfig.logLevel
+        }
+    };
+
+    const server = createServer(expressServerConfiguration);
     server.startServer();
 
     process.on('uncaughtException', error => {
