@@ -1,5 +1,5 @@
 import { ConnectionInfo } from './infrastructure/persistence/sequelize/datastore/database.model';
-import { APIDocConfig } from './ui/server/ports';
+import { APIDocConfig } from './ui/ports';
 
 export type DataStoreConfiguration = ConnectionInfo;
 
