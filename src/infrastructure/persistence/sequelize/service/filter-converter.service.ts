@@ -1,11 +1,11 @@
 import { injectable } from 'inversify';
-import { QueryFilter } from './../../../../app/ports';
 import * as _ from 'lodash';
+import { QueryFilter } from '../../../../app/ports';
 
 export interface FilterConverter {
-    convertFilter(
-        filter: QueryFilter
-    ): { where?: { [key: string]: string | string[] } };
+    convertFilter(filter: QueryFilter): {
+        where?: { [key: string]: string | string[] };
+    };
 }
 
 @injectable()
@@ -14,7 +14,7 @@ export class SequelizeFilterConverter implements FilterConverter {
         if (_.isEmpty(filter)) return filter;
 
         const whereClause: { where: { [key: string]: string | string[] } } = {
-            where: {}
+            where: {},
         };
 
         _.forOwn(filter, (value, key) => {

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { logger } from './../../../../aspects';
+import { logger } from '../../../../aspects';
 import { Database } from './database.model';
 
 export class SequelizeDatabase implements Database<Sequelize> {

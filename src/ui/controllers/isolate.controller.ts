@@ -1,35 +1,37 @@
+import { Response, Request } from 'express';
+import {
+    controller,
+    httpGet,
+    request,
+    response,
+} from 'inversify-express-utils';
+import { inject } from 'inversify';
 import {
     APPLICATION_TYPES,
     IsolatePort,
     IsolateCollection,
     FilterPort,
     GroupPort,
-    IsolateView
+    IsolateView,
 } from '../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
-    IsolateDTO
+    IsolateDTO,
 } from '../model/response.model';
 import { IsolateController } from '../model/controller.model';
-import { Response, Request } from 'express';
 import { AbstractController } from './abstract.controller';
-import {
-    controller,
-    httpGet,
-    request,
-    response
-} from 'inversify-express-utils';
 import { ROUTE } from '../model/enums';
-import { inject } from 'inversify';
 import { logger } from '../../aspects';
 
 enum ISOLATE_ROUTE {
-    ROOT = '/isolate'
+    ROOT = '/isolate',
 }
 @controller(ROUTE.VERSION + ISOLATE_ROUTE.ROOT)
-export class DefaultIsolateController extends AbstractController
-    implements IsolateController {
+export class DefaultIsolateController
+    extends AbstractController
+    implements IsolateController
+{
     constructor(
         @inject(APPLICATION_TYPES.IsolateService)
         private isolateService: IsolatePort,
@@ -51,12 +53,11 @@ export class DefaultIsolateController extends AbstractController
                 req.query as Record<string, string | string[]>
             );
 
-            const isolates: IsolateCollection = await this.isolateService.getIsolates(
-                filter
-            );
+            const isolates: IsolateCollection =
+                await this.isolateService.getIsolates(filter);
 
             const dto: GetIsolatesSuccessResponse = {
-                isolates: isolates.map(isolate => this.isolateToDTO(isolate))
+                isolates: isolates.map((isolate) => this.isolateToDTO(isolate)),
             };
             this.ok(res, dto);
         } catch (error) {
@@ -85,7 +86,7 @@ export class DefaultIsolateController extends AbstractController
             );
 
             const dto: GetCountedIsolatesSuccessResponse = {
-                totalNumberOfIsolates: isolateCount.totalNumberOfIsolates
+                totalNumberOfIsolates: isolateCount.totalNumberOfIsolates,
             };
             if (isolateCount.groups) {
                 dto.groups = isolateCount.groups;
@@ -114,7 +115,7 @@ export class DefaultIsolateController extends AbstractController
             matrix: isolate.matrix,
             matrixDetail: isolate.matrixDetail,
             characteristics: isolate.characteristics,
-            resistance: isolate.resistance
+            resistance: isolate.resistance,
         };
     }
 }

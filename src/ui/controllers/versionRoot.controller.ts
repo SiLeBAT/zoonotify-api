@@ -1,22 +1,26 @@
 import { Response } from 'express';
 import * as _ from 'lodash';
+import { controller, response, httpGet } from 'inversify-express-utils';
+import { inject } from 'inversify';
 import { VersionRootController } from '../model/controller.model';
 import { ROUTE } from '../model/enums';
 import { AbstractController } from './abstract.controller';
 import { AppServerConfiguration } from '../model/server.model';
-import { controller, response, httpGet } from 'inversify-express-utils';
-import { inject } from 'inversify';
 import SERVER_TYPES from '../server.types';
 
-const openAPI = require('./../doc/openapi_v1.json');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const openAPI = require('../doc/openapi_v1.json');
 
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type APIDefinition = any;
 
 @controller(ROUTE.VERSION)
-export class DefaultVersionRootController extends AbstractController
-    implements VersionRootController {
+export class DefaultVersionRootController
+    extends AbstractController
+    implements VersionRootController
+{
     private publicAPI: APIDefinition;
+
     constructor(
         @inject(SERVER_TYPES.AppServerConfiguration)
         configuration: AppServerConfiguration
@@ -28,6 +32,7 @@ export class DefaultVersionRootController extends AbstractController
             configuration.publicAPIDoc
         );
     }
+
     @httpGet('/')
     async getAPIDefinition(@response() res: Response) {
         try {
@@ -43,7 +48,7 @@ export class DefaultVersionRootController extends AbstractController
 
     // tslint:disable-next-line: no-any
     private search(term: string, object: APIDefinition, found: any[] = []) {
-        Object.keys(object).forEach(key => {
+        Object.keys(object).forEach((key) => {
             if (key === term) {
                 found.push(object[key]);
                 return found;
@@ -93,7 +98,7 @@ export class DefaultVersionRootController extends AbstractController
             (t: { name: string }) => t.name
         );
 
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
             if (!_.includes(remainingTags, tag)) {
                 _.remove(
                     definition.tags,

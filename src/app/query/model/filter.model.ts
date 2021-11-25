@@ -3,7 +3,10 @@ import { QueryFilter, QueryParameters } from './shared.model';
 export type FilterConfigurationCollection = FilterConfiguration[];
 
 export interface FilterPort {
-    getFilterConfiguration(id: string, filter?: QueryFilter): Promise<FilterConfiguration>;
+    getFilterConfiguration(
+        id: string,
+        filter?: QueryFilter
+    ): Promise<FilterConfiguration>;
     getAllFilterConfiguration(): Promise<FilterConfigurationCollection>;
     createFilter(queryParameters: QueryParameters): Promise<QueryFilter>;
 }
@@ -11,7 +14,7 @@ export interface FilterPort {
 export interface FilterNamesToAttributesHash {
     [key: string]: string;
 }
-export interface FilterService extends FilterPort {}
+export type FilterService = FilterPort;
 
 export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration {

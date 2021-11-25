@@ -1,6 +1,6 @@
 import {
     ConfigurationService,
-    ApplicationConfiguration
+    ApplicationConfiguration,
 } from '../../model/configuration.model';
 
 class MockConfigurationService implements ConfigurationService {
@@ -8,7 +8,7 @@ class MockConfigurationService implements ConfigurationService {
         return {
             appName: 'Mock',
             supportContact: 'test',
-            apiUrl: 'test'
+            apiUrl: 'test',
         };
     }
 }

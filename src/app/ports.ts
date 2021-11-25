@@ -3,7 +3,6 @@
  */
 export { getApplicationContainerModule } from './application.module';
 export { ApplicationConfiguration } from './core/model/configuration.model';
-export { createApplication, ZoonotifyApplication } from './application';
 export { ConfigurationService } from './core/model/configuration.model';
 export { APPLICATION_TYPES } from './application.types';
 
@@ -21,7 +20,7 @@ export {
     IsolateResistance,
     IsolateViewGateway,
     IsolateCollection,
-    IsolateCount
+    IsolateCount,
 } from './query/model/isolate.model';
 
 export { QueryFilter, GroupAttributes } from './query/model/shared.model';

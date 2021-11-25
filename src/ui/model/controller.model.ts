@@ -1,28 +1,26 @@
 import { Response, Request } from 'express';
 
-export interface Controller {}
-
-export interface VersionRootController extends Controller {
+export interface VersionRootController {
     getAPIDefinition(res: Response): Promise<void>;
 }
 
-export interface SystemInfoController extends Controller {
+export interface SystemInfoController {
     getSystemInfo(res: Response): Promise<void>;
 }
 
-export interface DatabaseController extends Controller {
+export interface DatabaseController {
     getDatabaseStatus(res: Response): Promise<void>;
 }
 
-export interface FilterConfigController extends Controller {
+export interface FilterConfigController {
     getFilterConfiguration(res: Response): Promise<void>;
 }
 
-export interface MockDataController extends Controller {
+export interface MockDataController {
     getMockData(res: Response): Promise<void>;
 }
 
-export interface IsolateController extends Controller {
+export interface IsolateController {
     getIsolate(req: Request, res: Response): Promise<void>;
     getIsolateCount(req: Request, res: Response): Promise<void>;
 }

@@ -1,12 +1,12 @@
+import { inject, injectable } from 'inversify';
+import * as _ from 'lodash';
 import {
     IsolateCollection,
     IsolateViewGateway,
     IsolateCount,
-    IsolateService
-} from './../model/isolate.model';
-import { APPLICATION_TYPES } from './../../application.types';
-import { inject, injectable } from 'inversify';
-import * as _ from 'lodash';
+    IsolateService,
+} from '../model/isolate.model';
+import { APPLICATION_TYPES } from '../../application.types';
 import { QueryFilter, GroupAttributes } from '../model/shared.model';
 
 @injectable()
