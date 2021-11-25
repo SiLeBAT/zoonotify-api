@@ -4,8 +4,6 @@ export interface ApplicationConfiguration {
     supportContact: string;
 }
 
-export interface ConfigurationPort {}
-
-export interface ConfigurationService extends ConfigurationPort {
+export interface ConfigurationService {
     getApplicationConfiguration(): ApplicationConfiguration;
 }

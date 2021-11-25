@@ -13,6 +13,7 @@ export interface DAOProvider {
 @injectable()
 export class SequelizeDAOProvider implements DAOProvider {
     private daoHash: DAOHash;
+
     constructor(private db: Database<Sequelize>) {
         this.daoHash = this.createDAOS();
     }
@@ -20,12 +21,12 @@ export class SequelizeDAOProvider implements DAOProvider {
     getDAOHash() {
         return this.daoHash;
     }
-    private createDAOS() {
 
+    private createDAOS() {
         const IsolateView = isolateViewModelFactory(this.db.getDatastore());
 
         return {
-            isolateView: IsolateView
+            isolateView: IsolateView,
         };
     }
 }

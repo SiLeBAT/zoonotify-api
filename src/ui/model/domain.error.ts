@@ -1,5 +1,5 @@
 export class ServerDomainError extends Error {
-    // tslint:disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
         // Calling parent constructor of base Error class.
         super(...args);
@@ -13,14 +13,14 @@ export class ServerDomainError extends Error {
 }
 
 export class MalformedRequestError extends ServerDomainError {
-    // tslint:disable-next-line: no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
         super(...args);
     }
 }
 
 export class UnknownPackageConfigurationError extends ServerDomainError {
-    // tslint:disable-next-line: no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
         super(...args);
     }

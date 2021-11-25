@@ -1,10 +1,10 @@
 // npm
+import { injectable, inject } from 'inversify';
 import {
     ApplicationConfiguration,
-    ConfigurationService
+    ConfigurationService,
 } from '../model/configuration.model';
-import { injectable, inject } from 'inversify';
-import { APPLICATION_TYPES } from './../../application.types';
+import { APPLICATION_TYPES } from '../../application.types';
 
 @injectable()
 export class DefaultConfigurationService implements ConfigurationService {

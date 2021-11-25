@@ -1,8 +1,8 @@
-import { IsolateService } from './query/model/isolate.model';
 import { ContainerModule, interfaces } from 'inversify';
+import { IsolateService } from './query/model/isolate.model';
 import {
     ConfigurationService,
-    ApplicationConfiguration
+    ApplicationConfiguration,
 } from './core/model/configuration.model';
 import { DefaultConfigurationService } from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
@@ -15,27 +15,25 @@ import { DefaultGroupService } from './query/application/group.service';
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
 ): ContainerModule {
-    return new ContainerModule(
-        (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-            bind(APPLICATION_TYPES.ApplicationConfiguration).toConstantValue(
-                appConfiguration
-            );
+    return new ContainerModule((bind: interfaces.Bind) => {
+        bind(APPLICATION_TYPES.ApplicationConfiguration).toConstantValue(
+            appConfiguration
+        );
 
-            bind<ConfigurationService>(
-                APPLICATION_TYPES.ConfigurationService
-            ).to(DefaultConfigurationService);
+        bind<ConfigurationService>(APPLICATION_TYPES.ConfigurationService).to(
+            DefaultConfigurationService
+        );
 
-            bind<FilterService>(APPLICATION_TYPES.FilterService).to(
-                DefaultFilterService
-            );
+        bind<FilterService>(APPLICATION_TYPES.FilterService).to(
+            DefaultFilterService
+        );
 
-            bind<GroupService>(APPLICATION_TYPES.GroupService).to(
-                DefaultGroupService
-            );
+        bind<GroupService>(APPLICATION_TYPES.GroupService).to(
+            DefaultGroupService
+        );
 
-            bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
-                DefaultIsolateService
-            );
-        }
-    );
+        bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
+            DefaultIsolateService
+        );
+    });
 }

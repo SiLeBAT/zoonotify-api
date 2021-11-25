@@ -1,4 +1,9 @@
+import 'reflect-metadata';
 import * as config from 'config';
+import {
+    createServer,
+    ServerConfiguration as ExpressServerConfiguration,
+} from '@SiLeBAT/fg43-ne-server';
 import { logger, getContainer } from './aspects';
 import { getServerContainerModule } from './ui/ports';
 import { getApplicationContainerModule } from './app/ports';
@@ -8,20 +13,18 @@ import {
     ServerConfiguration,
     AppConfiguration,
     DataStoreConfiguration,
-    APIConfiguration
+    APIConfiguration,
 } from './main.model';
 import {
     getPersistenceContainerModule,
-    SequelizeDatabaseService
+    SequelizeDatabaseService,
 } from './infrastructure/ports';
-
 import { ROUTE } from './ui/model/enums';
-import { createServer, ServerConfiguration as ExpressServerConfiguration } from '@SiLeBAT/fg43-ne-server';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
     private generalConfigurationDefaults: GeneralConfiguration = {
         logLevel: 'info',
-        supportContact: ''
+        supportContact: '',
     };
 
     getServerConfiguration(): ServerConfiguration {
@@ -48,12 +51,14 @@ export class DefaultConfigurationService implements SystemConfigurationService {
         if (!config.has('general')) {
             generalConfiguration = {
                 logLevel: this.generalConfigurationDefaults.logLevel,
-                supportContact: this.generalConfigurationDefaults.supportContact
+                supportContact:
+                    this.generalConfigurationDefaults.supportContact,
             };
         }
 
         if (!config.has('general.logLevel')) {
-            generalConfiguration.logLevel = this.generalConfigurationDefaults.logLevel;
+            generalConfiguration.logLevel =
+                this.generalConfigurationDefaults.logLevel;
         }
 
         return generalConfiguration;
@@ -62,11 +67,16 @@ export class DefaultConfigurationService implements SystemConfigurationService {
 
 async function init() {
     const configurationService = new DefaultConfigurationService();
-    const serverConfig: ServerConfiguration = configurationService.getServerConfiguration();
-    const generalConfig: GeneralConfiguration = configurationService.getGeneralConfiguration();
-    const dataStoreConfig: DataStoreConfiguration = configurationService.getDataStoreConfiguration();
-    const appConfiguration: AppConfiguration = configurationService.getApplicationConfiguration();
-    const apiConfiguration: APIConfiguration = configurationService.getAPIConfiguration();
+    const serverConfig: ServerConfiguration =
+        configurationService.getServerConfiguration();
+    const generalConfig: GeneralConfiguration =
+        configurationService.getGeneralConfiguration();
+    const dataStoreConfig: DataStoreConfiguration =
+        configurationService.getDataStoreConfiguration();
+    const appConfiguration: AppConfiguration =
+        configurationService.getApplicationConfiguration();
+    const apiConfiguration: APIConfiguration =
+        configurationService.getAPIConfiguration();
 
     logger.info(`Starting ${appConfiguration.appName}.`);
     logger.info(`Log level: ${generalConfig.logLevel}.`);
@@ -84,41 +94,41 @@ async function init() {
     container.load(
         getApplicationContainerModule({
             ...appConfiguration,
-            supportContact: generalConfig.supportContact
+            supportContact: generalConfig.supportContact,
         }),
         getServerContainerModule({
             ...serverConfig,
             publicAPIDoc: apiConfiguration.publicAPIDoc,
             logLevel: generalConfig.logLevel,
-            supportContact: generalConfig.supportContact
+            supportContact: generalConfig.supportContact,
         }),
         getPersistenceContainerModule(daos)
     );
 
     const expressServerConfiguration: ExpressServerConfiguration = {
         container,
-        api:{
+        api: {
             port: serverConfig.port,
-            root:'',
+            root: '',
             version: ROUTE.VERSION,
-            docPath: '/api-docs'
+            docPath: '/api-docs',
         },
         logging: {
             logger,
-            logLevel: generalConfig.logLevel
-        }
+            logLevel: generalConfig.logLevel,
+        },
     };
 
     const server = createServer(expressServerConfiguration);
     server.startServer();
 
-    process.on('uncaughtException', error => {
+    process.on('uncaughtException', (error) => {
         logger.error(`Uncaught Exception. error=${error}`);
         process.exit(1);
     });
 }
 
-init().catch(error => {
+init().catch((error) => {
     logger.error(`Unable to initialise application. error=${error}`);
     throw error;
 });

@@ -14,5 +14,5 @@ export enum FederalState {
     MV = 'Mecklenburg-Vorpommern',
     RP = 'Rheinland-Pfalz',
     ST = 'Sachsen-Anhalt',
-    TH = 'Thueringen'
+    TH = 'Thueringen',
 }

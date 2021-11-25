@@ -29,13 +29,13 @@ export class Logger {
     private _logger: winston.Logger;
 
     constructor() {
-        let logLevel: string = 'error';
+        let logLevel = 'error';
         try {
             logLevel = logConfiguration.logLevel;
         } catch (err) {
             // tslint:disable-next-line:no-console
             console.warn(
-                'Log Level configuration not found. Using default: ' + logLevel
+                `Log Level configuration not found. Using default: ${logLevel}`
             );
         }
 
@@ -44,9 +44,9 @@ export class Logger {
             format: winston.format.combine(
                 winston.format.colorize(),
                 winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                winston.format.printf(info => Logger.mapLogMessage(info))
+                winston.format.printf((info) => Logger.mapLogMessage(info))
             ),
-            transports: [new winston.transports.Console()]
+            transports: [new winston.transports.Console()],
         });
     }
 
@@ -54,11 +54,11 @@ export class Logger {
         let logMsg = `${info.timestamp} ${info.level} ${info.message}`;
         logMsg =
             info.meta !== undefined
-                ? logMsg +
-                  ' ' +
-                  (typeof info.meta === 'object'
-                      ? JSON.stringify(info.meta)
-                      : info.meta)
+                ? `${logMsg} ${
+                      typeof info.meta === 'object'
+                          ? JSON.stringify(info.meta)
+                          : info.meta
+                  }`
                 : logMsg;
 
         return logMsg;
@@ -119,32 +119,32 @@ export class Logger {
 
     // tslint:disable-next-line
     error(msg: string, meta?: any) {
-        this._logger.log('error', msg, { meta: meta });
+        this._logger.log('error', msg, { meta });
     }
 
     // tslint:disable-next-line
     warn(msg: string, meta?: any) {
-        this._logger.log('warn', msg, { meta: meta });
+        this._logger.log('warn', msg, { meta });
     }
 
     // tslint:disable-next-line
     info(msg: string, meta?: any) {
-        this._logger.log('info', msg, { meta: meta });
+        this._logger.log('info', msg, { meta });
     }
 
     // tslint:disable-next-line
     verbose(msg: string, meta?: any) {
-        this._logger.log('verbose', msg, { meta: meta });
+        this._logger.log('verbose', msg, { meta });
     }
 
     // tslint:disable-next-line
     debug(msg: string, meta?: any) {
-        this._logger.log('debug', msg, { meta: meta });
+        this._logger.log('debug', msg, { meta });
     }
 
     // tslint:disable-next-line
     trace(msg: string, meta?: any) {
-        this._logger.log('silly', msg, { meta: meta });
+        this._logger.log('silly', msg, { meta });
     }
 }
 

@@ -4,5 +4,5 @@ export const APPLICATION_TYPES = {
     FilterService: Symbol.for('FilterService'),
     GroupService: Symbol.for('GroupService'),
     IsolateService: Symbol.for('IsolateService'),
-    IsolateViewGateway: Symbol.for('IsolateViewGateway')
+    IsolateViewGateway: Symbol.for('IsolateViewGateway'),
 };

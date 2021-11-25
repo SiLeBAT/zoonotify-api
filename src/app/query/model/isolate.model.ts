@@ -44,14 +44,17 @@ export interface IsolatePort {
     ): Promise<IsolateCount>;
 }
 
-export interface IsolateService extends IsolatePort {}
+export type IsolateService = IsolatePort;
 
 export interface IsolateViewGateway extends EntityGateway<IsolateView> {
     getCount(
         filter: QueryFilter,
         groupAttributes: GroupAttributes
     ): Promise<IsolateCount>;
-    getUniqueAttributeValues(property: string, filter?: QueryFilter): Promise<(string | number | boolean)[]>
+    getUniqueAttributeValues(
+        property: string,
+        filter?: QueryFilter
+    ): Promise<(string | number | boolean)[]>;
 }
 export interface IsolateCount {
     totalNumberOfIsolates: number;

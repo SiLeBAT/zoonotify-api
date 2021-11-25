@@ -7,7 +7,7 @@ export interface ConnectionInfo {
     port: number;
 }
 
-export type SupportedDB = 'postgres' | "sqlite";
+export type SupportedDB = 'postgres';
 
 export interface DatabaseService<T> {
     createDataStore(connectionInfo: ConnectionInfo): Database<T>;

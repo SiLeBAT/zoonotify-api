@@ -24,7 +24,10 @@ export interface IsolateViewModel
     extends Model<IsolateViewAttributes>,
         IsolateViewAttributes {}
 
-export class IsolateViewDAO extends Model<IsolateViewModel, IsolateViewAttributes> {}
+export class IsolateViewDAO extends Model<
+    IsolateViewModel,
+    IsolateViewAttributes
+> {}
 
 export function isolateViewModelFactory(
     sequelize: Sequelize
@@ -36,66 +39,66 @@ export function isolateViewModelFactory(
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
-                field: 'isolate_id'
+                field: 'isolate_id',
             },
             microorganism: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             federalState: {
                 type: DataTypes.STRING,
-                field: 'federal_state'
+                field: 'federal_state',
             },
             samplingYear: {
                 type: DataTypes.STRING,
-                field: 'sampling_year'
+                field: 'sampling_year',
             },
             samplingContext: {
                 type: DataTypes.STRING,
-                field: 'sampling_context'
+                field: 'sampling_context',
             },
             samplingStage: {
                 type: DataTypes.STRING,
-                field: 'sampling_stage'
+                field: 'sampling_stage',
             },
             productionType: {
                 type: DataTypes.STRING,
-                field: 'production_type'
+                field: 'production_type',
             },
             category: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             matrix: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             origin: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             matrixDetail: {
                 type: DataTypes.STRING,
-                field: 'matrix_detail'
+                field: 'matrix_detail',
             },
             characteristic: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             characteristicValue: {
                 type: DataTypes.STRING,
-                field: 'characteristic_value'
+                field: 'characteristic_value',
             },
             resistance: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             resistanceActive: {
                 type: DataTypes.BOOLEAN,
-                field: 'resistance_active'
+                field: 'resistance_active',
             },
             resistanceValue: {
                 type: DataTypes.STRING,
-                field: 'resistance_value'
-            }
+                field: 'resistance_value',
+            },
         },
         {
             tableName: 'v_isolat',
-            timestamps: false
+            timestamps: false,
         }
     );
 }

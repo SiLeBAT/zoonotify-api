@@ -1,5 +1,5 @@
 export class ApplicationDomainError extends Error {
-    // tslint:disable-next-line
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
         // Calling parent constructor of base Error class.
         super(...args);

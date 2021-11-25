@@ -4,7 +4,7 @@ import { SequelizeDatabase } from '../datastore/database.entity';
 import {
     DatabaseService,
     Database,
-    ConnectionInfo
+    ConnectionInfo,
 } from '../datastore/database.model';
 import { SequelizeDAOProvider } from './dao-provider.service';
 
@@ -14,22 +14,23 @@ export class SequelizeDatabaseService implements DatabaseService<Sequelize> {
     createDataStore(connectionInfo: ConnectionInfo): Database<Sequelize> {
         logger.info('Creating datastore');
         let sequelize;
-        switch(connectionInfo.dialect) {
+        switch (connectionInfo.dialect) {
             case 'postgres':
-                sequelize = new Sequelize(connectionInfo.dataBase, connectionInfo.username, connectionInfo.password, {
-                    host: connectionInfo.host,
-                    dialect: 'postgres',
-                    port: connectionInfo.port
-                });
-                break;
-            case 'sqlite':
-                sequelize = new Sequelize({
-                    storage: connectionInfo.dataBase,
-                    dialect: 'sqlite'
-                });
+                sequelize = new Sequelize(
+                    connectionInfo.dataBase,
+                    connectionInfo.username,
+                    connectionInfo.password,
+                    {
+                        host: connectionInfo.host,
+                        dialect: 'postgres',
+                        port: connectionInfo.port,
+                    }
+                );
                 break;
             default:
-                throw new Error('Database dialect not supported.  Must be one of: postgres, sqlite');
+                throw new Error(
+                    'Database dialect not supported.  Must be one of: postgres'
+                );
         }
         this.dataStore = new SequelizeDatabase(sequelize);
         return this.dataStore;

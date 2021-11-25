@@ -1,7 +1,11 @@
-import { IsolateViewAttributes } from './../dao/isolate-view.model';
+import { inject, injectable } from 'inversify';
+import * as _ from 'lodash';
+import {
+    IsolateViewAttributes,
+    IsolateViewModel,
+} from '../dao/isolate-view.model';
 import { CountGroup } from '../../../../app/query/model/isolate.model';
 import { FilterConverter } from '../service/filter-converter.service';
-import { IsolateViewModel } from '../dao/isolate-view.model';
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
 import {
@@ -13,22 +17,18 @@ import {
     IsolateResistance,
     IsolateCount,
     QueryFilter,
-    GroupAttributes
+    GroupAttributes,
 } from '../../../../app/ports';
-import { inject, injectable } from 'inversify';
 import { logger } from '../../../../aspects';
-import * as _ from 'lodash';
 
 @injectable()
 export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     static toEntity(isolateViewModel: IsolateViewModel): IsolateView {
-        const characteristics: IsolateCharacteristics = SequelizeIsolateViewGateway.getCharacteristic(
-            isolateViewModel
-        );
+        const characteristics: IsolateCharacteristics =
+            SequelizeIsolateViewGateway.getCharacteristic(isolateViewModel);
 
-        const resistances: IsolateResistance = SequelizeIsolateViewGateway.getResistance(
-            isolateViewModel
-        );
+        const resistances: IsolateResistance =
+            SequelizeIsolateViewGateway.getResistance(isolateViewModel);
         return {
             microorganism: isolateViewModel.microorganism,
             id: isolateViewModel.isolateId,
@@ -41,8 +41,8 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             productionType: isolateViewModel.productionType,
             matrix: isolateViewModel.matrix,
             matrixDetail: isolateViewModel.matrixDetail,
-            characteristics: characteristics,
-            resistance: resistances
+            characteristics,
+            resistance: resistances,
         };
     }
 
@@ -50,7 +50,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         model: IsolateViewModel
     ): IsolateCharacteristics {
         const characteristics: IsolateCharacteristics = {
-            [model.characteristic]: model.characteristicValue
+            [model.characteristic]: model.characteristicValue,
         };
         return characteristics;
     }
@@ -59,8 +59,8 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         const resistance: IsolateResistance = {
             [model.resistance]: {
                 active: model.resistanceActive,
-                value: model.resistanceValue
-            }
+                value: model.resistanceValue,
+            },
         };
         return resistance;
     }
@@ -80,27 +80,28 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
-            ...whereClause
+            ...whereClause,
         };
 
         return this.IsolateView.findAll(options)
-            .then(models => {
+            .then((models) => {
                 const isolates = models.reduce((acc, current) => {
-                    let entity: IsolateView = acc[current.isolateId];
+                    const entity: IsolateView = acc[current.isolateId];
                     if (!entity) {
-                        acc[
-                            current.isolateId
-                        ] = SequelizeIsolateViewGateway.toEntity(current);
+                        acc[current.isolateId] =
+                            SequelizeIsolateViewGateway.toEntity(current);
                     } else {
                         entity.characteristics = {
                             ...entity.characteristics,
                             ...SequelizeIsolateViewGateway.getCharacteristic(
                                 current
-                            )
+                            ),
                         };
                         entity.resistance = {
                             ...entity.resistance,
-                            ...SequelizeIsolateViewGateway.getResistance(current)
+                            ...SequelizeIsolateViewGateway.getResistance(
+                                current
+                            ),
                         };
                     }
 
@@ -109,7 +110,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
 
                 return Object.values(isolates);
             })
-            .catch(error => {
+            .catch((error) => {
                 logger.error(error);
                 throw error;
             });
@@ -123,21 +124,21 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             `${this.constructor.name}.${this.getCount.name}, Executing with: ${filter}`
         );
         let options = {
-            distinct: true
+            distinct: true,
         };
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
-            ...whereClause
+            ...whereClause,
         };
 
         const result: IsolateCount = await this.IsolateView.count(options)
-            .then(dbCount => {
+            .then((dbCount) => {
                 return {
-                    totalNumberOfIsolates: dbCount
+                    totalNumberOfIsolates: dbCount,
                 };
             })
-            .catch(error => {
+            .catch((error) => {
                 logger.error('Unable to retrieve count data', error);
                 throw error;
             });
@@ -146,17 +147,19 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
 
         if (groupByValues.length > 0) {
             const groupBy = {
-                group: groupByValues
+                group: groupByValues,
             };
             options = {
                 ...options,
-                ...groupBy
+                ...groupBy,
             };
-            const groupings: CountGroup[] = await this.IsolateView.count(options)
-                .then(dbCount => {
-                    return (dbCount as unknown) as CountGroup[];
+            const groupings: CountGroup[] = await this.IsolateView.count(
+                options
+            )
+                .then((dbCount) => {
+                    return dbCount as unknown as CountGroup[];
                 })
-                .catch(error => {
+                .catch((error) => {
                     logger.error('Unable to retrieve count data', error);
                     throw error;
                 });
@@ -165,23 +168,28 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         return result;
     }
 
-    getUniqueAttributeValues(property: keyof IsolateViewAttributes, filter: QueryFilter = {}): Promise<(string | number | boolean)[]> {
-
+    getUniqueAttributeValues(
+        property: keyof IsolateViewAttributes,
+        filter: QueryFilter = {}
+    ): Promise<(string | number | boolean)[]> {
         let options = {
             attributes: [property],
-            group: property
+            group: property,
         };
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
-            ...whereClause
+            ...whereClause,
         };
 
         // Here we need to filter out null values due to the way the IsolatView is constructed (via multiple joins)
-        return this.IsolateView.findAll(options).then(data => {
-            return data.map(d => {
-                return d[property]
-            }).filter(d => !_.isNil(d)).sort()
-        })
+        return this.IsolateView.findAll(options).then((data) => {
+            return data
+                .map((d) => {
+                    return d[property];
+                })
+                .filter((d) => !_.isNil(d))
+                .sort();
+        });
     }
 }

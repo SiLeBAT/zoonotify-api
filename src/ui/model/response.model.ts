@@ -3,7 +3,7 @@ interface ErrorDTO {
     message: string;
 }
 
-export interface DefaultServerErrorDTO extends ErrorDTO {}
+export type DefaultServerErrorDTO = ErrorDTO;
 
 export interface SystemInformationDTO {
     version: string;

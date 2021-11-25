@@ -1,11 +1,11 @@
-import { DefaultFilterConfigController } from './controllers/filterconfig.controller';
 import { ContainerModule, interfaces } from 'inversify';
+import { DefaultFilterConfigController } from './controllers/filterconfig.controller';
 import {
     SystemInfoController,
     DatabaseController,
     VersionRootController,
     FilterConfigController,
-    IsolateController
+    IsolateController,
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
@@ -17,31 +17,29 @@ import { DefaultIsolateController } from './controllers/isolate.controller';
 export function getServerContainerModule(
     serverCongfiguration: AppServerConfiguration
 ): ContainerModule {
-    return new ContainerModule(
-        (bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-            bind(SERVER_TYPES.AppServerConfiguration).toConstantValue(
-                serverCongfiguration
-            );
+    return new ContainerModule((bind: interfaces.Bind) => {
+        bind(SERVER_TYPES.AppServerConfiguration).toConstantValue(
+            serverCongfiguration
+        );
 
-            bind<SystemInfoController>(SERVER_TYPES.InfoController).to(
-                DefaultSystemInfoController
-            );
+        bind<SystemInfoController>(SERVER_TYPES.InfoController).to(
+            DefaultSystemInfoController
+        );
 
-            bind<DatabaseController>(SERVER_TYPES.DatabaseController).to(
-                DefaultDatabaseController
-            );
+        bind<DatabaseController>(SERVER_TYPES.DatabaseController).to(
+            DefaultDatabaseController
+        );
 
-            bind<VersionRootController>(SERVER_TYPES.VersionRootController).to(
-                DefaultVersionRootController
-            );
+        bind<VersionRootController>(SERVER_TYPES.VersionRootController).to(
+            DefaultVersionRootController
+        );
 
-            bind<FilterConfigController>(
-                SERVER_TYPES.FilterConfigController
-            ).to(DefaultFilterConfigController);
+        bind<FilterConfigController>(SERVER_TYPES.FilterConfigController).to(
+            DefaultFilterConfigController
+        );
 
-            bind<IsolateController>(SERVER_TYPES.IsolateController).to(
-                DefaultIsolateController
-            );
-        }
-    );
+        bind<IsolateController>(SERVER_TYPES.IsolateController).to(
+            DefaultIsolateController
+        );
+    });
 }
