@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import * as config from 'config';
+import * as path from 'path';
 import {
     createServer,
     ServerConfiguration as ExpressServerConfiguration,
@@ -117,6 +118,7 @@ async function init() {
             logger,
             logLevel: generalConfig.logLevel,
         },
+        publicDir: path.join(__dirname + '/ui/public'),
     };
 
     const server = createServer(expressServerConfiguration);
