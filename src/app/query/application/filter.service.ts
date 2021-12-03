@@ -287,7 +287,7 @@ export class DefaultFilterService implements FilterService {
         query: Record<string, string | string[]>
     ): Promise<QueryFilter> {
         return _.chain(query)
-            .pick(this.mainFilterDefinitionCollection.map((d) => d.attribute))
+            .pick((await this.getAllFilterConfiguration()).map((d) => d.id))
             .reduce((result, value, key: string) => {
                 result[key] = value;
                 return result;
