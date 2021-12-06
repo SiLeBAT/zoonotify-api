@@ -3,7 +3,7 @@ import { ModelStatic, Sequelize } from 'sequelize/types';
 import { isolateViewModelFactory } from '../dao/isolate-view.model';
 import { Database } from '../datastore/database.model';
 
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type DAOHash = Record<string, ModelStatic<any>>;
 
 export interface DAOProvider {

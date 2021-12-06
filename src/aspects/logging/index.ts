@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* istanbul ignore file */
 import * as winston from 'winston';
 import * as config from 'config';
@@ -33,7 +34,6 @@ export class Logger {
         try {
             logLevel = logConfiguration.logLevel;
         } catch (err) {
-            // tslint:disable-next-line:no-console
             console.warn(
                 `Log Level configuration not found. Using default: ${logLevel}`
             );
@@ -117,32 +117,26 @@ export class Logger {
         }
     }
 
-    // tslint:disable-next-line
     error(msg: string, meta?: any) {
         this._logger.log('error', msg, { meta });
     }
 
-    // tslint:disable-next-line
     warn(msg: string, meta?: any) {
         this._logger.log('warn', msg, { meta });
     }
 
-    // tslint:disable-next-line
     info(msg: string, meta?: any) {
         this._logger.log('info', msg, { meta });
     }
 
-    // tslint:disable-next-line
     verbose(msg: string, meta?: any) {
         this._logger.log('verbose', msg, { meta });
     }
 
-    // tslint:disable-next-line
     debug(msg: string, meta?: any) {
         this._logger.log('debug', msg, { meta });
     }
 
-    // tslint:disable-next-line
     trace(msg: string, meta?: any) {
         this._logger.log('silly', msg, { meta });
     }

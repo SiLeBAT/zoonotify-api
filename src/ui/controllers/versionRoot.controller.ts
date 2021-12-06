@@ -7,6 +7,7 @@ import { ROUTE } from '../model/enums';
 import { AbstractController } from './abstract.controller';
 import { AppServerConfiguration } from '../model/server.model';
 import SERVER_TYPES from '../server.types';
+import { logger } from 'src/aspects';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const openAPI = require('../doc/openapi_v1.json');
@@ -43,10 +44,11 @@ export class DefaultVersionRootController
     }
 
     private handleError(res: Response, error: Error) {
+        logger.error('Error retrieving documentation', error);
         this.fail(res, 'Unable to retrieve documentation');
     }
 
-    // tslint:disable-next-line: no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private search(term: string, object: APIDefinition, found: any[] = []) {
         Object.keys(object).forEach((key) => {
             if (key === term) {

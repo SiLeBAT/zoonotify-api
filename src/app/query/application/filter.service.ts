@@ -25,7 +25,7 @@ export class DefaultFilterService implements FilterService {
     ) {}
 
     /* List of Main Filters */
-    private readonly mainFilterDefinitionCollection: FilterDefinitionCollection =
+    private readonly uiMainFilterDefinitionCollection: FilterDefinitionCollection =
         [
             {
                 id: 'samplingYear',
@@ -66,7 +66,7 @@ export class DefaultFilterService implements FilterService {
         ];
 
     /* List of Subfilters */
-    private readonly subfilterDefinitionCollection: SubfilterDefinitionCollection =
+    private readonly uiSubfilterDefinitionCollection: SubfilterDefinitionCollection =
         [
             {
                 id: 'serovar',
@@ -151,19 +151,31 @@ export class DefaultFilterService implements FilterService {
         ];
 
     /* List of expanded Subfilters */
-    private readonly expandedFilterDefinitionCollection: Partial<SubfilterDefinition>[] =
-        [
-            {
-                id: 'matrixDetail',
-                attribute: 'matrixDetail',
-                parent: 'matrix',
-            },
-        ];
+    private readonly uiExpandedFilterDefinitionCollection: (FilterDefinition &
+        Partial<SubfilterDefinition>)[] = [
+        {
+            id: 'matrixDetail',
+            attribute: 'matrixDetail',
+            parent: 'matrix',
+        },
+    ];
+
+    /* List of manual Subfilters */
+    private readonly uiManualFilterDefinitionCollection: (FilterDefinition &
+        Partial<SubfilterDefinition>)[] = [
+        {
+            id: 'genes',
+            attribute: '',
+            parent: 'microorganism',
+            trigger: 'STEC',
+        },
+    ];
 
     /* List of manually configured Subfilters */
     private readonly manualFilterConfiguration: FilterConfiguration[] = [
         {
             id: 'genes',
+            attribute: '',
             parent: 'microorganism',
             trigger: 'STEC',
             values: ['stx1_Gen', 'stx2_Gen', 'eae_Gen', 'e_hly_Gen'],
@@ -174,21 +186,9 @@ export class DefaultFilterService implements FilterService {
         id: string,
         attributeReduction?: QueryFilter
     ): Promise<FilterConfiguration> {
-        const findById = (e: Partial<{ id: string }>) => {
-            return e.id === id;
-        };
-
-        const config = _.find([...this.manualFilterConfiguration], findById);
-
-        if (config) return config as FilterConfiguration;
-
-        const definition = _.find(
-            [
-                ...this.mainFilterDefinitionCollection,
-                ...this.subfilterDefinitionCollection,
-                ...this.expandedFilterDefinitionCollection,
-            ],
-            findById
+        const definition = this.findByIdInCollection(
+            id,
+            this.getAllFilterDefinitions()
         );
 
         if (!definition) throw new Error();
@@ -203,8 +203,9 @@ export class DefaultFilterService implements FilterService {
         const filterConfiguration: FilterConfigurationCollection = [];
 
         const allDefinitions = [
-            ...this.mainFilterDefinitionCollection,
-            ...this.subfilterDefinitionCollection,
+            ...this.uiMainFilterDefinitionCollection,
+            ...this.uiSubfilterDefinitionCollection,
+            ...this.uiManualFilterDefinitionCollection,
         ];
 
         for (let index = 0; index < allDefinitions.length; index++) {
@@ -216,31 +217,49 @@ export class DefaultFilterService implements FilterService {
 
         for (
             let index = 0;
-            index < this.expandedFilterDefinitionCollection.length;
+            index < this.uiExpandedFilterDefinitionCollection.length;
             index++
         ) {
             const config = _.find(filterConfiguration, (e) => {
                 return (
                     e.id ===
-                    this.expandedFilterDefinitionCollection[index].parent
+                    this.uiExpandedFilterDefinitionCollection[index].parent
                 );
             });
 
-            if (config!.values!.length) {
-                for (let i = 0; i < config!.values.length; i++) {
-                    const configuration =
+            if (!config) throw new Error();
+
+            if (config.values.length) {
+                for (let i = 0; i < config.values.length; i++) {
+                    const expandedConfig =
                         await this.fromDefinitionToConfiguration({
-                            ...this.expandedFilterDefinitionCollection[index],
-                            ...{ trigger: config!.values[i] as string },
+                            ...this.uiExpandedFilterDefinitionCollection[index],
+                            ...{ trigger: config.values[i] as string },
                         });
+                    const configuration = {
+                        ...expandedConfig,
+                        ...{
+                            id:
+                                expandedConfig.id +
+                                '_' +
+                                expandedConfig.trigger,
+                        },
+                    };
                     filterConfiguration.push(configuration);
                 }
             }
         }
 
-        filterConfiguration.push(...this.manualFilterConfiguration);
-
         return filterConfiguration;
+    }
+
+    private getAllFilterDefinitions() {
+        return [
+            ...this.uiMainFilterDefinitionCollection,
+            ...this.uiSubfilterDefinitionCollection,
+            ...this.uiExpandedFilterDefinitionCollection,
+            ...this.uiManualFilterDefinitionCollection,
+        ];
     }
 
     private async fromDefinitionToConfiguration(
@@ -251,7 +270,7 @@ export class DefaultFilterService implements FilterService {
             trigger,
             target,
             targetValue,
-        }: Partial<SubfilterDefinition>,
+        }: FilterDefinition & Partial<SubfilterDefinition>,
         filter?: QueryFilter
     ): Promise<FilterConfiguration> {
         if (parent && trigger) {
@@ -271,27 +290,50 @@ export class DefaultFilterService implements FilterService {
                 },
             };
         }
-        const values = await this.isolateViewGateway.getUniqueAttributeValues(
-            attribute!,
-            filter
-        );
-        return {
-            id: id!,
-            parent,
-            trigger,
-            values,
-        };
+
+        let configuration: Partial<FilterConfiguration> | undefined =
+            this.findByIdInCollection(id, [...this.manualFilterConfiguration]);
+
+        if (!configuration) {
+            const values =
+                await this.isolateViewGateway.getUniqueAttributeValues(
+                    attribute,
+                    filter
+                );
+            configuration = {
+                id: id,
+                attribute: id,
+                parent,
+                trigger,
+                values,
+            };
+        }
+        if (!configuration) throw new Error();
+        return configuration as FilterConfiguration;
     }
 
     async createFilter(
         query: Record<string, string | string[]>
     ): Promise<QueryFilter> {
+        const idCollection = this.getAllFilterDefinitions().map((d) => d.id);
         return _.chain(query)
-            .pick((await this.getAllFilterConfiguration()).map((d) => d.id))
+            .pick(idCollection)
             .reduce((result, value, key: string) => {
                 result[key] = value;
                 return result;
             }, {} as QueryFilter)
             .value();
     }
+
+    private findByIdInCollection = (
+        id: string,
+        collection: Partial<{ id: string }>[]
+    ) => {
+        const findById = (e: Partial<{ id: string }>) => {
+            return e.id === id;
+        };
+
+        const found = _.find(collection, findById);
+        return found;
+    };
 }
