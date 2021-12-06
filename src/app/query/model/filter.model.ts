@@ -19,6 +19,7 @@ export type FilterService = FilterPort;
 export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration {
     readonly id: string;
+    readonly attribute: string;
     readonly parent?: string;
     readonly trigger?: string;
     readonly values: FilterValueCollection;

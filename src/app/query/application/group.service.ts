@@ -10,7 +10,7 @@ export class DefaultGroupService implements GroupService {
     ): GroupAttributes {
         return _.chain(query)
             .pick(['row', 'column'])
-            .reduce((result, value: string, key) => {
+            .reduce((result, value: string) => {
                 result.push(value);
                 return result;
             }, [] as string[])

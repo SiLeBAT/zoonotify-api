@@ -35,7 +35,7 @@ export abstract class AbstractController {
 
     protected fail(
         response: Response,
-        message = 'An unknown error occured'
+        message = 'An unknown error occurred'
     ): Response {
         const dto: DefaultServerErrorDTO = {
             code: SERVER_ERROR_CODE.UNKNOWN_ERROR,

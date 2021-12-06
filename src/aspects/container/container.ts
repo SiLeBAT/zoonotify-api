@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 
-// tslint:disable-next-line: no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getContainer(...args: any[]) {
     return new Container(...args);
 }
