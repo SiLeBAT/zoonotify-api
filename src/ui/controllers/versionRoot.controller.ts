@@ -7,7 +7,7 @@ import { ROUTE } from '../model/enums';
 import { AbstractController } from './abstract.controller';
 import { AppServerConfiguration } from '../model/server.model';
 import SERVER_TYPES from '../server.types';
-import { logger } from 'src/aspects';
+import { logger } from '../../aspects';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const openAPI = require('../doc/openapi_v1.json');
