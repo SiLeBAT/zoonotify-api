@@ -23,4 +23,8 @@ export {
     IsolateCount,
 } from './query/model/isolate.model';
 
-export { QueryFilter, GroupAttributes } from './query/model/shared.model';
+export {
+    QueryFilter,
+    GroupAttributes,
+    DependentQueryFilter,
+} from './query/model/shared.model';
