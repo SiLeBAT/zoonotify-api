@@ -8,7 +8,7 @@
     "start": "node ./lib/main.js",
     "serve": "npx nodemon -e ts --exec \"npm run serve:pipe\"",
     "debug": "npx nodemon -e ts --exec \"npm run debug:pipe\"",
-    "serve:pipe": "npm run build && node ./lib/main.js",
+    "serve:pipe": "npm run build && npm run test && node ./lib/main.js",
     "debug:pipe": "npm run build && node --inspect-brk ./lib/main.js",
     "cp:json": "npx copyfiles -u 1 ./src/**/*.json ./lib",
     "cp:all": "npm run cp:json",
@@ -18,14 +18,18 @@
     "clean": "npx rimraf lib/*",
     "lint": "npx eslint ./src --ext .js,.ts",
     "lint:fix": "npx eslint --fix ./src --ext .js,.ts",
-    "format": "npx prettier --write \"src/**/*.ts\""
+    "format": "npx prettier --write \"src/**/*.ts\"",
+    "test": "jest --config=jest.config.js",
+    "test:watch": "npm test -- --watch",
+    "test:coverage": "npm test -- --coverage && open coverage/lcov-report/index.html",
+    "test:report": "npm test -- --reporters default jest-stare --testResultsProcessor=jest-stare && open jest-stare/index.html"
   },
   "resolutions": {
     "tar": "4.4.19"
   },
   "private": true,
   "dependencies": {
-    "@SiLeBAT/fg43-ne-server": "^1.0.1",
+    "@SiLeBAT/fg43-ne-server": "^1.0.2",
     "app-root-dir": "^1.0.2",
     "compression": "^1.7.3",
     "config": "^1.29.4",
@@ -46,7 +50,7 @@
     "request-promise-native": "^1.0.9",
     "rxjs": "^6.6.7",
     "sequelize": "^6.6.5",
-    "swagger-ui-express": "^4.1.6",
+    "swagger-ui-express": "^4.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -59,6 +63,7 @@
     "@types/express-serve-static-core": "4.17.19",
     "@types/fs-readfile-promise": "^3.0.1",
     "@types/helmet": "0.0.42",
+    "@types/jest": "^27.0.1",
     "@types/jsonwebtoken": "^7.2.5",
     "@types/lodash": "^4.14.172",
     "@types/morgan": "^1.9.3",
@@ -77,8 +82,10 @@
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-prettier": "^3.1.3",
     "husky": "^7.0.4",
+    "jest": "~27.1.1",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.0",
+    "ts-jest": "27.0.5",
     "typescript": "^4.4.4"
   },
   "eslintConfig": {

@@ -41,7 +41,7 @@ export class DefaultFilterConfigController
         );
         try {
             const filterConfigs =
-                await this.filterService.getAllFilterConfiguration();
+                await this.filterService.getFilterConfigurationCollection();
 
             const dto: GetFilterConfigurationContainerDTO = {
                 filters: filterConfigs.map((config) =>
@@ -70,7 +70,7 @@ export class DefaultFilterConfigController
             );
 
             const filterConfig =
-                await this.filterService.getFilterConfiguration(id, filter);
+                await this.filterService.getFilterConfigurationById(id, filter);
 
             const dto: GetFilterConfigurationContainerDTO = {
                 filters: [this.filterConfigurationToDTO(filterConfig)],
