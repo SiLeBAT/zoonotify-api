@@ -18,7 +18,8 @@ declare type APIDefinition = any;
 @controller(ROUTE.VERSION)
 export class DefaultVersionRootController
     extends AbstractController
-    implements VersionRootController {
+    implements VersionRootController
+{
     private publicAPI: APIDefinition;
 
     constructor(
