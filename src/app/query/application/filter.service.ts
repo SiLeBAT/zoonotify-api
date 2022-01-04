@@ -195,13 +195,18 @@ export class DefaultFilterService implements FilterService {
         id: string,
         attributeReduction?: QueryFilter
     ): Promise<FilterConfiguration> {
+        let trueId = id;
+        if (this.determineFilterType(id) === FilterType.DYNAMIC) {
+            [trueId] = id.split('__');
+        }
         const definition = this.findByIdInCollection(
-            id,
+            trueId,
             this.getCombinedFilterDefinitions()
         );
 
-        if (!definition)
+        if (!definition) {
             throw new Error(`No Filter Configuration found for id: ${id}`);
+        }
 
         return this.fromDefinitionToConfiguration(
             definition as FilterDefinition,
