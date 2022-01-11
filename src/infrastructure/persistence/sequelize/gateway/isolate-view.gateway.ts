@@ -118,7 +118,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
 
     async getCount(
         filter: QueryFilter = {},
-        groupAttributes: GroupAttributes = [null, null]
+        groupAttributes: GroupAttributes = []
     ): Promise<IsolateCount> {
         logger.trace(
             `${this.constructor.name}.${this.getCount.name}, Executing with: ${filter}`
