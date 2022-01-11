@@ -5,15 +5,15 @@ import { GroupAttributes } from '../model/shared.model';
 
 @injectable()
 export class DefaultGroupService implements GroupService {
+    private static GROUPING_STRING = 'group-by';
     getGroupAttribute(
         query: Record<string, string | string[]>
     ): GroupAttributes {
-        return _.chain(query)
-            .pick(['row', 'column'])
-            .reduce((result, value: string) => {
-                result.push(value);
-                return result;
-            }, [] as string[])
-            .value() as GroupAttributes;
+        const queryStrings = query[DefaultGroupService.GROUPING_STRING];
+        if (_.isNil(queryStrings)) return [];
+        if (!_.isArray(queryStrings)) {
+            return [queryStrings];
+        }
+        return queryStrings;
     }
 }

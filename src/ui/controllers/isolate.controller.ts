@@ -72,11 +72,11 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolateCount.name}, Received: ${req}`
         );
         try {
-            const filter = await this.filterService.createFilter(
+            const groupAttributes = this.groupService.getGroupAttribute(
                 req.query as Record<string, string | string[]>
             );
 
-            const groupAttributes = this.groupService.getGroupAttribute(
+            const filter = await this.filterService.createFilter(
                 req.query as Record<string, string | string[]>
             );
 

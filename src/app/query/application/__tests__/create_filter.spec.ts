@@ -40,6 +40,17 @@ describe('Create Query Filter Use Case', () => {
             matrixDetail: 'Poolprobe',
         });
     });
+    it('should not include "group-by" parameter', async () => {
+        const result = await service.createFilter({
+            matrix: 'Blinddarminhalt',
+            matrixDetail: 'Poolprobe',
+            ['group-by']: 'microorganism',
+        });
+        expect(result).toStrictEqual({
+            matrix: 'Blinddarminhalt',
+            matrixDetail: 'Poolprobe',
+        });
+    });
     it('should return a filter with array', async () => {
         const result = await service.createFilter({
             matrix: ['Blinddarminhalt', 'Kot'],

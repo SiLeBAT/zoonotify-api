@@ -337,7 +337,16 @@ export class DefaultFilterService implements FilterService {
                     break;
                 case FilterType.MAIN:
                 default:
-                    independentFilter[key] = value;
+                    if (
+                        !_.isUndefined(
+                            this.findByIdInCollection(
+                                key,
+                                this.getCombinedFilterDefinitions()
+                            )
+                        )
+                    ) {
+                        independentFilter[key] = value;
+                    }
             }
         });
 
