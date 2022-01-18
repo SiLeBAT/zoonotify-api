@@ -133,4 +133,45 @@ describe('Create Query Filter Use Case', () => {
             ],
         });
     });
+    it('should return a resistance filter', async () => {
+        const result = await service.createFilter({
+            microorganism: 'Campylobacter spp.',
+            ['resistance__Campylobacter spp.']: 'GEN',
+        });
+        expect(result).toStrictEqual({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'GEN',
+                        resistance_active: 'true',
+                    },
+                },
+            ],
+        });
+    });
+    it('should return two resistance filter', async () => {
+        const result = await service.createFilter({
+            microorganism: 'Campylobacter spp.',
+            ['resistance__Campylobacter spp.']: ['GEN', 'CIP'],
+        });
+        expect(result).toStrictEqual({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'GEN',
+                        resistance_active: 'true',
+                    },
+                },
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'CIP',
+                        resistance_active: 'true',
+                    },
+                },
+            ],
+        });
+    });
 });

@@ -1,7 +1,11 @@
 import { injectable } from 'inversify';
 import * as _ from 'lodash';
 import { Op } from 'sequelize';
-import { QueryFilter, DependentQueryFilter } from '../../../../app/ports';
+import {
+    QueryFilter,
+    DependentQueryFilter,
+    QueryValue,
+} from '../../../../app/ports';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MyWhere = any;
@@ -44,11 +48,11 @@ export class SequelizeFilterConverter implements FilterConverter {
                     const parentAndChild = _.map(dependentFilters, (d) => {
                         return [
                             { [key]: d.trigger },
-                            {
-                                [Object.keys(d.dependent)[0]]: Object.values(
-                                    d.dependent
-                                )[0],
-                            },
+                            Object.entries(d.dependent).reduce((p, c) => {
+                                const accumulatedProperties = p;
+                                accumulatedProperties[c[0]] = c[1];
+                                return accumulatedProperties;
+                            }, {} as Record<string, QueryValue>),
                         ];
                     });
                     whereClause.where[Op.or] = [

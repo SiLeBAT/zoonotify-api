@@ -5,7 +5,7 @@ export type DependentQueryFilter = {
     };
 };
 
-type QueryValue = string | (string | DependentQueryFilter)[];
+export type QueryValue = string | (string | DependentQueryFilter)[];
 export interface EntityGateway<T> {
     findAll(filter?: QueryFilter): Promise<T[]>;
 }

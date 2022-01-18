@@ -24,6 +24,7 @@ export {
 } from './query/model/isolate.model';
 
 export {
+    QueryValue,
     QueryFilter,
     GroupAttributes,
     DependentQueryFilter,

@@ -99,4 +99,78 @@ describe('Filter Conversion Use Case', () => {
             },
         });
     });
+
+    it('should convert resistance filter', async () => {
+        const result = await service.convertFilter({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'GEN',
+                        resistance_active: 'true',
+                    },
+                },
+            ],
+        });
+        expect(result).toStrictEqual({
+            where: {
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            { microorganism: 'Campylobacter spp.' },
+                            {
+                                resistance: 'GEN',
+                                resistance_active: 'true',
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+    });
+
+    it('should convert two resistance filter', async () => {
+        const result = await service.convertFilter({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'GEN',
+                        resistance_active: 'true',
+                    },
+                },
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        resistance: 'CIP',
+                        resistance_active: 'true',
+                    },
+                },
+            ],
+        });
+        expect(result).toStrictEqual({
+            where: {
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            { microorganism: 'Campylobacter spp.' },
+                            {
+                                resistance: 'GEN',
+                                resistance_active: 'true',
+                            },
+                        ],
+                    },
+                    {
+                        [Op.and]: [
+                            { microorganism: 'Campylobacter spp.' },
+                            {
+                                resistance: 'CIP',
+                                resistance_active: 'true',
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+    });
 });

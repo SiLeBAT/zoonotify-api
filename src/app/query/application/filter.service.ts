@@ -1,4 +1,4 @@
-import { QueryParameters } from './../model/shared.model';
+import { QueryParameters, DependentQueryFilter } from './../model/shared.model';
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { IsolateViewGateway } from '../model/isolate.model';
@@ -166,6 +166,11 @@ export class DefaultFilterService implements FilterService {
             attribute: 'matrixDetail',
             parent: 'matrix',
         },
+        {
+            id: 'resistance',
+            attribute: 'resistance',
+            parent: 'microorganism',
+        },
     ];
 
     /* List of manually created Subfilters */
@@ -291,14 +296,27 @@ export class DefaultFilterService implements FilterService {
                         dependent,
                         this.uiDynamicFilterDefinitionCollection
                     ) as SubfilterDefinition;
-                    dependentFilters.push({
-                        parent: dynamicDefinition.parent,
-                        child: {
-                            trigger,
-                            dependent: {
-                                [dependent]: value,
+                    let dependentValue;
+                    if (!_.isArray(value)) {
+                        dependentValue = [value];
+                    } else {
+                        dependentValue = value;
+                    }
+                    dependentValue.map((v) => {
+                        const entry = {
+                            parent: dynamicDefinition.parent,
+                            child: {
+                                trigger,
+                                dependent: {
+                                    [dependent]: v,
+                                },
                             },
-                        },
+                        };
+
+                        if (dependent === 'resistance') {
+                            entry.child.dependent.resistance_active = 'true';
+                        }
+                        dependentFilters.push(entry);
                     });
                     break;
                 case FilterType.MANUAL:
@@ -395,11 +413,19 @@ export class DefaultFilterService implements FilterService {
                             ...d.child,
                         });
                     } else {
-                        allFilter[key] = [
-                            {
+                        if (_.isArray(allFilter[key])) {
+                            (
+                                allFilter[key] as Array<DependentQueryFilter>
+                            ).push({
                                 ...d.child,
-                            },
-                        ];
+                            });
+                        } else {
+                            allFilter[key] = [
+                                {
+                                    ...d.child,
+                                },
+                            ];
+                        }
                     }
                 });
             }
