@@ -36,12 +36,14 @@ interface ResistanceProfile {
     active: boolean;
 }
 export type IsolateResistance = Record<string, ResistanceProfile>;
+export type ResistanceCollection = Set<string>;
 export interface IsolatePort {
     getIsolates(filter: QueryFilter): Promise<IsolateCollection>;
     getIsolateCount(
         filter: QueryFilter,
         groupAttributes: GroupAttributes
     ): Promise<IsolateCount>;
+    getResistances(): Promise<ResistanceCollection>;
 }
 
 export type IsolateService = IsolatePort;
