@@ -6,11 +6,13 @@ import {
     VersionRootController,
     FilterConfigController,
     IsolateController,
+    ResistanceController,
 } from './model/controller.model';
 import SERVER_TYPES from './server.types';
 import { DefaultSystemInfoController } from './controllers/info.controller';
 import { DefaultDatabaseController } from './controllers/database.controller';
 import { DefaultVersionRootController } from './controllers/versionRoot.controller';
+import { DefaultResistanceController } from './controllers/resistance.controller';
 import { AppServerConfiguration } from './model/server.model';
 import { DefaultIsolateController } from './controllers/isolate.controller';
 
@@ -28,6 +30,10 @@ export function getServerContainerModule(
 
         bind<DatabaseController>(SERVER_TYPES.DatabaseController).to(
             DefaultDatabaseController
+        );
+
+        bind<ResistanceController>(SERVER_TYPES.ResistanceController).to(
+            DefaultResistanceController
         );
 
         bind<VersionRootController>(SERVER_TYPES.VersionRootController).to(

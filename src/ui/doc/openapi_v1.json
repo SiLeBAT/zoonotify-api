@@ -29,6 +29,10 @@
     {
       "name": "Isolate",
       "description": "Access to Isolat functions"
+    },
+    {
+      "name": "Resistance",
+      "description": "Access to Resistance functions"
     }
   ],
   "paths": {
@@ -95,7 +99,7 @@
     },
     "/isolate": {
       "get": {
-        "operationId": "getIsolates",
+        "operationId": "getIsolate",
         "tags": [
           "Isolate"
         ],
@@ -124,7 +128,7 @@
     },
     "/isolate/counted": {
       "get": {
-        "operationId": "getCountOfIsolates",
+        "operationId": "getIsolateCount",
         "tags": [
           "Isolate"
         ],
@@ -147,6 +151,24 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/GetCountedIsolatesSuccessResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/resistance": {
+      "get": {
+        "operationId": "getResistance",
+        "tags": [
+          "Resistance"
+        ],
+        "summary": "Get the resistances",
+        "description": "Retrieve the resistance dataset",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GetResistanceSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -205,6 +227,61 @@
         "items": {
           "$ref": "#/components/schemas/IsolatDTO"
         }
+      },
+      "GetResistanceSuccessResponseData": {
+        "type": "object",
+        "required": [
+          "resistances"
+        ],
+        "properties": {
+          "resistances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResistanceValues"
+            }
+          }
+        }
+      },
+      "ResistanceValues": {
+        "type": "string",
+        "description": "All of the resistances tested for at the BfR",
+        "enum": [
+          "AMP",
+          "AZI",
+          "CHL",
+          "CIP",
+          "CLI",
+          "COL",
+          "DAP",
+          "ERY",
+          "ETP",
+          "F/C",
+          "FEP",
+          "FOT",
+          "FOX",
+          "FUS",
+          "GEN",
+          "IMI",
+          "KAN",
+          "LZD",
+          "MERO",
+          "MUP",
+          "NAL",
+          "PEN",
+          "RIF",
+          "SMX",
+          "STR",
+          "SYN",
+          "T/C",
+          "TAZ",
+          "TEC",
+          "TET",
+          "TGC",
+          "TIA",
+          "TMP",
+          "TRM",
+          "VAN"
+        ]
       },
       "IsolatDTO": {
         "type": "object",
@@ -485,6 +562,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/GetIsolatesSuccessResponseData"
+            }
+          }
+        }
+      },
+      "GetResistanceSuccessResponse": {
+        "description": "Successful Resistance Dataset retrieval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetResistanceSuccessResponseData"
             }
           }
         }
