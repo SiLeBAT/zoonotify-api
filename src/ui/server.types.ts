@@ -4,7 +4,7 @@ const SERVER_TYPES = {
     DatabaseController: Symbol.for('DatabaseController'),
     FilterConfigController: Symbol.for('FilterConfigController'),
     IsolateController: Symbol.for('IsolateController'),
-    ResistanceController: Symbol.for('ResistanceController'),
+    MockDataController: Symbol.for('MockDataController'),
     VersionRootController: Symbol.for('VersionRootController'),
     APIDocsController: Symbol.for('APIDocsController'),
     SwaggerMW: Symbol.for('SwaggerMW'),
