@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
+    "preinstall": "npx npm-force-resolutions",
     "start": "node ./lib/main.js",
     "serve": "npx nodemon -e ts --exec \"npm run serve:pipe\"",
     "debug": "npx nodemon -e ts --exec \"npm run debug:pipe\"",
