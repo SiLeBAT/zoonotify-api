@@ -49,8 +49,12 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
         );
         try {
-            const filter = await this.filterResolutionService.createFilter(
+            const convertedQuery = this.parseURLQueryParameters(
                 req.query as Record<string, string | string[]>
+            );
+
+            const filter = await this.filterResolutionService.createFilter(
+                convertedQuery
             );
 
             const isolates: IsolateCollection =
@@ -72,12 +76,15 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolateCount.name}, Received: ${req}`
         );
         try {
-            const groupAttributes = this.groupService.getGroupAttribute(
+            const convertedQuery = this.parseURLQueryParameters(
                 req.query as Record<string, string | string[]>
             );
 
+            const groupAttributes =
+                this.groupService.getGroupAttribute(convertedQuery);
+
             const filter = await this.filterResolutionService.createFilter(
-                req.query as Record<string, string | string[]>
+                convertedQuery
             );
 
             const isolateCount = await this.isolateService.getIsolateCount(

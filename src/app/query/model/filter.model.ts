@@ -1,3 +1,4 @@
+import { FilterType } from './../domain/filter-type.enum';
 import {
     DependentQueryFilter,
     QueryFilter,
@@ -14,7 +15,11 @@ export interface FilterConfigurationPort {
     getFilterConfigurationCollection(): Promise<FilterConfigurationCollection>;
 }
 
-export type FilterConfigurationProvider = FilterConfigurationPort;
+export interface FilterConfigurationProvider extends FilterConfigurationPort {
+    determineFilterType(id: string): FilterType;
+    findDefinitionById(id: string, type?: FilterType): FilterDefinition;
+    parseDynamicFilterId(id: string): [string, string | undefined];
+}
 export interface FilterResolutionPort {
     createFilter(queryParameters: QueryParameters): Promise<QueryFilter>;
 }
@@ -25,15 +30,13 @@ export interface FilterNamesToAttributesHash {
 export type FilterResolutionService = FilterResolutionPort;
 
 export type FilterValueCollection = (string | number | boolean)[];
-export interface FilterConfiguration {
-    readonly id: string;
+export interface FilterConfiguration extends IdentifiedEntry {
     readonly parent?: string;
     readonly trigger?: string;
     readonly values: FilterValueCollection;
 }
 
-export interface FilterDefinition {
-    readonly id: string;
+export interface FilterDefinition extends IdentifiedEntry {
     readonly attribute: string;
 }
 
@@ -52,7 +55,7 @@ export interface FilterValueProvider {
 }
 
 export interface IdentifiedEntry {
-    id: string;
+    readonly id: string;
 }
 export interface DependentFilter {
     parent: string;
