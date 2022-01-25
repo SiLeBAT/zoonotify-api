@@ -10,7 +10,7 @@ import {
     APPLICATION_TYPES,
     IsolatePort,
     IsolateCollection,
-    FilterPort,
+    FilterResolutionPort,
     GroupPort,
     IsolateView,
 } from '../../app/ports';
@@ -35,8 +35,8 @@ export class DefaultIsolateController
     constructor(
         @inject(APPLICATION_TYPES.IsolateService)
         private isolateService: IsolatePort,
-        @inject(APPLICATION_TYPES.FilterService)
-        private filterService: FilterPort,
+        @inject(APPLICATION_TYPES.FilterResolutionService)
+        private filterResolutionService: FilterResolutionPort,
         @inject(APPLICATION_TYPES.GroupService)
         private groupService: GroupPort
     ) {
@@ -49,7 +49,7 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
         );
         try {
-            const filter = await this.filterService.createFilter(
+            const filter = await this.filterResolutionService.createFilter(
                 req.query as Record<string, string | string[]>
             );
 
@@ -76,7 +76,7 @@ export class DefaultIsolateController
                 req.query as Record<string, string | string[]>
             );
 
-            const filter = await this.filterService.createFilter(
+            const filter = await this.filterResolutionService.createFilter(
                 req.query as Record<string, string | string[]>
             );
 

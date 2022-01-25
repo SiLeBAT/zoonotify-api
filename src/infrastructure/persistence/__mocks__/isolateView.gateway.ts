@@ -1,4 +1,4 @@
-import { FederalState } from './../../../app/query/domain/federal-state.entity';
+import { FederalState } from '../../../app/query/domain/federal-state.enum';
 import { IsolateViewGateway } from './../../../app/ports';
 
 export function getMockIsolateViewGateway(): IsolateViewGateway {

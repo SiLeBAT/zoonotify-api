@@ -8,7 +8,7 @@ import {
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { FilterConfiguration } from '../../app/query/model/filter.model';
-import { FilterPort } from '../../app/ports';
+import { FilterResolutionPort, FilterConfigurationPort } from '../../app/ports';
 import {
     GetFilterConfigurationContainerDTO,
     FilterConfigurationDTO,
@@ -28,8 +28,10 @@ export class DefaultFilterConfigController
     implements FilterConfigController
 {
     constructor(
-        @inject(APPLICATION_TYPES.FilterService)
-        private filterService: FilterPort
+        @inject(APPLICATION_TYPES.FilterResolutionService)
+        private filterResolutionService: FilterResolutionPort,
+        @inject(APPLICATION_TYPES.FilterConfigurationProvider)
+        private filterConfigurationProvider: FilterConfigurationPort
     ) {
         super();
     }
@@ -41,7 +43,7 @@ export class DefaultFilterConfigController
         );
         try {
             const filterConfigs =
-                await this.filterService.getFilterConfigurationCollection();
+                await this.filterConfigurationProvider.getFilterConfigurationCollection();
 
             const dto: GetFilterConfigurationContainerDTO = {
                 filters: filterConfigs.map((config) =>
@@ -65,12 +67,15 @@ export class DefaultFilterConfigController
         );
 
         try {
-            const filter = await this.filterService.createFilter(
+            const filter = await this.filterResolutionService.createFilter(
                 req.query as Record<string, string | string[]>
             );
 
             const filterConfig =
-                await this.filterService.getFilterConfigurationById(id, filter);
+                await this.filterConfigurationProvider.getFilterConfigurationById(
+                    id,
+                    filter
+                );
 
             const dto: GetFilterConfigurationContainerDTO = {
                 filters: [this.filterConfigurationToDTO(filterConfig)],

@@ -1,4 +1,4 @@
-import { FilterService } from './../../model/filter.model';
+import { FilterResolutionService } from './../../model/filter.model';
 import { getContainer } from '../../../../aspects/container/container';
 import { Container } from 'inversify';
 import { mockPersistenceContainerModule } from '../../../../infrastructure/persistence/__mocks__/persistence-mock.module';
@@ -6,7 +6,7 @@ import { APPLICATION_TYPES } from '../../../application.types';
 import { getApplicationContainerModule } from '../../../ports';
 
 describe('Create Query Filter Use Case', () => {
-    let service: FilterService;
+    let service: FilterResolutionService;
     let container: Container | null;
     beforeEach(() => {
         container = getContainer();
@@ -18,7 +18,9 @@ describe('Create Query Filter Use Case', () => {
             }),
             mockPersistenceContainerModule
         );
-        service = container.get<FilterService>(APPLICATION_TYPES.FilterService);
+        service = container.get<FilterResolutionService>(
+            APPLICATION_TYPES.FilterResolutionService
+        );
     });
     afterEach(() => {
         container = null;

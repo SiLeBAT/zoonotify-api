@@ -1,5 +1,5 @@
 import { EntityGateway, QueryFilter, GroupAttributes } from './shared.model';
-import { FederalState } from '../domain/federal-state.entity';
+import { FederalState } from '../domain/federal-state.enum';
 
 export interface IsolateView {
     federalState: FederalState;
