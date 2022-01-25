@@ -1,5 +1,4 @@
 import { GroupService } from './../../model/group.model';
-import { FilterService } from './../../model/filter.model';
 import { getContainer } from '../../../../aspects/container/container';
 import { Container } from 'inversify';
 import { mockPersistenceContainerModule } from '../../../../infrastructure/persistence/__mocks__/persistence-mock.module';

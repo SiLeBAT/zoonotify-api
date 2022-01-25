@@ -95,7 +95,7 @@
     },
     "/isolate": {
       "get": {
-        "operationId": "getIsolates",
+        "operationId": "getIsolate",
         "tags": [
           "Isolate"
         ],
@@ -124,7 +124,7 @@
     },
     "/isolate/counted": {
       "get": {
-        "operationId": "getCountOfIsolates",
+        "operationId": "getIsolateCount",
         "tags": [
           "Isolate"
         ],
