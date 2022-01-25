@@ -9,7 +9,7 @@ export type QueryValue = string | (string | DependentQueryFilter)[];
 export interface EntityGateway<T> {
     findAll(filter?: QueryFilter): Promise<T[]>;
 }
-type QueryParametersValue = string | string[];
+type QueryParametersValue = string[];
 
 export type QueryParameters = Record<string, QueryParametersValue>;
 

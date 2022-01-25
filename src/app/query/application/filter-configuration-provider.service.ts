@@ -197,40 +197,85 @@ export class DefaultFilterConfigurationProvider
         },
     ];
 
-    async getFilterConfigurationById(
+    getFilterConfigurationById(
         id: string,
         attributeReduction?: QueryFilter
     ): Promise<FilterConfiguration> {
-        let trueId = id;
-        if (this.determineFilterType(id) === FilterType.DYNAMIC) {
-            [trueId] = id.split('__');
-        }
+        const [trueId] = this.parseDynamicFilterId(id);
         const definition = this.findByIdInCollection(
             trueId,
             this.getCombinedFilterDefinitions()
-        );
+        ) as FilterDefinition;
 
         if (!definition) {
             throw new Error(`No Filter Configuration found for id: ${id}`);
         }
 
         return this.fromDefinitionToConfiguration(
-            definition as FilterDefinition,
+            definition,
             attributeReduction
         );
     }
 
-    getFilterConfigurationCollection(): Promise<FilterConfigurationCollection> {
+    getFilterConfigurationCollection() {
         return this.filterConfigurationCollection;
     }
 
-    private getCombinedFilterDefinitions() {
-        return [
-            ...this.uiMainFilterDefinitionCollection,
-            ...this.uiSubfilterDefinitionCollection,
-            ...this.uiDynamicFilterDefinitionCollection,
-            ...this.uiManualFilterDefinitionCollection,
-        ];
+    determineFilterType(id: string) {
+        let type = FilterType.MAIN;
+
+        if (id.includes('__')) {
+            type = FilterType.DYNAMIC;
+        } else if (
+            this.findByIdInCollection(
+                id,
+                this.uiManualFilterDefinitionCollection
+            )
+        ) {
+            type = FilterType.MANUAL;
+        } else if (
+            this.findByIdInCollection(id, this.uiSubfilterDefinitionCollection)
+        ) {
+            type = FilterType.SUB;
+        }
+        return type;
+    }
+
+    findDefinitionById(id: string): FilterDefinition {
+        const type = this.determineFilterType(id);
+        let result;
+        switch (type) {
+            case FilterType.DYNAMIC:
+                result = this.findByIdInCollection(
+                    id,
+                    this.uiDynamicFilterDefinitionCollection
+                );
+                break;
+            case FilterType.MANUAL:
+                result = this.findByIdInCollection(
+                    id,
+                    this.uiManualFilterDefinitionCollection
+                );
+                break;
+            case FilterType.SUB:
+                result = this.findByIdInCollection(
+                    id,
+                    this.uiSubfilterDefinitionCollection
+                ) as SubfilterDefinition;
+                break;
+            case FilterType.MAIN:
+            default:
+                result = this.findByIdInCollection(
+                    id,
+                    this.getCombinedFilterDefinitions()
+                );
+        }
+        return (result as FilterDefinition) || null;
+    }
+
+    parseDynamicFilterId(id: string): [string, string | undefined] {
+        const [trueId, trigger] = id.split('__');
+        return [trueId, trigger];
     }
 
     private async fromDefinitionToConfiguration(
@@ -284,24 +329,13 @@ export class DefaultFilterConfigurationProvider
         return configuration as FilterConfiguration;
     }
 
-    private determineFilterType(id: string) {
-        let type = FilterType.MAIN;
-
-        if (id.includes('__')) {
-            type = FilterType.DYNAMIC;
-        } else if (
-            this.findByIdInCollection(
-                id,
-                this.uiManualFilterDefinitionCollection
-            )
-        ) {
-            type = FilterType.MANUAL;
-        } else if (
-            this.findByIdInCollection(id, this.uiSubfilterDefinitionCollection)
-        ) {
-            type = FilterType.SUB;
-        }
-        return type;
+    private getCombinedFilterDefinitions() {
+        return [
+            ...this.uiMainFilterDefinitionCollection,
+            ...this.uiSubfilterDefinitionCollection,
+            ...this.uiDynamicFilterDefinitionCollection,
+            ...this.uiManualFilterDefinitionCollection,
+        ];
     }
 
     private findByIdInCollection = (

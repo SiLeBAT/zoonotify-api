@@ -1,3 +1,4 @@
+import { QueryParameters } from './../../model/shared.model';
 import { FilterResolutionService } from './../../model/filter.model';
 import { getContainer } from '../../../../aspects/container/container';
 import { Container } from 'inversify';
@@ -25,32 +26,32 @@ describe('Create Query Filter Use Case', () => {
     afterEach(() => {
         container = null;
     });
+    const exampleQueryParameter: QueryParameters = {
+        matrix: ['Blinddarminhalt'],
+        matrixDetail: ['Poolprobe'],
+    };
+
     it('should return a promise', () => {
-        const result = service.createFilter({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-        });
+        const result = service.createFilter(exampleQueryParameter);
         expect(result).toBeInstanceOf(Promise);
     });
     it('should return a simple filter', async () => {
-        const result = await service.createFilter({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-        });
+        const result = await service.createFilter(exampleQueryParameter);
         expect(result).toStrictEqual({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
         });
     });
     it('should not include "group-by" parameter', async () => {
-        const result = await service.createFilter({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-            ['group-by']: 'microorganism',
-        });
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['microorganism'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
         expect(result).toStrictEqual({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
         });
     });
     it('should return a filter with array', async () => {
@@ -62,17 +63,19 @@ describe('Create Query Filter Use Case', () => {
         });
     });
     it('should return a manual filter', async () => {
-        const result = await service.createFilter({
-            genes: 'stx1_Gen',
-            microorganism: 'STEC',
-        });
+        const queryParameter: QueryParameters = {
+            genes: ['stx1_Gen'],
+            microorganism: ['STEC'],
+        };
+
+        const result = await service.createFilter(queryParameter);
         expect(result).toStrictEqual({
             microorganism: [
                 {
                     trigger: 'STEC',
                     dependent: {
                         characteristicValue: '+',
-                        characteristic: 'stx1_Gen',
+                        characteristic: ['stx1_Gen'],
                     },
                 },
             ],
@@ -80,15 +83,15 @@ describe('Create Query Filter Use Case', () => {
     });
     it('should return a dependent filter', async () => {
         const result = await service.createFilter({
-            entero_spez: 'Enterococcus faecalis',
-            microorganism: 'Enterococcus spp.',
+            entero_spez: ['Enterococcus faecalis'],
+            microorganism: ['Enterococcus spp.'],
         });
         expect(result).toStrictEqual({
             microorganism: [
                 {
                     trigger: 'Enterococcus spp.',
                     dependent: {
-                        characteristicValue: 'Enterococcus faecalis',
+                        characteristicValue: ['Enterococcus faecalis'],
                         characteristic: 'spez',
                     },
                 },
@@ -98,7 +101,7 @@ describe('Create Query Filter Use Case', () => {
     it('should return a dependent dynamic filter', async () => {
         const result = await service.createFilter({
             matrix: ['Blinddarminhalt', 'Kot'],
-            matrixDetail__Kot: 'Einzeltierprobe',
+            matrixDetail__Kot: ['Einzeltierprobe'],
         });
         expect(result).toStrictEqual({
             matrix: [
@@ -115,8 +118,8 @@ describe('Create Query Filter Use Case', () => {
     it('should return two dependent dynamic filter', async () => {
         const result = await service.createFilter({
             matrix: ['Blinddarminhalt', 'Kot'],
-            matrixDetail__Kot: 'Einzeltierprobe',
-            matrixDetail__Blinddarminhalt: 'Einzeltierprobe',
+            matrixDetail__Kot: ['Einzeltierprobe'],
+            matrixDetail__Blinddarminhalt: ['Einzeltierprobe'],
         });
         expect(result).toStrictEqual({
             matrix: [
@@ -137,8 +140,8 @@ describe('Create Query Filter Use Case', () => {
     });
     it('should return a resistance filter', async () => {
         const result = await service.createFilter({
-            microorganism: 'Campylobacter spp.',
-            ['resistance__Campylobacter spp.']: 'GEN',
+            microorganism: ['Campylobacter spp.'],
+            ['resistance__Campylobacter spp.']: ['GEN'],
         });
         expect(result).toStrictEqual({
             microorganism: [
@@ -154,7 +157,7 @@ describe('Create Query Filter Use Case', () => {
     });
     it('should return two resistance filter', async () => {
         const result = await service.createFilter({
-            microorganism: 'Campylobacter spp.',
+            microorganism: ['Campylobacter spp.'],
             ['resistance__Campylobacter spp.']: ['GEN', 'CIP'],
         });
         expect(result).toStrictEqual({

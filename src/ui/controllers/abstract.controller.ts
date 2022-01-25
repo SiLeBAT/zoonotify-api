@@ -3,7 +3,7 @@ import { controller } from 'inversify-express-utils';
 import { SERVER_ERROR_CODE } from '../model/enums';
 import { DefaultServerErrorDTO } from '../model/response.model';
 import { MalformedRequestError } from '../model/domain.error';
-
+import _ = require('lodash');
 @controller('')
 export abstract class AbstractController {
     protected jsonResponse<T>(
@@ -52,5 +52,20 @@ export abstract class AbstractController {
                 `Error parsing input. error=${error}`
             );
         }
+    }
+
+    protected parseURLQueryParameters(
+        urlQuery: Record<string, string | string[]>
+    ): Record<string, string[]> {
+        const result: Record<string, string[]> = {};
+        _.each(urlQuery, (value, key) => {
+            if (!_.isArray(value)) {
+                result[key] = [value];
+            } else {
+                result[key] = value;
+            }
+        });
+
+        return result;
     }
 }

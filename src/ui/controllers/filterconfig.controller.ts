@@ -67,8 +67,11 @@ export class DefaultFilterConfigController
         );
 
         try {
-            const filter = await this.filterResolutionService.createFilter(
+            const convertedQuery = this.parseURLQueryParameters(
                 req.query as Record<string, string | string[]>
+            );
+            const filter = await this.filterResolutionService.createFilter(
+                convertedQuery
             );
 
             const filterConfig =

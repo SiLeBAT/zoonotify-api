@@ -1,3 +1,4 @@
+import { QueryParameters } from './../../model/shared.model';
 import { GroupService } from './../../model/group.model';
 import { getContainer } from '../../../../aspects/container/container';
 import { Container } from 'inversify';
@@ -23,33 +24,34 @@ describe('Create Group Attribute Use Case', () => {
     afterEach(() => {
         container = null;
     });
+
+    const exampleQueryParameter: QueryParameters = {
+        matrix: ['Blinddarminhalt'],
+        matrixDetail: ['Poolprobe'],
+    };
     it('should return an array', () => {
-        const result = service.getGroupAttribute({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-        });
+        const result = service.getGroupAttribute(exampleQueryParameter);
         expect(result).toBeInstanceOf(Array);
     });
     it('should return no group attribute', async () => {
-        const result = await service.getGroupAttribute({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-        });
+        const result = await service.getGroupAttribute(exampleQueryParameter);
         expect(result).toStrictEqual([]);
     });
     it('should return a simple group attribute', async () => {
-        const result = await service.getGroupAttribute({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-            ['group-by']: 'microorganism',
-        });
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['microorganism'],
+        };
+        const result = await service.getGroupAttribute(enhancedQuery);
         expect(result).toStrictEqual(['microorganism']);
     });
     it('should return a group attribute with numerous values', async () => {
-        const result = await service.getGroupAttribute({
+        const queryParameter: QueryParameters = {
             matrix: ['Blinddarminhalt', 'Kot'],
             ['group-by']: ['microorganism', 'matrix'],
-        });
+        };
+
+        const result = await service.getGroupAttribute(queryParameter);
         expect(result).toStrictEqual(['microorganism', 'matrix']);
     });
 });

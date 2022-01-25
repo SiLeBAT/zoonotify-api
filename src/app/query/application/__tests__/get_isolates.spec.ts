@@ -1,4 +1,3 @@
-import { mockIsolates } from './../../../../infrastructure/persistence/__mocks__/isolateView.gateway';
 import { IsolateService } from './../../model/isolate.model';
 import { getContainer } from '../../../../aspects/container/container';
 import { Container } from 'inversify';
