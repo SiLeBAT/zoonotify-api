@@ -7,10 +7,14 @@ import {
 import { DefaultConfigurationService } from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
 import { DefaultIsolateService } from './query/application/isolat.service';
-import { DefaultFilterService } from './query/application/filter.service';
-import { FilterService } from './query/model/filter.model';
+import { DefaultFilterResolutionService } from './query/application/filter-resolution.service';
+import {
+    FilterResolutionService,
+    FilterConfigurationProvider,
+} from './query/model/filter.model';
 import { GroupService } from './query/model/group.model';
 import { DefaultGroupService } from './query/application/group.service';
+import { DefaultFilterConfigurationProvider } from './query/application/filter-configuration-provider.service';
 
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
@@ -24,9 +28,13 @@ export function getApplicationContainerModule(
             DefaultConfigurationService
         );
 
-        bind<FilterService>(APPLICATION_TYPES.FilterService).to(
-            DefaultFilterService
-        );
+        bind<FilterResolutionService>(
+            APPLICATION_TYPES.FilterResolutionService
+        ).to(DefaultFilterResolutionService);
+
+        bind<FilterConfigurationProvider>(
+            APPLICATION_TYPES.FilterConfigurationProvider
+        ).to(DefaultFilterConfigurationProvider);
 
         bind<GroupService>(APPLICATION_TYPES.GroupService).to(
             DefaultGroupService

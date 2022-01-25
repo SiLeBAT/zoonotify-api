@@ -9,8 +9,11 @@ export { APPLICATION_TYPES } from './application.types';
 /**
  * query exports
  */
-export { FederalState } from './query/domain/federal-state.entity';
-export { FilterPort } from './query/model/filter.model';
+export { FederalState } from './query/domain/federal-state.enum';
+export {
+    FilterResolutionPort,
+    FilterConfigurationPort,
+} from './query/model/filter.model';
 export { GroupPort } from './query/model/group.model';
 
 export {

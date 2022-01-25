@@ -6,19 +6,23 @@ import {
 
 export type FilterConfigurationCollection = FilterConfiguration[];
 
-export interface FilterPort {
+export interface FilterConfigurationPort {
     getFilterConfigurationById(
         id: string,
         filter?: QueryFilter
     ): Promise<FilterConfiguration>;
     getFilterConfigurationCollection(): Promise<FilterConfigurationCollection>;
+}
+
+export type FilterConfigurationProvider = FilterConfigurationPort;
+export interface FilterResolutionPort {
     createFilter(queryParameters: QueryParameters): Promise<QueryFilter>;
 }
 
 export interface FilterNamesToAttributesHash {
     [key: string]: string;
 }
-export type FilterService = FilterPort;
+export type FilterResolutionService = FilterResolutionPort;
 
 export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration {

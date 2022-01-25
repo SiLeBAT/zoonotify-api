@@ -1,4 +1,3 @@
-import { QueryParameters, DependentQueryFilter } from './../model/shared.model';
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { IsolateViewGateway } from '../model/isolate.model';
@@ -7,22 +6,24 @@ import {
     SubfilterDefinition,
     SubfilterDefinitionCollection,
     FilterDefinition,
-    DependentFilter,
     IdentifiedEntry,
 } from '../model/filter.model';
 
 // npm
 import {
     FilterConfiguration,
-    FilterService,
+    FilterConfigurationProvider,
     FilterConfigurationCollection,
 } from '../model/filter.model';
 import { APPLICATION_TYPES } from '../../application.types';
 import { QueryFilter } from '../model/shared.model';
 import { logger } from '../../../aspects';
+import { FilterType } from '../domain/filter-type.enum';
 
 @injectable()
-export class DefaultFilterService implements FilterService {
+export class DefaultFilterConfigurationProvider
+    implements FilterConfigurationProvider
+{
     private filterConfigurationCollection: Promise<FilterConfigurationCollection>;
     constructor(
         @inject(APPLICATION_TYPES.IsolateViewGateway)
@@ -283,98 +284,6 @@ export class DefaultFilterService implements FilterService {
         return configuration as FilterConfiguration;
     }
 
-    async createFilter(query: QueryParameters): Promise<QueryFilter> {
-        const dependentFilters: DependentFilter[] = [];
-        const independentFilter: QueryFilter = {};
-
-        _.forEach(query, (value, key) => {
-            const filterType = this.determineFilterType(key);
-            switch (filterType) {
-                case FilterType.DYNAMIC:
-                    const [dependent, trigger] = key.split('__');
-                    const dynamicDefinition = this.findByIdInCollection(
-                        dependent,
-                        this.uiDynamicFilterDefinitionCollection
-                    ) as SubfilterDefinition;
-                    let dependentValue;
-                    if (!_.isArray(value)) {
-                        dependentValue = [value];
-                    } else {
-                        dependentValue = value;
-                    }
-                    dependentValue.map((v) => {
-                        const entry = {
-                            parent: dynamicDefinition.parent,
-                            child: {
-                                trigger,
-                                dependent: {
-                                    [dependent]: v,
-                                },
-                            },
-                        };
-
-                        if (dependent === 'resistance') {
-                            entry.child.dependent.resistance_active = 'true';
-                        }
-                        dependentFilters.push(entry);
-                    });
-                    break;
-                case FilterType.MANUAL:
-                    const manualDefinition = this.findByIdInCollection(
-                        key,
-                        this.uiManualFilterDefinitionCollection
-                    ) as SubfilterDefinition;
-                    dependentFilters.push({
-                        parent: manualDefinition.parent,
-                        child: {
-                            trigger: manualDefinition.trigger,
-                            dependent: {
-                                [manualDefinition.attribute]: value,
-                                [manualDefinition.target]:
-                                    manualDefinition.targetValue,
-                            },
-                        },
-                    });
-                    break;
-                case FilterType.SUB:
-                    const subFilterDefinition = this.findByIdInCollection(
-                        key,
-                        this.uiSubfilterDefinitionCollection
-                    ) as SubfilterDefinition;
-                    dependentFilters.push({
-                        parent: subFilterDefinition.parent,
-                        child: {
-                            trigger: subFilterDefinition.trigger,
-                            dependent: {
-                                [subFilterDefinition.attribute]: value,
-                                [subFilterDefinition.target]:
-                                    subFilterDefinition.targetValue,
-                            },
-                        },
-                    });
-                    break;
-                case FilterType.MAIN:
-                default:
-                    if (
-                        !_.isUndefined(
-                            this.findByIdInCollection(
-                                key,
-                                this.getCombinedFilterDefinitions()
-                            )
-                        )
-                    ) {
-                        independentFilter[key] = value;
-                    }
-            }
-        });
-
-        const queryFilter = this.mergeDependentIntoIndependentFilter(
-            dependentFilters,
-            independentFilter
-        );
-        return queryFilter;
-    }
-
     private determineFilterType(id: string) {
         let type = FilterType.MAIN;
 
@@ -393,45 +302,6 @@ export class DefaultFilterService implements FilterService {
             type = FilterType.SUB;
         }
         return type;
-    }
-
-    private mergeDependentIntoIndependentFilter(
-        dependentFilters: DependentFilter[],
-        independentFilter: QueryFilter
-    ) {
-        const allFilter = { ...independentFilter };
-        _.forEach(allFilter, (value, key) => {
-            const dependents = _.filter(
-                dependentFilters,
-                (e) => e.parent === key
-            );
-            if (dependents.length > 0) {
-                _.forEach(dependents, (d) => {
-                    _.remove(value, (e) => e === d.child.trigger);
-                    if (_.isArray(value)) {
-                        value.push({
-                            ...d.child,
-                        });
-                    } else {
-                        if (_.isArray(allFilter[key])) {
-                            (
-                                allFilter[key] as Array<DependentQueryFilter>
-                            ).push({
-                                ...d.child,
-                            });
-                        } else {
-                            allFilter[key] = [
-                                {
-                                    ...d.child,
-                                },
-                            ];
-                        }
-                    }
-                });
-            }
-        });
-
-        return allFilter;
     }
 
     private findByIdInCollection = (
@@ -524,11 +394,4 @@ export class DefaultFilterService implements FilterService {
         }
         return result;
     }
-}
-
-enum FilterType {
-    DYNAMIC,
-    MAIN,
-    SUB,
-    MANUAL,
 }
