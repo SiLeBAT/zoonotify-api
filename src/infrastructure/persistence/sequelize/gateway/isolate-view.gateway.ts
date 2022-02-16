@@ -20,6 +20,7 @@ import {
     GroupAttributes,
 } from '../../../../app/ports';
 import { logger } from '../../../../aspects';
+import { characteristicMap } from '../service/utils.service';
 
 @injectable()
 export class SequelizeIsolateViewGateway implements IsolateViewGateway {
@@ -49,10 +50,13 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     private static getCharacteristic(
         model: IsolateViewModel
     ): IsolateCharacteristics {
-        const characteristics: IsolateCharacteristics = {
-            [model.characteristic]: model.characteristicValue,
-        };
-        return characteristics;
+        const characteristicKey = characteristicMap.get(model.characteristic);
+        if (!_.isUndefined(characteristicKey)) {
+            return {
+                [characteristicKey]: model.characteristicValue,
+            };
+        }
+        return {};
     }
 
     private static getResistance(model: IsolateViewModel): IsolateResistance {

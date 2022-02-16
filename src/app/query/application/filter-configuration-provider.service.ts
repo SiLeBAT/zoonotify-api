@@ -91,7 +91,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'CARBA-E. coli',
                 target: 'characteristic',
-                targetValue: 'AmpC_Carba_Phänotyp',
+                targetValue: 'carba_ampc_carba_phenotype',
             },
             {
                 id: 'esbl_ampc_carba_phenotype',
@@ -99,7 +99,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'ESBL/AmpC-E. coli',
                 target: 'characteristic',
-                targetValue: 'AmpC_Carba_Phänotyp',
+                targetValue: 'esbl_ampc_carba_phenotype',
             },
             {
                 id: 'campy_spez',
@@ -123,7 +123,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Listeria monocytogenes',
                 target: 'characteristic',
-                targetValue: 'serotyp',
+                targetValue: 'serotype',
             },
             {
                 id: 'spa_type',
@@ -131,7 +131,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                targetValue: 'spa_Typ',
+                targetValue: 'spa_type',
             },
             {
                 id: 'clonal_group',
@@ -139,7 +139,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                targetValue: 'Klonale_Gruppe',
+                targetValue: 'clonal_group',
             },
             {
                 id: 'o_group',
@@ -147,7 +147,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                targetValue: 'O_Gruppe',
+                targetValue: 'o_group',
             },
             {
                 id: 'h_group',
@@ -155,7 +155,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                targetValue: 'H_Gruppe',
+                targetValue: 'h_group',
             },
         ];
 
@@ -193,7 +193,7 @@ export class DefaultFilterConfigurationProvider
             id: 'genes',
             parent: 'microorganism',
             trigger: 'STEC',
-            values: ['stx1_Gen', 'stx2_Gen', 'eae_Gen', 'e_hly_Gen'],
+            values: ['stx1', 'stx2', 'eae', 'e_hly'],
         },
     ];
 

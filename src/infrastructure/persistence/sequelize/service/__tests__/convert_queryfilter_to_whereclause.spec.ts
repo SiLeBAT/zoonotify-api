@@ -173,4 +173,33 @@ describe('Filter Conversion Use Case', () => {
             },
         });
     });
+
+    it('should convert characteristic filter', async () => {
+        const result = await service.convertFilter({
+            microorganism: [
+                {
+                    trigger: 'STEC',
+                    dependent: {
+                        characteristic: 'o_group',
+                        characteristicValue: '116',
+                    },
+                },
+            ],
+        });
+        expect(result).toStrictEqual({
+            where: {
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            { microorganism: 'STEC' },
+                            {
+                                characteristic: 'O_Gruppe',
+                                characteristicValue: '116',
+                            },
+                        ],
+                    },
+                ],
+            },
+        });
+    });
 });
