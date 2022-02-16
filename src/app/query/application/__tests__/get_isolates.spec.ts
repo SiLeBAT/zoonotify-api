@@ -50,4 +50,22 @@ describe('Get Isolates Use Case', () => {
         expect(entry.resistance['GEN'].active).toBeTruthy;
         expect(entry.resistance['KAN'].active).toBeFalsy;
     });
+    it('should return one O_Gruppe 166 entry', async () => {
+        const result = await service.getIsolates({
+            microorganism: [
+                {
+                    trigger: 'STEC',
+                    dependent: {
+                        characteristic: 'o_group',
+                        characteristicValue: '184',
+                    },
+                },
+            ],
+        });
+
+        expect(result.length).toEqual(1);
+        const entry = result[0];
+        expect(entry.characteristics['o_group']).toEqual('184');
+        expect(entry.characteristics['h_group']).toEqual('2');
+    });
 });

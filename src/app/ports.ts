@@ -5,6 +5,7 @@ export { getApplicationContainerModule } from './application.module';
 export { ApplicationConfiguration } from './core/model/configuration.model';
 export { ConfigurationService } from './core/model/configuration.model';
 export { APPLICATION_TYPES } from './application.types';
+export { BidirectionalMap } from './core/domain/bidirectional.map';
 
 /**
  * query exports

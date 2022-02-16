@@ -101,6 +101,7 @@ export class DefaultFilterResolutionService implements FilterResolutionService {
             if (id === 'resistance') {
                 entry.child.dependent.resistance_active = 'true';
             }
+
             return entry;
         });
     }

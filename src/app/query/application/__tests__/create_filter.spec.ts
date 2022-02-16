@@ -64,7 +64,7 @@ describe('Create Query Filter Use Case', () => {
     });
     it('should return a manual filter', async () => {
         const queryParameter: QueryParameters = {
-            genes: ['stx1_Gen'],
+            genes: ['stx1'],
             microorganism: ['STEC'],
         };
 
@@ -75,7 +75,7 @@ describe('Create Query Filter Use Case', () => {
                     trigger: 'STEC',
                     dependent: {
                         characteristicValue: '+',
-                        characteristic: ['stx1_Gen'],
+                        characteristic: ['stx1'],
                     },
                 },
             ],
@@ -174,6 +174,23 @@ describe('Create Query Filter Use Case', () => {
                     dependent: {
                         resistance: 'CIP',
                         resistance_active: 'true',
+                    },
+                },
+            ],
+        });
+    });
+    it('should return a characteristic filter', async () => {
+        const result = await service.createFilter({
+            microorganism: ['STEC'],
+            ['o_group']: ['116'],
+        });
+        expect(result).toStrictEqual({
+            microorganism: [
+                {
+                    trigger: 'STEC',
+                    dependent: {
+                        characteristic: 'o_group',
+                        characteristicValue: ['116'],
                     },
                 },
             ],

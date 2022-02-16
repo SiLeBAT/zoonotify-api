@@ -6,6 +6,7 @@ import {
     DependentQueryFilter,
     QueryValue,
 } from '../../../../app/ports';
+import { characteristicMap } from './utils.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MyWhere = any;
@@ -57,7 +58,19 @@ export class SequelizeFilterConverter implements FilterConverter {
                     });
                     whereClause.where[Op.or] = [
                         ...whereClause.where[Op.or],
-                        ...parentAndChild.map((e) => ({ [Op.and]: e })),
+                        ...parentAndChild.map((e) => {
+                            const mappedValues = e.map((entry) =>
+                                _.mapValues(entry, (val) => {
+                                    let newValue = val;
+                                    if (_.isString(val)) {
+                                        newValue =
+                                            characteristicMap.get(val) || val;
+                                    }
+                                    return newValue;
+                                })
+                            );
+                            return { [Op.and]: mappedValues };
+                        }),
                     ];
                 } else {
                     whereClause.where[key] = stringValues;
