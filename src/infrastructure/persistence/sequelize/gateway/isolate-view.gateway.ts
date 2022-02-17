@@ -60,6 +60,9 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     }
 
     private static getResistance(model: IsolateViewModel): IsolateResistance {
+        if (_.isNull(model.resistance)) {
+            return {};
+        }
         const resistance: IsolateResistance = {
             [model.resistance]: {
                 active: model.resistanceActive,
