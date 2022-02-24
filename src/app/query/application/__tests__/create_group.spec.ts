@@ -54,4 +54,20 @@ describe('Create Group Attribute Use Case', () => {
         const result = await service.getGroupAttribute(queryParameter);
         expect(result).toStrictEqual(['microorganism', 'matrix']);
     });
+    it('should return a characteristic group attribute', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['h_group'],
+        };
+        const result = await service.getGroupAttribute(enhancedQuery);
+        expect(result).toStrictEqual(['characteristicValue']);
+    });
+    it('should return a characteristic group attribute', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['genes'],
+        };
+        const result = await service.getGroupAttribute(enhancedQuery);
+        expect(result).toStrictEqual(['characteristic']);
+    });
 });

@@ -196,4 +196,91 @@ describe('Create Query Filter Use Case', () => {
             ],
         });
     });
+    it('should include genes characteristics parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['genes'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['stx1', 'stx2', 'eae', 'e_hly'],
+            characteristic_value: ['+'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
+    it('should include o_group characteristics parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['o_group'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['o_group'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
+
+    it('should include spez characteristics and Campy microorganism parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['campy_spez'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['spez'],
+            microorganism: ['Campylobacter spp.'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
+
+    it('should include spez characteristics and Entero microorganism parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['entero_spez'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['spez'],
+            microorganism: ['Enterococcus spp.'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
+
+    it('should include ampc_carba_phenotype characteristics and CARBA-E. coli microorganism parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['carba_ampc_carba_phenotype'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['ampc_carba_phenotype'],
+            microorganism: ['CARBA-E. coli'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
+
+    it('should include ampc_carba_phenotype characteristics and ESBL/AmpC-E. coli microorganism parameter because of group-by', async () => {
+        const enhancedQuery: QueryParameters = {
+            ...exampleQueryParameter,
+            ['group-by']: ['esbl_ampc_carba_phenotype'],
+        };
+
+        const result = await service.createFilter(enhancedQuery);
+        expect(result).toStrictEqual({
+            characteristic: ['ampc_carba_phenotype'],
+            microorganism: ['ESBL/AmpC-E. coli'],
+            matrix: ['Blinddarminhalt'],
+            matrixDetail: ['Poolprobe'],
+        });
+    });
 });

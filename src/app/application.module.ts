@@ -43,5 +43,7 @@ export function getApplicationContainerModule(
         bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
             DefaultIsolateService
         );
+
+        bind(APPLICATION_TYPES.GroupingString).toConstantValue('group-by');
     });
 }

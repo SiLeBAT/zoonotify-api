@@ -38,7 +38,7 @@ export class SequelizeFilterConverter implements FilterConverter {
                     if (this.isDependentQueryFilter(v)) {
                         dependentFilters.push(v);
                     } else {
-                        stringValues.push(v);
+                        stringValues.push(characteristicMap.get(v) || v);
                     }
                 });
                 if (dependentFilters.length > 0) {
