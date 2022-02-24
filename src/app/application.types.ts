@@ -4,6 +4,7 @@ export const APPLICATION_TYPES = {
     FilterResolutionService: Symbol.for('FilterResolutionService'),
     FilterConfigurationProvider: Symbol.for('FilterConfigurationProvider'),
     GroupService: Symbol.for('GroupService'),
+    GroupingString: Symbol.for('GroupingString'),
     IsolateService: Symbol.for('IsolateService'),
     IsolateViewGateway: Symbol.for('IsolateViewGateway'),
 };

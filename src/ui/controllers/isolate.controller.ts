@@ -82,7 +82,6 @@ export class DefaultIsolateController
 
             const groupAttributes =
                 this.groupService.getGroupAttribute(convertedQuery);
-
             const filter = await this.filterResolutionService.createFilter(
                 convertedQuery
             );

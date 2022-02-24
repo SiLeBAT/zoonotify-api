@@ -18,11 +18,145 @@ import { FilterType } from '../domain/filter-type.enum';
 export class DefaultFilterResolutionService implements FilterResolutionService {
     constructor(
         @inject(APPLICATION_TYPES.FilterConfigurationProvider)
-        private filterConfigurationProvider: FilterConfigurationProvider
+        private filterConfigurationProvider: FilterConfigurationProvider,
+        @inject(APPLICATION_TYPES.GroupingString)
+        private groupingString: string
     ) {}
     async createFilter(query: QueryParameters): Promise<QueryFilter> {
         const dependentFilters: DependentFilter[] = [];
         const independentFilter: QueryFilter = {};
+
+        if (!_.isUndefined(query[this.groupingString])) {
+            query[this.groupingString].forEach((group) => {
+                switch (group) {
+                    case 'genes':
+                        if (
+                            _.isNil(independentFilter['characteristic_value'])
+                        ) {
+                            independentFilter['characteristic_value'] = ['+'];
+                        } else {
+                            independentFilter['characteristic_value'] = _.uniq([
+                                ...independentFilter['characteristic_value'],
+                                ...['+'],
+                            ]);
+                        }
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = [
+                                'stx1',
+                                'stx2',
+                                'eae',
+                                'e_hly',
+                            ];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...['stx1', 'stx2', 'eae', 'e_hly'],
+                            ]);
+                        }
+                        break;
+                    case 'o_group':
+                    case 'h_group':
+                    case 'serovar':
+                    case 'serotyp':
+                    case 'clonal_group':
+                    case 'spa_type':
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = [group];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...[group],
+                            ]);
+                        }
+                        break;
+                    case 'campy_spez':
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = ['spez'];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...['spez'],
+                            ]);
+                        }
+                        if (_.isNil(independentFilter['microorganism'])) {
+                            independentFilter['microorganism'] = [
+                                'Campylobacter spp.',
+                            ];
+                        } else {
+                            independentFilter['microorganism'] = _.uniq([
+                                ...independentFilter['microorganism'],
+                                ...['Campylobacter spp.'],
+                            ]);
+                        }
+                        break;
+                    case 'entero_spez':
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = ['spez'];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...['spez'],
+                            ]);
+                        }
+                        if (_.isNil(independentFilter['microorganism'])) {
+                            independentFilter['microorganism'] = [
+                                'Enterococcus spp.',
+                            ];
+                        } else {
+                            independentFilter['microorganism'] = _.uniq([
+                                ...independentFilter['microorganism'],
+                                ...['Enterococcus spp.'],
+                            ]);
+                        }
+                        break;
+                    case 'carba_ampc_carba_phenotype':
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = [
+                                'ampc_carba_phenotype',
+                            ];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...['ampc_carba_phenotype'],
+                            ]);
+                        }
+                        if (_.isNil(independentFilter['microorganism'])) {
+                            independentFilter['microorganism'] = [
+                                'CARBA-E. coli',
+                            ];
+                        } else {
+                            independentFilter['microorganism'] = _.uniq([
+                                ...independentFilter['microorganism'],
+                                ...['CARBA-E. coli'],
+                            ]);
+                        }
+                        break;
+                    case 'esbl_ampc_carba_phenotype':
+                        if (_.isNil(independentFilter['characteristic'])) {
+                            independentFilter['characteristic'] = [
+                                'ampc_carba_phenotype',
+                            ];
+                        } else {
+                            independentFilter['characteristic'] = _.uniq([
+                                ...independentFilter['characteristic'],
+                                ...['ampc_carba_phenotype'],
+                            ]);
+                        }
+                        if (_.isNil(independentFilter['microorganism'])) {
+                            independentFilter['microorganism'] = [
+                                'ESBL/AmpC-E. coli',
+                            ];
+                        } else {
+                            independentFilter['microorganism'] = _.uniq([
+                                ...independentFilter['microorganism'],
+                                ...['ESBL/AmpC-E. coli'],
+                            ]);
+                        }
+                        break;
+                    default:
+                }
+            });
+        }
 
         _.forEach(query, (value, key) => {
             const filterType =
@@ -67,10 +201,11 @@ export class DefaultFilterResolutionService implements FilterResolutionService {
                     }
                     break;
                 case FilterType.MAIN:
-                default:
                     if (!_.isNull(definition)) {
                         independentFilter[filterId] = value;
                     }
+                    break;
+                default:
             }
         });
 
@@ -78,6 +213,7 @@ export class DefaultFilterResolutionService implements FilterResolutionService {
             dependentFilters,
             independentFilter
         );
+
         return queryFilter;
     }
 
