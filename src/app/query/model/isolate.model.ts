@@ -35,7 +35,7 @@ interface ResistanceProfile {
     value: string;
     active: boolean;
 }
-export type IsolateResistance = Record<string, ResistanceProfile>;
+export type IsolateResistance = Record<string, ResistanceProfile | undefined>;
 export interface IsolatePort {
     getIsolates(filter: QueryFilter): Promise<IsolateCollection>;
     getIsolateCount(

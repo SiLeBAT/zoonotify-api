@@ -1,5 +1,6 @@
 import { FederalState } from '../../../app/query/domain/federal-state.enum';
 import { IsolateViewGateway } from './../../../app/ports';
+import * as _ from 'lodash';
 
 export function getMockIsolateViewGateway(): IsolateViewGateway {
     return {
@@ -9,8 +10,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
             })
         ),
         getUniqueAttributeValues: jest.fn(() => Promise.resolve([])),
-        findAll: jest.fn(() =>
-            Promise.resolve([
+        findAll: jest.fn((flag) => {
+            const resultArray = [
                 {
                     id: 1,
                     microorganism: 'STEC',
@@ -381,8 +382,59 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                         },
                     },
                 },
-            ])
-        ),
+                {
+                    id: 5,
+                    microorganism: 'Campylobacter spp.',
+                    samplingYear: '1999',
+                    federalState: FederalState.HH,
+                    samplingContext: 'Looking',
+                    samplingStage: 'Here',
+                    origin: 'Lebensmittel',
+                    category: 'Leprechaun',
+                    productionType: 'Leprechaun',
+                    matrix: '(Hals)haut',
+                    matrixDetail: 'Einzel(tier)probe',
+                    characteristics: {
+                        spez: 'C. coli',
+                    },
+                    resistance: {
+                        GEN: {
+                            active: false,
+                            value: '0.5',
+                        },
+                        STR: {
+                            active: true,
+                            value: '32',
+                        },
+                        CIP: {
+                            active: true,
+                            value: '8',
+                        },
+                        TET: {
+                            active: true,
+                            value: '16',
+                        },
+                        ERY: {
+                            active: false,
+                            value: '1',
+                        },
+                        NAL: {
+                            active: true,
+                            value: '32',
+                        },
+                    },
+                },
+            ];
+            const f = flag || {};
+            const result = _.filter(resultArray, (e) => {
+                return (
+                    !Boolean(f['microorganism']) ||
+                    (Boolean(f['microorganism']) &&
+                        f['microorganism'].includes(e.microorganism))
+                );
+            });
+            return Promise.resolve(result);
+        }),
     };
 }
 
@@ -1149,6 +1201,48 @@ export const mockIsolates = [
             MERO: {
                 active: false,
                 value: '0.03',
+            },
+        },
+    },
+    {
+        id: 11,
+        microorganism: 'Campylobacter spp.',
+        samplingYear: '1999',
+        federalState: FederalState.HH,
+        samplingContext: 'Looking',
+        samplingStage: 'Here',
+        origin: 'Lebensmittel',
+        category: 'Leprechaun',
+        productionType: 'Leprechaun',
+        matrix: '(Hals)haut',
+        matrixDetail: 'Einzel(tier)probe',
+        characteristics: {
+            spez: 'C. coli',
+        },
+        resistance: {
+            GEN: {
+                active: false,
+                value: '0.5',
+            },
+            STR: {
+                active: true,
+                value: '32',
+            },
+            CIP: {
+                active: true,
+                value: '8',
+            },
+            TET: {
+                active: true,
+                value: '16',
+            },
+            ERY: {
+                active: false,
+                value: '1',
+            },
+            NAL: {
+                active: true,
+                value: '32',
             },
         },
     },

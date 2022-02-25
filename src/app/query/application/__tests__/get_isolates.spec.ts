@@ -31,7 +31,7 @@ describe('Get Isolates Use Case', () => {
     });
     it('should return the complete data set', async () => {
         const result = await service.getIsolates({});
-        expect(result.length).toEqual(5);
+        expect(result.length).toEqual(6);
     });
     it('should return one GEN positive', async () => {
         const result = await service.getIsolates({
@@ -47,10 +47,10 @@ describe('Get Isolates Use Case', () => {
         });
         expect(result.length).toEqual(1);
         const entry = result[0];
-        expect(entry.resistance['GEN'].active).toBeTruthy;
-        expect(entry.resistance['KAN'].active).toBeFalsy;
+        expect(entry.resistance['GEN']?.active).toBeTruthy;
+        expect(entry.resistance['KAN']?.active).toBeFalsy;
     });
-    it('should return one O_Gruppe 166 entry', async () => {
+    it('should return one O_Gruppe 184 entry', async () => {
         const result = await service.getIsolates({
             microorganism: [
                 {
@@ -67,5 +67,74 @@ describe('Get Isolates Use Case', () => {
         const entry = result[0];
         expect(entry.characteristics['o_group']).toEqual('184');
         expect(entry.characteristics['h_group']).toEqual('2');
+    });
+    it('should return all entries', async () => {
+        const result = await service.getIsolates({
+            microorganism: ['STEC', 'Campylobacter spp.'],
+        });
+
+        expect(result.length).toEqual(6);
+    });
+    it('should return all 6 entries', async () => {
+        const result = await service.getIsolates({
+            microorganism: [
+                'STEC',
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        characteristic: 'spez',
+                        characteristicValue: 'C. coli',
+                    },
+                },
+            ],
+        });
+
+        expect(result.length).toEqual(6);
+    });
+    it('should return all 1 entries', async () => {
+        const result = await service.getIsolates({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        characteristic: 'spez',
+                        characteristicValue: 'C. coli',
+                    },
+                },
+            ],
+        });
+
+        expect(result.length).toEqual(1);
+    });
+    it('should return all 0 entries', async () => {
+        const result = await service.getIsolates({
+            microorganism: [
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        characteristic: 'spez',
+                        characteristicValue: 'C. bobby',
+                    },
+                },
+            ],
+        });
+
+        expect(result.length).toEqual(0);
+    });
+    it('should return 5 entries', async () => {
+        const result = await service.getIsolates({
+            microorganism: [
+                'STEC',
+                {
+                    trigger: 'Campylobacter spp.',
+                    dependent: {
+                        characteristic: 'spez',
+                        characteristicValue: 'C. bobby',
+                    },
+                },
+            ],
+        });
+
+        expect(result.length).toEqual(5);
     });
 });
