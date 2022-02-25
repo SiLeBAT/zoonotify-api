@@ -121,7 +121,7 @@ export class DefaultIsolateController
             matrix: isolate.matrix,
             matrixDetail: isolate.matrixDetail,
             characteristics: isolate.characteristics,
-            resistance: isolate.resistance,
+            resistance: isolate.resistance || {},
         };
     }
 }

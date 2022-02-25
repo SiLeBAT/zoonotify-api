@@ -64,7 +64,7 @@ interface ResistanceProfileDTO {
     active: boolean;
 }
 
-type IsolateResistanceDTO = Record<string, ResistanceProfileDTO>;
+type IsolateResistanceDTO = Partial<Record<string, ResistanceProfileDTO>>;
 interface IsolateCharacteristicsDTO {
     species?: string;
     serovar?: string;

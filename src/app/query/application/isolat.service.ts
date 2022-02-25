@@ -14,6 +14,7 @@ import * as _ from 'lodash';
 type FilterTuple = [QueryFilter, ApplicationFilter[]];
 
 interface ApplicationFilter {
+    target: string;
     key: string;
     value: string | boolean;
 }
@@ -51,23 +52,31 @@ export class DefaultIsolateService implements IsolateService {
         isolateView: IsolateView,
         applicationFilter: ApplicationFilter
     ): boolean {
-        return (
-            Boolean(isolateView.resistance[applicationFilter.key]) &&
-            isolateView.resistance[applicationFilter.key].active ===
-                applicationFilter.value
-        );
+        if (isolateView.microorganism !== applicationFilter.target) {
+            return true;
+        }
+        const profile = isolateView.resistance[applicationFilter.key];
+        return Boolean(profile)
+            ? profile?.active === applicationFilter.value
+                ? true
+                : false
+            : false;
     }
 
     private hasDesiredCharacteristic(
         isolateView: IsolateView,
         applicationFilter: ApplicationFilter
     ): boolean {
+        if (isolateView.microorganism !== applicationFilter.target) {
+            return true;
+        }
         const filterKey = applicationFilter.key as keyof IsolateCharacteristics;
-        const result =
-            Boolean(isolateView.characteristics[filterKey]) &&
-            String(isolateView.characteristics[filterKey]) ===
-                String(applicationFilter.value);
-        return result;
+        const characteristic = isolateView.characteristics[filterKey];
+        return Boolean(characteristic)
+            ? String(characteristic) === String(applicationFilter.value)
+                ? true
+                : false
+            : false;
     }
 
     getIsolateCount(
@@ -98,6 +107,7 @@ export class DefaultIsolateService implements IsolateService {
                     !!(entry as DependentQueryFilter).dependent['resistance']
                 ) {
                     applicationFilter.push({
+                        target: (entry as DependentQueryFilter).trigger,
                         key: (entry as DependentQueryFilter).dependent[
                             'resistance'
                         ] as string,
@@ -122,6 +132,7 @@ export class DefaultIsolateService implements IsolateService {
                     ]
                 ) {
                     applicationFilter.push({
+                        target: (entry as DependentQueryFilter).trigger,
                         key: (entry as DependentQueryFilter).dependent[
                             'characteristic'
                         ] as string,
