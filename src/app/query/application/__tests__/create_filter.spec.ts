@@ -189,7 +189,7 @@ describe('Create Query Filter Use Case', () => {
                 {
                     trigger: 'STEC',
                     dependent: {
-                        characteristic: 'o_group',
+                        characteristic: 'O_Gruppe',
                         characteristicValue: ['116'],
                     },
                 },

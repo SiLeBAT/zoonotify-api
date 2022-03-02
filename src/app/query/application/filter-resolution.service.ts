@@ -252,7 +252,7 @@ export class DefaultFilterResolutionService implements FilterResolutionService {
                 trigger: definition.trigger,
                 dependent: {
                     [definition.attribute]: attribute,
-                    [definition.target]: definition.targetValue,
+                    [definition.target]: definition.dbTargetValue,
                 },
             },
         };
