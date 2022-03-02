@@ -83,7 +83,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Salmonella spp.',
                 target: 'characteristic',
-                targetValue: 'serovar',
+                dbTargetValue: 'serovar',
             },
             {
                 id: 'carba_ampc_carba_phenotype',
@@ -91,7 +91,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'CARBA-E. coli',
                 target: 'characteristic',
-                targetValue: 'carba_ampc_carba_phenotype',
+                dbTargetValue: 'AmpC_Carba_Phänotyp',
             },
             {
                 id: 'esbl_ampc_carba_phenotype',
@@ -99,7 +99,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'ESBL/AmpC-E. coli',
                 target: 'characteristic',
-                targetValue: 'esbl_ampc_carba_phenotype',
+                dbTargetValue: 'AmpC_Carba_Phänotyp',
             },
             {
                 id: 'campy_spez',
@@ -107,7 +107,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Campylobacter spp.',
                 target: 'characteristic',
-                targetValue: 'spez',
+                dbTargetValue: 'spez',
             },
             {
                 id: 'entero_spez',
@@ -115,7 +115,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Enterococcus spp.',
                 target: 'characteristic',
-                targetValue: 'spez',
+                dbTargetValue: 'spez',
             },
             {
                 id: 'serotype',
@@ -123,7 +123,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Listeria monocytogenes',
                 target: 'characteristic',
-                targetValue: 'serotype',
+                dbTargetValue: 'serotyp',
             },
             {
                 id: 'spa_type',
@@ -131,7 +131,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                targetValue: 'spa_type',
+                dbTargetValue: 'spa_Typ',
             },
             {
                 id: 'clonal_group',
@@ -139,7 +139,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                targetValue: 'clonal_group',
+                dbTargetValue: 'Klonale_Gruppe',
             },
             {
                 id: 'o_group',
@@ -147,7 +147,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                targetValue: 'o_group',
+                dbTargetValue: 'O_Gruppe',
             },
             {
                 id: 'h_group',
@@ -155,7 +155,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                targetValue: 'h_group',
+                dbTargetValue: 'H_Gruppe',
             },
         ];
 
@@ -183,7 +183,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristicValue',
-                targetValue: '+',
+                dbTargetValue: '+',
             },
         ];
 
@@ -285,7 +285,7 @@ export class DefaultFilterConfigurationProvider
             parent,
             trigger,
             target,
-            targetValue,
+            dbTargetValue: targetValue,
         }: FilterDefinition & Partial<SubfilterDefinition>,
         filter?: QueryFilter
     ): Promise<FilterConfiguration> {

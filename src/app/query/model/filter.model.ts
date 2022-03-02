@@ -45,7 +45,7 @@ export interface SubfilterDefinition extends FilterDefinition {
     readonly attribute: string;
     readonly trigger: string;
     readonly target: string;
-    readonly targetValue: string | string[];
+    readonly dbTargetValue: string | string[]; // Value as it stands in the Database
 }
 
 export type FilterDefinitionCollection = FilterDefinition[];
