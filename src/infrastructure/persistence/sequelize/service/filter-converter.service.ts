@@ -1,25 +1,21 @@
+import { TreeNode } from './../../../../app/core/domain/tree-node';
+import { FilterValue } from './../../../../app/query/domain/shared.model';
 import { injectable } from 'inversify';
 import * as _ from 'lodash';
 import { Op } from 'sequelize';
-import {
-    QueryFilter,
-    DependentQueryFilter,
-    QueryValue,
-} from '../../../../app/ports';
+import { QueryFilter, Tree } from '../../../../app/ports';
 import { characteristicMap } from './utils.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MyWhere = any;
 export interface FilterConverter {
-    convertFilter(filter: QueryFilter): {
-        where?: MyWhere;
-    };
+    convertFilter(filter: QueryFilter): MyWhere;
 }
 
 @injectable()
 export class SequelizeFilterConverter implements FilterConverter {
     convertFilter(filter: QueryFilter) {
-        if (_.isEmpty(filter)) return filter;
+        if (filter.isEmpty()) return {};
 
         const whereClause: {
             where: MyWhere;
@@ -27,66 +23,60 @@ export class SequelizeFilterConverter implements FilterConverter {
             where: {},
         };
 
-        _.forEach(filter, (value, key) => {
-            if (_.isString(value)) {
-                whereClause.where[key] = value;
+        whereClause.where;
+        const resultGroups: MyWhere = {};
+        filter.getAllFilterTrees().forEach((tree: Tree<FilterValue>) => {
+            const root = tree.getRoot();
+            if (!_.isArray(resultGroups[root.value.key])) {
+                resultGroups[root.value.key] = [];
             }
-            if (_.isArray(value)) {
-                const stringValues: string[] = [];
-                const dependentFilters: DependentQueryFilter[] = [];
-                _.forEach(value, (v) => {
-                    if (this.isDependentQueryFilter(v)) {
-                        dependentFilters.push(v);
-                    } else {
-                        stringValues.push(characteristicMap.get(v) || v);
-                    }
-                });
-                if (dependentFilters.length > 0) {
-                    whereClause.where[Op.or] = [];
-                    if (stringValues.length > 0) {
-                        whereClause.where[Op.or].push({ [key]: stringValues });
-                    }
-                    const parentAndChild = _.map(dependentFilters, (d) => {
-                        return [
-                            { [key]: d.trigger },
-                            Object.entries(d.dependent).reduce((p, c) => {
-                                const accumulatedProperties = p;
-                                accumulatedProperties[c[0]] = c[1];
-                                return accumulatedProperties;
-                            }, {} as Record<string, QueryValue>),
-                        ];
-                    });
-                    whereClause.where[Op.or] = [
-                        ...whereClause.where[Op.or],
-                        ...parentAndChild.map((e) => {
-                            const mappedValues = e.map((entry) =>
-                                _.mapValues(entry, (val) => {
-                                    let newValue = val;
-                                    if (_.isString(val)) {
-                                        newValue =
-                                            characteristicMap.get(val) || val;
-                                    }
-                                    return newValue;
-                                })
-                            );
-                            return { [Op.and]: mappedValues };
-                        }),
-                    ];
-                } else {
-                    whereClause.where[key] = stringValues;
-                }
+            const result = this.myRec(root, null);
+            resultGroups[root.value.key].push(result);
+        });
+
+        const resultArray: MyWhere[] = [];
+        _.forEach(resultGroups, (v: MyWhere[]) => {
+            if (v.length > 1) {
+                resultArray.push({ [Op.or]: v });
+            } else {
+                resultArray.push(v[0]);
             }
         });
+
+        if (resultArray.length > 1) {
+            whereClause.where[Op.and] = resultArray;
+        } else {
+            whereClause.where = resultArray[0];
+        }
 
         return whereClause;
     }
 
-    private isDependentQueryFilter(
-        entry: string | DependentQueryFilter
-    ): entry is DependentQueryFilter {
-        return (
-            (entry as DependentQueryFilter).trigger !== undefined &&
-            (entry as DependentQueryFilter).dependent !== undefined
-        );
+    private myRec(child: TreeNode<FilterValue>, parent: FilterValue | null) {
+        let childResult: MyWhere[] = [];
+        if (child.hasChildren) {
+            childResult = child.children.map((c) => this.myRec(c, child.value));
+            if (child.children.length > 1) {
+                return { [Op.or]: childResult };
+            } else {
+                return childResult[0];
+            }
+        } else {
+            const childFV = child.value;
+            const childEntry = {
+                [childFV.key]:
+                    characteristicMap.get(childFV.value) || childFV.value,
+            };
+
+            if (!_.isNull(parent)) {
+                childResult.push({
+                    [parent.key]:
+                        characteristicMap.get(parent.value) || parent.value,
+                });
+                childResult.push(childEntry);
+                return { [Op.and]: childResult };
+            }
+            return childEntry;
+        }
     }
 }

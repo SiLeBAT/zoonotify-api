@@ -1,3 +1,4 @@
+import { ConvertedQuery } from './../model/controller.model';
 import { Response } from 'express';
 import { controller } from 'inversify-express-utils';
 import { SERVER_ERROR_CODE } from '../model/enums';
@@ -56,7 +57,7 @@ export abstract class AbstractController {
 
     protected parseURLQueryParameters(
         urlQuery: Record<string, string | string[]>
-    ): Record<string, string[]> {
+    ): ConvertedQuery {
         const result: Record<string, string[]> = {};
         _.each(urlQuery, (value, key) => {
             if (!_.isArray(value)) {

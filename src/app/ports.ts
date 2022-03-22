@@ -2,34 +2,44 @@
  * core exports
  */
 export { getApplicationContainerModule } from './application.module';
-export { ApplicationConfiguration } from './core/model/configuration.model';
-export { ConfigurationService } from './core/model/configuration.model';
+export { ApplicationConfiguration } from './core/domain/configuration.model';
+export { ConfigurationService } from './core/application/configuration.service';
 export { APPLICATION_TYPES } from './application.types';
 export { BidirectionalMap } from './core/domain/bidirectional.map';
+export { Tree } from './core/domain/tree';
+export { TreeNode } from './core/domain/tree-node';
 
 /**
  * query exports
  */
 export { FederalState } from './query/domain/federal-state.enum';
 export {
-    FilterResolutionPort,
+    DependentFilter,
+    SubfilterDefinition,
+    UIFilterType,
     FilterConfigurationPort,
-} from './query/model/filter.model';
-export { GroupPort } from './query/model/group.model';
+    FilterDefinition,
+} from './query/domain/filter.model';
 
 export {
-    IsolateView,
-    IsolatePort,
-    IsolateCharacteristics,
-    IsolateResistance,
+    GeneSet,
+    Isolate,
+    IsolateCharacteristicSet,
+    IsolateResistanceSet,
     IsolateViewGateway,
     IsolateCollection,
     IsolateCount,
-} from './query/model/isolate.model';
+    IsolateCountGroup,
+} from './query/domain/isolate.model';
 
+export { createIsolateCollection } from './query/domain/isolate-collection.entity';
+export { createDataRequestCreatedEvent } from './query/domain/dataRequestCreated.event';
+export { IsolatePort } from './query/application/isolat.service';
+export { createQueryFilter } from './query/domain/query-filter.entity';
+export { createIsolate } from './query/domain/isolate.entity';
 export {
-    QueryValue,
     QueryFilter,
+    FilterValue,
+    DataRequestCreatedEvent,
     GroupAttributes,
-    DependentQueryFilter,
-} from './query/model/shared.model';
+} from './query/domain/shared.model';

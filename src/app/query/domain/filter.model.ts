@@ -1,9 +1,4 @@
-import { FilterType } from './../domain/filter-type.enum';
-import {
-    DependentQueryFilter,
-    QueryFilter,
-    QueryParameters,
-} from './shared.model';
+import { QueryFilter, FilterValue } from './shared.model';
 
 export type FilterConfigurationCollection = FilterConfiguration[];
 
@@ -11,23 +6,17 @@ export interface FilterConfigurationPort {
     getFilterConfigurationById(
         id: string,
         filter?: QueryFilter
-    ): Promise<FilterConfiguration>;
+    ): Promise<FilterConfiguration & Partial<SubfilterDefinition>>;
     getFilterConfigurationCollection(): Promise<FilterConfigurationCollection>;
-}
-
-export interface FilterConfigurationProvider extends FilterConfigurationPort {
-    determineFilterType(id: string): FilterType;
-    findDefinitionById(id: string, type?: FilterType): FilterDefinition;
+    determineFilterType(id: string): UIFilterType;
+    findDefinitionById(id: string, type?: UIFilterType): FilterDefinition;
     parseDynamicFilterId(id: string): [string, string | undefined];
 }
-export interface FilterResolutionPort {
-    createFilter(queryParameters: QueryParameters): Promise<QueryFilter>;
-}
 
+export type FilterConfigurationProvider = FilterConfigurationPort;
 export interface FilterNamesToAttributesHash {
     [key: string]: string;
 }
-export type FilterResolutionService = FilterResolutionPort;
 
 export type FilterValueCollection = (string | number | boolean)[];
 export interface FilterConfiguration extends IdentifiedEntry {
@@ -45,7 +34,7 @@ export interface SubfilterDefinition extends FilterDefinition {
     readonly attribute: string;
     readonly trigger: string;
     readonly target: string;
-    readonly dbTargetValue: string | string[]; // Value as it stands in the Database
+    readonly dbTargetValue: string; // Value as it stands in the Database
 }
 
 export type FilterDefinitionCollection = FilterDefinition[];
@@ -59,5 +48,12 @@ export interface IdentifiedEntry {
 }
 export interface DependentFilter {
     parent: string;
-    child: DependentQueryFilter;
+    child: FilterValue;
+}
+
+export enum UIFilterType {
+    DYNAMIC,
+    MAIN,
+    SUB,
+    MANUAL,
 }

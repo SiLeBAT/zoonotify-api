@@ -35,7 +35,7 @@ export interface GetIsolatesSuccessResponse {
 }
 
 export type CountGroupDTO = {
-    [key in keyof IsolateDTO]: string;
+    [key: string]: string;
 } & {
     count: number;
 };

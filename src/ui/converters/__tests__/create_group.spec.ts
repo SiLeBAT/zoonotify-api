@@ -1,17 +1,27 @@
-import { QueryParameters } from './../../model/shared.model';
-import { GroupService } from './../../model/group.model';
-import { getContainer } from '../../../../aspects/container/container';
+import 'reflect-metadata';
 import { Container } from 'inversify';
-import { mockPersistenceContainerModule } from '../../../../infrastructure/persistence/__mocks__/persistence-mock.module';
-import { APPLICATION_TYPES } from '../../../application.types';
-import { getApplicationContainerModule } from '../../../ports';
+import { getApplicationContainerModule } from '../../../app/ports';
+import { getContainer } from '../../../aspects';
+import { mockPersistenceContainerModule } from '../../../infrastructure/persistence/__mocks__/persistence-mock.module';
+import {
+    QueryParameters,
+    QueryParameterToGroupingConverter,
+} from '../../model/converter.model';
+import { getServerContainerModule } from '../../server.module';
+import SERVER_TYPES from '../../server.types';
 
 describe('Create Group Attribute Use Case', () => {
-    let service: GroupService;
+    let service: QueryParameterToGroupingConverter;
     let container: Container | null;
     beforeEach(() => {
         container = getContainer();
         container.load(
+            getServerContainerModule({
+                port: 6666,
+                publicAPIDoc: {},
+                logLevel: 'debug',
+                supportContact: 'test',
+            }),
             getApplicationContainerModule({
                 appName: 'TestZN',
                 apiUrl: '/',
@@ -19,7 +29,9 @@ describe('Create Group Attribute Use Case', () => {
             }),
             mockPersistenceContainerModule
         );
-        service = container.get<GroupService>(APPLICATION_TYPES.GroupService);
+        service = container.get<QueryParameterToGroupingConverter>(
+            SERVER_TYPES.QueryParameterToGroupingConverter
+        );
     });
     afterEach(() => {
         container = null;
@@ -53,21 +65,5 @@ describe('Create Group Attribute Use Case', () => {
 
         const result = await service.getGroupAttribute(queryParameter);
         expect(result).toStrictEqual(['microorganism', 'matrix']);
-    });
-    it('should return a characteristic group attribute', async () => {
-        const enhancedQuery: QueryParameters = {
-            ...exampleQueryParameter,
-            ['group-by']: ['h_group'],
-        };
-        const result = await service.getGroupAttribute(enhancedQuery);
-        expect(result).toStrictEqual(['characteristicValue']);
-    });
-    it('should return a characteristic group attribute', async () => {
-        const enhancedQuery: QueryParameters = {
-            ...exampleQueryParameter,
-            ['group-by']: ['genes'],
-        };
-        const result = await service.getGroupAttribute(enhancedQuery);
-        expect(result).toStrictEqual(['characteristic']);
     });
 });

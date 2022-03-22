@@ -1,3 +1,4 @@
+import { QueryParameterToQueryFilterConverter } from './../model/converter.model';
 import { Response, Request } from 'express';
 import {
     controller,
@@ -7,8 +8,8 @@ import {
     response,
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
-import { FilterConfiguration } from '../../app/query/model/filter.model';
-import { FilterResolutionPort, FilterConfigurationPort } from '../../app/ports';
+import { FilterConfiguration } from '../../app/query/domain/filter.model';
+import { FilterConfigurationPort } from '../../app/ports';
 import {
     GetFilterConfigurationContainerDTO,
     FilterConfigurationDTO,
@@ -18,6 +19,7 @@ import { AbstractController } from './abstract.controller';
 import { ROUTE } from '../model/enums';
 import { APPLICATION_TYPES } from '../../app/application.types';
 import { logger } from '../../aspects';
+import SERVER_TYPES from '../server.types';
 
 enum FILTER_CONFIG_ROUTE {
     ROOT = '/filterconfig',
@@ -28,8 +30,8 @@ export class DefaultFilterConfigController
     implements FilterConfigController
 {
     constructor(
-        @inject(APPLICATION_TYPES.FilterResolutionService)
-        private filterResolutionService: FilterResolutionPort,
+        @inject(SERVER_TYPES.QueryParameterToQueryFilterConverter)
+        private parameterToFilterConverter: QueryParameterToQueryFilterConverter,
         @inject(APPLICATION_TYPES.FilterConfigurationProvider)
         private filterConfigurationProvider: FilterConfigurationPort
     ) {
@@ -70,9 +72,10 @@ export class DefaultFilterConfigController
             const convertedQuery = this.parseURLQueryParameters(
                 req.query as Record<string, string | string[]>
             );
-            const filter = await this.filterResolutionService.createFilter(
-                convertedQuery
-            );
+            const filter =
+                await this.parameterToFilterConverter.convertParameterToFilter(
+                    convertedQuery
+                );
 
             const filterConfig =
                 await this.filterConfigurationProvider.getFilterConfigurationById(

@@ -1,7 +1,7 @@
 import { IsolateViewGateway } from './../../../app/ports';
 import { ContainerModule, interfaces } from 'inversify';
 import { APPLICATION_TYPES } from '../../../app/application.types';
-import { getMockIsolateViewGateway } from './isolateView.gateway';
+import { getMockIsolateViewGateway } from './isolate-view-mock.gateway';
 
 export const mockPersistenceContainerModule = new ContainerModule(
     (bind: interfaces.Bind, unbind: interfaces.Unbind) => {

@@ -24,3 +24,5 @@ export interface IsolateController {
     getIsolate(req: Request, res: Response): Promise<void>;
     getIsolateCount(req: Request, res: Response): Promise<void>;
 }
+
+export type ConvertedQuery = Record<string, string[]>;
