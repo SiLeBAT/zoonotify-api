@@ -4,66 +4,76 @@ import {
     IsolateViewAttributes,
     IsolateViewModel,
 } from '../dao/isolate-view.model';
-import { CountGroup } from '../../../../app/query/model/isolate.model';
 import { FilterConverter } from '../service/filter-converter.service';
 import { ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
 import {
-    IsolateView,
+    QueryFilter,
+    Isolate,
     FederalState,
     IsolateViewGateway,
     IsolateCollection,
-    IsolateCharacteristics,
-    IsolateResistance,
-    IsolateCount,
-    QueryFilter,
-    GroupAttributes,
+    IsolateCharacteristicSet,
+    IsolateResistanceSet,
+    DataRequestCreatedEvent,
+    createIsolateCollection,
+    createIsolate,
 } from '../../../../app/ports';
 import { logger } from '../../../../aspects';
 import { characteristicMap } from '../service/utils.service';
 
 @injectable()
 export class SequelizeIsolateViewGateway implements IsolateViewGateway {
-    static toEntity(isolateViewModel: IsolateViewModel): IsolateView {
-        const characteristics: IsolateCharacteristics =
+    static toEntity(isolateViewModel: IsolateViewModel): Isolate {
+        const characteristics: Partial<IsolateCharacteristicSet> =
             SequelizeIsolateViewGateway.getCharacteristic(isolateViewModel);
 
-        const resistances: IsolateResistance =
+        const resistances: IsolateResistanceSet =
             SequelizeIsolateViewGateway.getResistance(isolateViewModel);
-        return {
-            microorganism: isolateViewModel.microorganism,
-            id: isolateViewModel.isolateId,
-            federalState: isolateViewModel.federalState as FederalState,
-            samplingYear: isolateViewModel.samplingYear,
-            samplingContext: isolateViewModel.samplingContext,
-            samplingStage: isolateViewModel.samplingStage,
-            origin: isolateViewModel.origin,
-            category: isolateViewModel.category,
-            productionType: isolateViewModel.productionType,
-            matrix: isolateViewModel.matrix,
-            matrixDetail: isolateViewModel.matrixDetail,
+
+        return createIsolate(
+            isolateViewModel.federalState as FederalState,
+            isolateViewModel.microorganism,
+            isolateViewModel.samplingYear,
+            isolateViewModel.samplingContext,
+            isolateViewModel.samplingStage,
+            isolateViewModel.origin,
+            isolateViewModel.category,
+            isolateViewModel.productionType,
+            isolateViewModel.matrix,
+            isolateViewModel.matrixDetail,
             characteristics,
-            resistance: resistances,
-        };
+            resistances,
+            isolateViewModel.isolateId
+        );
     }
 
     private static getCharacteristic(
         model: IsolateViewModel
-    ): IsolateCharacteristics {
+    ): Partial<IsolateCharacteristicSet> {
         const characteristicKey = characteristicMap.get(model.characteristic);
         if (!_.isUndefined(characteristicKey)) {
+            let value: string | boolean = model.characteristicValue;
+            if (value === '+') {
+                value = true;
+            }
+            if (value === '-') {
+                value = false;
+            }
             return {
-                [characteristicKey]: model.characteristicValue,
+                [characteristicKey]: value,
             };
         }
         return {};
     }
 
-    private static getResistance(model: IsolateViewModel): IsolateResistance {
+    private static getResistance(
+        model: IsolateViewModel
+    ): IsolateResistanceSet {
         if (_.isNull(model.resistance)) {
             return {};
         }
-        const resistance: IsolateResistance = {
+        const resistance: IsolateResistanceSet = {
             [model.resistance]: {
                 active: model.resistanceActive,
                 value: model.resistanceValue,
@@ -79,11 +89,14 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         private filterConverter: FilterConverter
     ) {}
 
-    findAll(filter: QueryFilter = {}): Promise<IsolateCollection> {
+    findAll(
+        dataRequestCreated: DataRequestCreatedEvent,
+        options = {}
+    ): Promise<IsolateCollection> {
         logger.trace(
             `${this.constructor.name}.${this.findAll.name}, Executing`
         );
-        let options = {};
+        const filter = dataRequestCreated.filter.getPersistenceFilter();
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,
@@ -91,98 +104,69 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         };
 
         return this.IsolateView.findAll(options)
-            .then((models) => {
-                const isolates = models.reduce((acc, current) => {
-                    const entity: IsolateView = acc[current.isolateId];
-                    if (!entity) {
-                        acc[current.isolateId] =
-                            SequelizeIsolateViewGateway.toEntity(current);
-                    } else {
-                        entity.characteristics = {
-                            ...entity.characteristics,
-                            ...SequelizeIsolateViewGateway.getCharacteristic(
-                                current
-                            ),
-                        };
-                        entity.resistance = {
-                            ...entity.resistance,
-                            ...SequelizeIsolateViewGateway.getResistance(
-                                current
-                            ),
-                        };
-                    }
-
-                    return acc;
-                }, {} as { [key: number]: IsolateView });
-
-                return Object.values(isolates);
-            })
+            .then((models) =>
+                this.turnModelCollectionIntoIsolateCollection(
+                    models,
+                    dataRequestCreated.filter
+                )
+            )
             .catch((error) => {
                 logger.error(error);
                 throw error;
             });
     }
 
+    private turnModelCollectionIntoIsolateCollection(
+        modelCollection: IsolateViewModel[],
+        filter: QueryFilter
+    ): IsolateCollection {
+        const isolates = modelCollection.reduce((acc, current) => {
+            const entity: Isolate = acc[current.isolateId];
+            if (!entity) {
+                acc[current.isolateId] =
+                    SequelizeIsolateViewGateway.toEntity(current);
+            } else {
+                entity.addCharacteristics(
+                    SequelizeIsolateViewGateway.getCharacteristic(current)
+                );
+                entity.addResistances(
+                    SequelizeIsolateViewGateway.getResistance(current)
+                );
+            }
+
+            return acc;
+        }, {} as { [key: number]: Isolate });
+
+        return createIsolateCollection(Object.values(isolates), filter);
+    }
     async getCount(
-        filter: QueryFilter = {},
-        groupAttributes: GroupAttributes = []
-    ): Promise<IsolateCount> {
+        dataRequestCreated: DataRequestCreatedEvent
+    ): Promise<IsolateCollection> {
         logger.trace(
-            `${this.constructor.name}.${this.getCount.name}, Executing with: ${filter}`
+            `${this.constructor.name}.${this.getCount.name}, Executing with: ${dataRequestCreated}`
         );
-        let options = {
+        const options = {
             distinct: true,
         };
-        const whereClause = this.filterConverter.convertFilter(filter);
-        options = {
-            ...options,
-            ...whereClause,
-        };
 
-        const result: IsolateCount = await this.IsolateView.count(options)
-            .then((dbCount) => {
-                return {
-                    totalNumberOfIsolates: dbCount,
-                };
-            })
-            .catch((error) => {
+        return await this.findAll(dataRequestCreated, options).catch(
+            (error) => {
                 logger.error('Unable to retrieve count data', error);
                 throw error;
-            });
-
-        const groupByValues = _.compact(groupAttributes);
-
-        if (groupByValues.length > 0) {
-            const groupBy = {
-                group: groupByValues,
-            };
-            options = {
-                ...options,
-                ...groupBy,
-            };
-            const groupings: CountGroup[] = await this.IsolateView.count(
-                options
-            )
-                .then((dbCount) => {
-                    return dbCount as unknown as CountGroup[];
-                })
-                .catch((error) => {
-                    logger.error('Unable to retrieve count data', error);
-                    throw error;
-                });
-            result.groups = groupings;
-        }
-        return result;
+            }
+        );
     }
 
+    //FIXME: Application Filters?
     getUniqueAttributeValues(
         property: keyof IsolateViewAttributes,
-        filter: QueryFilter = {}
+        dataRequestCreated: DataRequestCreatedEvent
     ): Promise<(string | number | boolean)[]> {
         let options = {
             attributes: [property],
             group: property,
         };
+        const filter = dataRequestCreated.filter.getPersistenceFilter();
         const whereClause = this.filterConverter.convertFilter(filter);
         options = {
             ...options,

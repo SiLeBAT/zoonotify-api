@@ -1,24 +1,21 @@
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
-import { IsolateViewGateway } from '../model/isolate.model';
+import { IsolateViewGateway } from '../domain/isolate.model';
 import {
     FilterDefinitionCollection,
     SubfilterDefinition,
     SubfilterDefinitionCollection,
     FilterDefinition,
     IdentifiedEntry,
-} from '../model/filter.model';
-
-// npm
-import {
     FilterConfiguration,
     FilterConfigurationProvider,
     FilterConfigurationCollection,
-} from '../model/filter.model';
+    UIFilterType,
+} from '../domain/filter.model';
 import { APPLICATION_TYPES } from '../../application.types';
-import { QueryFilter } from '../model/shared.model';
+import { QueryFilter } from '../domain/shared.model';
 import { logger } from '../../../aspects';
-import { FilterType } from '../domain/filter-type.enum';
+import { createQueryFilter } from '../domain/query-filter.entity';
 
 @injectable()
 export class DefaultFilterConfigurationProvider
@@ -91,7 +88,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'CARBA-E. coli',
                 target: 'characteristic',
-                dbTargetValue: 'AmpC_Carba_Phänotyp',
+                dbTargetValue: 'ampc_carba_phenotype',
             },
             {
                 id: 'esbl_ampc_carba_phenotype',
@@ -99,7 +96,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'ESBL/AmpC-E. coli',
                 target: 'characteristic',
-                dbTargetValue: 'AmpC_Carba_Phänotyp',
+                dbTargetValue: 'ampc_carba_phenotype',
             },
             {
                 id: 'campy_spez',
@@ -107,7 +104,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Campylobacter spp.',
                 target: 'characteristic',
-                dbTargetValue: 'spez',
+                dbTargetValue: 'species',
             },
             {
                 id: 'entero_spez',
@@ -115,7 +112,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Enterococcus spp.',
                 target: 'characteristic',
-                dbTargetValue: 'spez',
+                dbTargetValue: 'species',
             },
             {
                 id: 'serotype',
@@ -123,7 +120,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Listeria monocytogenes',
                 target: 'characteristic',
-                dbTargetValue: 'serotyp',
+                dbTargetValue: 'serotype',
             },
             {
                 id: 'spa_type',
@@ -131,7 +128,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                dbTargetValue: 'spa_Typ',
+                dbTargetValue: 'spa_type',
             },
             {
                 id: 'clonal_group',
@@ -139,7 +136,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'MRSA',
                 target: 'characteristic',
-                dbTargetValue: 'Klonale_Gruppe',
+                dbTargetValue: 'clonal_group',
             },
             {
                 id: 'o_group',
@@ -147,7 +144,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                dbTargetValue: 'O_Gruppe',
+                dbTargetValue: 'o_group',
             },
             {
                 id: 'h_group',
@@ -155,7 +152,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'STEC',
                 target: 'characteristic',
-                dbTargetValue: 'H_Gruppe',
+                dbTargetValue: 'h_group',
             },
         ];
 
@@ -179,14 +176,13 @@ export class DefaultFilterConfigurationProvider
         [
             {
                 id: 'genes',
-                attribute: 'characteristic',
+                attribute: 'characteristicValue',
                 parent: 'microorganism',
                 trigger: 'STEC',
-                target: 'characteristicValue',
+                target: 'characteristic',
                 dbTargetValue: '+',
             },
         ];
-
     /* List of manually configured Subfilters */
     private readonly manualFilterConfiguration: FilterConfiguration[] = [
         {
@@ -200,7 +196,7 @@ export class DefaultFilterConfigurationProvider
     getFilterConfigurationById(
         id: string,
         attributeReduction?: QueryFilter
-    ): Promise<FilterConfiguration> {
+    ): Promise<FilterConfiguration & Partial<SubfilterDefinition>> {
         const [trueId] = this.parseDynamicFilterId(id);
         const definition = this.findByIdInCollection(
             trueId,
@@ -222,21 +218,21 @@ export class DefaultFilterConfigurationProvider
     }
 
     determineFilterType(id: string) {
-        let type = FilterType.MAIN;
+        let type = UIFilterType.MAIN;
 
         if (id.includes('__')) {
-            type = FilterType.DYNAMIC;
+            type = UIFilterType.DYNAMIC;
         } else if (
             this.findByIdInCollection(
                 id,
                 this.uiManualFilterDefinitionCollection
             )
         ) {
-            type = FilterType.MANUAL;
+            type = UIFilterType.MANUAL;
         } else if (
             this.findByIdInCollection(id, this.uiSubfilterDefinitionCollection)
         ) {
-            type = FilterType.SUB;
+            type = UIFilterType.SUB;
         }
         return type;
     }
@@ -245,25 +241,25 @@ export class DefaultFilterConfigurationProvider
         const type = this.determineFilterType(id);
         let result;
         switch (type) {
-            case FilterType.DYNAMIC:
+            case UIFilterType.DYNAMIC:
                 result = this.findByIdInCollection(
                     id,
                     this.uiDynamicFilterDefinitionCollection
                 );
                 break;
-            case FilterType.MANUAL:
+            case UIFilterType.MANUAL:
                 result = this.findByIdInCollection(
                     id,
                     this.uiManualFilterDefinitionCollection
                 );
                 break;
-            case FilterType.SUB:
+            case UIFilterType.SUB:
                 result = this.findByIdInCollection(
                     id,
                     this.uiSubfilterDefinitionCollection
                 ) as SubfilterDefinition;
                 break;
-            case FilterType.MAIN:
+            case UIFilterType.MAIN:
             default:
                 result = this.findByIdInCollection(
                     id,
@@ -287,26 +283,39 @@ export class DefaultFilterConfigurationProvider
             target,
             dbTargetValue: targetValue,
         }: FilterDefinition & Partial<SubfilterDefinition>,
-        filter?: QueryFilter
+        filter: QueryFilter = createQueryFilter()
     ): Promise<FilterConfiguration> {
         const isSubfilter = parent && trigger;
         const hasOwnEntry = target && targetValue;
+
         if (isSubfilter) {
-            filter = {
-                ...filter,
-                ...{
-                    [parent]: trigger,
-                },
-            };
+            filter.addFilter({
+                key: parent,
+                value: trigger,
+            });
         }
 
         if (hasOwnEntry) {
-            filter = {
-                ...filter,
-                ...{
-                    [target]: targetValue,
+            if (_.isUndefined(parent) || _.isUndefined(trigger)) {
+                throw Error("Can't create Subfilter for " + target);
+            }
+            const parentId =
+                filter.getIdOf({
+                    key: parent,
+                    value: trigger,
+                }) ||
+                filter.addFilter({
+                    key: parent,
+                    value: trigger,
+                });
+
+            filter.addFilter(
+                {
+                    key: target,
+                    value: targetValue.toString(),
                 },
-            };
+                parentId
+            );
         }
 
         let configuration: Partial<FilterConfiguration> | undefined =
@@ -316,7 +325,10 @@ export class DefaultFilterConfigurationProvider
             const values =
                 await this.isolateViewGateway.getUniqueAttributeValues(
                     attribute,
-                    filter
+                    {
+                        filter: filter,
+                        grouping: [],
+                    }
                 );
             configuration = {
                 id: id,

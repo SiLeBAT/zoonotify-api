@@ -6,6 +6,13 @@ const SERVER_TYPES = {
     IsolateController: Symbol.for('IsolateController'),
     VersionRootController: Symbol.for('VersionRootController'),
     APIDocsController: Symbol.for('APIDocsController'),
+    QueryParameterToQueryFilterConverter: Symbol.for(
+        'QueryParameterToQueryFilterConverter'
+    ),
+    QueryParameterToGroupingConverter: Symbol.for(
+        'QueryParameterToGroupingConverter'
+    ),
+    GroupingString: Symbol.for('GroupingString'),
     SwaggerMW: Symbol.for('SwaggerMW'),
 };
 

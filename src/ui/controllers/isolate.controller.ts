@@ -1,3 +1,4 @@
+import { GeneSet } from './../../app/query/domain/isolate.model';
 import { Response, Request } from 'express';
 import {
     controller,
@@ -10,23 +11,29 @@ import {
     APPLICATION_TYPES,
     IsolatePort,
     IsolateCollection,
-    FilterResolutionPort,
-    GroupPort,
-    IsolateView,
+    Isolate,
+    DataRequestCreatedEvent,
+    createDataRequestCreatedEvent,
 } from '../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
     IsolateDTO,
 } from '../model/response.model';
-import { IsolateController } from '../model/controller.model';
+import { ConvertedQuery, IsolateController } from '../model/controller.model';
 import { AbstractController } from './abstract.controller';
 import { ROUTE } from '../model/enums';
 import { logger } from '../../aspects';
-
+import SERVER_TYPES from '../server.types';
+import {
+    QueryParameterToGroupingConverter,
+    QueryParameterToQueryFilterConverter,
+} from '../model/converter.model';
+import _ = require('lodash');
 enum ISOLATE_ROUTE {
     ROOT = '/isolate',
 }
+
 @controller(ROUTE.VERSION + ISOLATE_ROUTE.ROOT)
 export class DefaultIsolateController
     extends AbstractController
@@ -35,10 +42,10 @@ export class DefaultIsolateController
     constructor(
         @inject(APPLICATION_TYPES.IsolateService)
         private isolateService: IsolatePort,
-        @inject(APPLICATION_TYPES.FilterResolutionService)
-        private filterResolutionService: FilterResolutionPort,
-        @inject(APPLICATION_TYPES.GroupService)
-        private groupService: GroupPort
+        @inject(SERVER_TYPES.QueryParameterToQueryFilterConverter)
+        private parameterToFilterConverter: QueryParameterToQueryFilterConverter,
+        @inject(SERVER_TYPES.QueryParameterToGroupingConverter)
+        private parameterToGroupingConverter: QueryParameterToGroupingConverter
     ) {
         super();
     }
@@ -53,15 +60,17 @@ export class DefaultIsolateController
                 req.query as Record<string, string | string[]>
             );
 
-            const filter = await this.filterResolutionService.createFilter(
+            const dataRequestCreated = await this.createDataRequest(
                 convertedQuery
             );
 
-            const isolates: IsolateCollection =
-                await this.isolateService.getIsolates(filter);
+            const isolateCollection: IsolateCollection =
+                await this.isolateService.getIsolates(dataRequestCreated);
 
             const dto: GetIsolatesSuccessResponse = {
-                isolates: isolates.map((isolate) => this.isolateToDTO(isolate)),
+                isolates: isolateCollection.isolates.map((isolate) =>
+                    this.isolateToDTO(isolate)
+                ),
             };
             this.ok(res, dto);
         } catch (error) {
@@ -76,26 +85,23 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolateCount.name}, Received: ${req}`
         );
         try {
-            const convertedQuery = this.parseURLQueryParameters(
+            const convertedQuery: ConvertedQuery = this.parseURLQueryParameters(
                 req.query as Record<string, string | string[]>
             );
 
-            const groupAttributes =
-                this.groupService.getGroupAttribute(convertedQuery);
-            const filter = await this.filterResolutionService.createFilter(
+            const dataRequestCreated = await this.createDataRequest(
                 convertedQuery
             );
 
             const isolateCount = await this.isolateService.getIsolateCount(
-                filter,
-                groupAttributes
+                dataRequestCreated
             );
 
             const dto: GetCountedIsolatesSuccessResponse = {
                 totalNumberOfIsolates: isolateCount.totalNumberOfIsolates,
             };
             if (isolateCount.groups) {
-                dto.groups = isolateCount.groups;
+                dto.groups = isolateCount.groups as any;
             }
             this.ok(res, dto);
         } catch (error) {
@@ -104,11 +110,32 @@ export class DefaultIsolateController
         }
     }
 
+    private async createDataRequest(
+        convertedQuery: ConvertedQuery
+    ): Promise<DataRequestCreatedEvent> {
+        const grouping =
+            this.parameterToGroupingConverter.getGroupAttribute(convertedQuery);
+        const filter =
+            await this.parameterToFilterConverter.convertParameterToFilter(
+                convertedQuery
+            );
+
+        return createDataRequestCreatedEvent(filter, grouping);
+    }
     private handleError(res: Response) {
         this.fail(res);
     }
 
-    private isolateToDTO(isolate: IsolateView): IsolateDTO {
+    private isolateToDTO(isolate: Isolate): IsolateDTO {
+        const characteristics: any = { ...isolate.getCharacteristics() };
+
+        _.forEach(isolate.getGenes(), (v, gene: keyof GeneSet) => {
+            if (v) {
+                characteristics[gene] = '+';
+            }
+        });
+
+        const resistance = { ...isolate.getResistances() };
         return {
             microorganism: isolate.microorganism,
             samplingYear: isolate.samplingYear,
@@ -120,8 +147,8 @@ export class DefaultIsolateController
             productionType: isolate.productionType,
             matrix: isolate.matrix,
             matrixDetail: isolate.matrixDetail,
-            characteristics: isolate.characteristics,
-            resistance: isolate.resistance || {},
+            characteristics: characteristics,
+            resistance: resistance,
         };
     }
 }

@@ -6,8 +6,12 @@ import {
     ServerConfiguration as ExpressServerConfiguration,
 } from '@SiLeBAT/fg43-ne-server';
 import { logger, getContainer } from './aspects';
-import { getServerContainerModule } from './ui/ports';
+import { getServerContainerModule, ROUTE } from './ui/ports';
 import { getApplicationContainerModule } from './app/ports';
+import {
+    getPersistenceContainerModule,
+    SequelizeDatabaseService,
+} from './infrastructure/ports';
 import {
     SystemConfigurationService,
     GeneralConfiguration,
@@ -16,11 +20,6 @@ import {
     DataStoreConfiguration,
     APIConfiguration,
 } from './main.model';
-import {
-    getPersistenceContainerModule,
-    SequelizeDatabaseService,
-} from './infrastructure/ports';
-import { ROUTE } from './ui/model/enums';
 
 export class DefaultConfigurationService implements SystemConfigurationService {
     private generalConfigurationDefaults: GeneralConfiguration = {

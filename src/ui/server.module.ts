@@ -1,3 +1,7 @@
+import {
+    QueryParameterToGroupingConverter,
+    QueryParameterToQueryFilterConverter,
+} from './model/converter.model';
 import { ContainerModule, interfaces } from 'inversify';
 import { DefaultFilterConfigController } from './controllers/filterconfig.controller';
 import {
@@ -13,6 +17,8 @@ import { DefaultDatabaseController } from './controllers/database.controller';
 import { DefaultVersionRootController } from './controllers/versionRoot.controller';
 import { AppServerConfiguration } from './model/server.model';
 import { DefaultIsolateController } from './controllers/isolate.controller';
+import { DefaultQueryParameterToQueryFilterConverter } from './converters/parameter-to-filter.converter';
+import { DefaultQueryParameterToGroupingConverter } from './converters/parameter-to-grouping.converter';
 
 export function getServerContainerModule(
     serverCongfiguration: AppServerConfiguration
@@ -41,5 +47,15 @@ export function getServerContainerModule(
         bind<IsolateController>(SERVER_TYPES.IsolateController).to(
             DefaultIsolateController
         );
+
+        bind<QueryParameterToQueryFilterConverter>(
+            SERVER_TYPES.QueryParameterToQueryFilterConverter
+        ).to(DefaultQueryParameterToQueryFilterConverter);
+
+        bind<QueryParameterToGroupingConverter>(
+            SERVER_TYPES.QueryParameterToGroupingConverter
+        ).to(DefaultQueryParameterToGroupingConverter);
+
+        bind(SERVER_TYPES.GroupingString).toConstantValue('group-by');
     });
 }

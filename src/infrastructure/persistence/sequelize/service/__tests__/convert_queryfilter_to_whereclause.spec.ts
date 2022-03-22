@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Op } from 'sequelize';
+import { createQueryFilter, FilterValue } from '../../../../../app/ports';
 import {
     FilterConverter,
     SequelizeFilterConverter,
@@ -7,79 +8,151 @@ import {
 
 describe('Filter Conversion Use Case', () => {
     let service: FilterConverter;
+    const testFilter: FilterValue[] = [
+        {
+            key: 'matrix',
+            value: 'Blinddarminhalt',
+        },
+        {
+            key: 'matrixDetail',
+            value: 'Poolprobe',
+        },
+        {
+            key: 'matrix',
+            value: 'Kot',
+        },
+        {
+            key: 'matrixDetail',
+            value: 'Einzeltierprobe',
+        },
+        {
+            key: 'matrixDetail',
+            value: 'Einzeltierprobe',
+        },
+        {
+            key: 'microorganism',
+            value: 'Campylobacter spp.',
+        },
+        {
+            key: 'resistance',
+            value: 'GEN',
+        },
+        {
+            key: 'resistance_active',
+            value: 'true',
+        },
+        {
+            key: 'resistance',
+            value: 'CIP',
+        },
+        {
+            key: 'resistance_active',
+            value: 'true',
+        },
+        {
+            key: 'microorganism',
+            value: 'STEC',
+        },
+        {
+            key: 'characteristicValue',
+            value: '116',
+        },
+        {
+            key: 'characteristic',
+            value: 'o_group',
+        },
+        {
+            key: 'characteristic',
+            value: 'species',
+        },
+        {
+            key: 'characteristicValue',
+            value: 'C. bobby',
+        },
+        {
+            key: 'characteristicValue',
+            value: 'C. coli',
+        },
+    ];
     beforeEach(() => {
         service = new SequelizeFilterConverter();
     });
 
     it('should return an empty filter', () => {
-        const result = service.convertFilter({});
+        const result = service.convertFilter(createQueryFilter());
         expect(result).toStrictEqual({});
     });
     it('should convert a simple filter', async () => {
-        const result = await service.convertFilter({
-            matrix: 'Blinddarminhalt',
-            matrixDetail: 'Poolprobe',
-        });
+        const queryFilter = createQueryFilter();
+        queryFilter.addFilter(testFilter[0]);
+        const result = await service.convertFilter(queryFilter);
+
         expect(result).toStrictEqual({
             where: {
                 matrix: 'Blinddarminhalt',
-                matrixDetail: 'Poolprobe',
             },
         });
     });
     it('should convert a filter with array', async () => {
-        const result = await service.convertFilter({
-            matrix: ['Blinddarminhalt', 'Kot'],
-        });
+        const queryFilter = createQueryFilter();
+        queryFilter.addFilter(testFilter[0]);
+        queryFilter.addFilter(testFilter[2]);
+        const result = await service.convertFilter(queryFilter);
         expect(result).toStrictEqual({
             where: {
-                matrix: ['Blinddarminhalt', 'Kot'],
+                [Op.or]: [{ matrix: 'Blinddarminhalt' }, { matrix: 'Kot' }],
             },
         });
     });
-    it('should convert a dependent filter', async () => {
-        const result = await service.convertFilter({
-            matrix: [
-                'Blinddarminhalt',
-                {
-                    trigger: 'Kot',
-                    dependent: {
-                        matrixDetail: 'Einzeltierprobe',
-                    },
-                },
-            ],
-        });
+    it('should convert a filter with two independent attributes', async () => {
+        const queryFilter = createQueryFilter();
+        queryFilter.addFilter(testFilter[0]);
+        queryFilter.addFilter(testFilter[5]);
+        queryFilter.addFilter(testFilter[10]);
+        const result = await service.convertFilter(queryFilter);
         expect(result).toStrictEqual({
             where: {
-                [Op.or]: [
-                    { matrix: ['Blinddarminhalt'] },
+                [Op.and]: [
+                    { matrix: 'Blinddarminhalt' },
                     {
-                        [Op.and]: [
-                            { matrix: 'Kot' },
-                            { matrixDetail: 'Einzeltierprobe' },
+                        [Op.or]: [
+                            { microorganism: 'Campylobacter spp.' },
+                            { microorganism: 'STEC' },
                         ],
                     },
                 ],
             },
         });
     });
-    it('should convert two dependent filter', async () => {
-        const result = await service.convertFilter({
-            matrix: [
-                {
-                    trigger: 'Kot',
-                    dependent: {
-                        matrixDetail: 'Einzeltierprobe',
+    it('should convert a dependents filter', async () => {
+        const queryFilter = createQueryFilter();
+        const pk2 = queryFilter.addFilter(testFilter[2]);
+        queryFilter.addFilter(testFilter[3], pk2);
+        queryFilter.addFilter(testFilter[0]);
+
+        const result = await service.convertFilter(queryFilter);
+
+        expect(result).toStrictEqual({
+            where: {
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            { matrix: 'Kot' },
+                            { matrixDetail: 'Einzeltierprobe' },
+                        ],
                     },
-                },
-                {
-                    trigger: 'Blinddarminhalt',
-                    dependent: {
-                        matrixDetail: 'Einzeltierprobe',
-                    },
-                },
-            ],
+                    { matrix: 'Blinddarminhalt' },
+                ],
+            },
         });
+    });
+    it('should convert two dependents filter', async () => {
+        const queryFilter = createQueryFilter();
+        const pk2 = queryFilter.addFilter(testFilter[2]);
+        queryFilter.addFilter(testFilter[3], pk2);
+        const pk0 = queryFilter.addFilter(testFilter[0]);
+        queryFilter.addFilter(testFilter[4], pk0);
+        const result = await service.convertFilter(queryFilter);
         expect(result).toStrictEqual({
             where: {
                 [Op.or]: [
@@ -93,109 +166,6 @@ describe('Filter Conversion Use Case', () => {
                         [Op.and]: [
                             { matrix: 'Blinddarminhalt' },
                             { matrixDetail: 'Einzeltierprobe' },
-                        ],
-                    },
-                ],
-            },
-        });
-    });
-
-    it('should convert resistance filter', async () => {
-        const result = await service.convertFilter({
-            microorganism: [
-                {
-                    trigger: 'Campylobacter spp.',
-                    dependent: {
-                        resistance: 'GEN',
-                        resistance_active: 'true',
-                    },
-                },
-            ],
-        });
-        expect(result).toStrictEqual({
-            where: {
-                [Op.or]: [
-                    {
-                        [Op.and]: [
-                            { microorganism: 'Campylobacter spp.' },
-                            {
-                                resistance: 'GEN',
-                                resistance_active: 'true',
-                            },
-                        ],
-                    },
-                ],
-            },
-        });
-    });
-
-    it('should convert two resistance filter', async () => {
-        const result = await service.convertFilter({
-            microorganism: [
-                {
-                    trigger: 'Campylobacter spp.',
-                    dependent: {
-                        resistance: 'GEN',
-                        resistance_active: 'true',
-                    },
-                },
-                {
-                    trigger: 'Campylobacter spp.',
-                    dependent: {
-                        resistance: 'CIP',
-                        resistance_active: 'true',
-                    },
-                },
-            ],
-        });
-        expect(result).toStrictEqual({
-            where: {
-                [Op.or]: [
-                    {
-                        [Op.and]: [
-                            { microorganism: 'Campylobacter spp.' },
-                            {
-                                resistance: 'GEN',
-                                resistance_active: 'true',
-                            },
-                        ],
-                    },
-                    {
-                        [Op.and]: [
-                            { microorganism: 'Campylobacter spp.' },
-                            {
-                                resistance: 'CIP',
-                                resistance_active: 'true',
-                            },
-                        ],
-                    },
-                ],
-            },
-        });
-    });
-
-    it('should convert characteristic filter', async () => {
-        const result = await service.convertFilter({
-            microorganism: [
-                {
-                    trigger: 'STEC',
-                    dependent: {
-                        characteristic: 'o_group',
-                        characteristicValue: '116',
-                    },
-                },
-            ],
-        });
-        expect(result).toStrictEqual({
-            where: {
-                [Op.or]: [
-                    {
-                        [Op.and]: [
-                            { microorganism: 'STEC' },
-                            {
-                                characteristic: 'O_Gruppe',
-                                characteristicValue: '116',
-                            },
                         ],
                     },
                 ],

@@ -1,16 +1,18 @@
+import { Isolate } from './../../../app/query/domain/isolate.model';
 import { FederalState } from '../../../app/query/domain/federal-state.enum';
-import { IsolateViewGateway } from './../../../app/ports';
+import {
+    createIsolate,
+    createIsolateCollection,
+    createQueryFilter,
+    IsolateViewGateway,
+} from '../../../app/ports';
 import * as _ from 'lodash';
 
 export function getMockIsolateViewGateway(): IsolateViewGateway {
     return {
-        getCount: jest.fn(() =>
-            Promise.resolve({
-                totalNumberOfIsolates: 0,
-            })
-        ),
+        getCount: jest.fn(() => Promise.resolve(createIsolateCollection([]))),
         getUniqueAttributeValues: jest.fn(() => Promise.resolve([])),
-        findAll: jest.fn((flag) => {
+        findAll: jest.fn((dataRequestCreated) => {
             const resultArray = [
                 {
                     id: 1,
@@ -25,9 +27,9 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: '-',
-                        stx2: '-',
-                        stx1: '+',
+                        eae: false,
+                        stx2: false,
+                        stx1: true,
                         h_group: 'NT',
                         o_group: '1',
                     },
@@ -99,9 +101,9 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: '-',
-                        stx2: '-',
-                        stx1: '+',
+                        eae: false,
+                        stx2: false,
+                        stx1: true,
                         h_group: 'NT',
                         o_group: '1',
                     },
@@ -173,9 +175,9 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: '+',
-                        stx2: '+',
-                        stx1: '-',
+                        eae: true,
+                        stx2: true,
+                        stx1: false,
                         h_group: 'NT',
                         o_group: '1',
                     },
@@ -247,9 +249,9 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: '-',
-                        stx2: '-',
-                        stx1: '+',
+                        eae: false,
+                        stx2: false,
+                        stx1: true,
                         h_group: 'NT',
                         o_group: '1',
                     },
@@ -321,9 +323,9 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: '+',
-                        stx2: '-',
-                        stx1: '+',
+                        eae: true,
+                        stx2: false,
+                        stx1: true,
                         h_group: '2',
                         o_group: '184',
                     },
@@ -395,7 +397,7 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: '(Hals)haut',
                     matrixDetail: 'Einzel(tier)probe',
                     characteristics: {
-                        spez: 'C. coli',
+                        species: 'C. coli',
                     },
                     resistance: {
                         GEN: {
@@ -425,15 +427,26 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
             ];
-            const f = flag || {};
-            const result = _.filter(resultArray, (e) => {
-                return (
-                    !Boolean(f['microorganism']) ||
-                    (Boolean(f['microorganism']) &&
-                        f['microorganism'].includes(e.microorganism))
+            const internalFilter =
+                dataRequestCreated?.filter || createQueryFilter();
+            const isolateArray = resultArray.map((r) => {
+                return createIsolate(
+                    r.federalState,
+                    r.microorganism,
+                    r.samplingYear,
+                    r.samplingContext,
+                    r.samplingStage,
+                    r.origin,
+                    r.category,
+                    r.productionType,
+                    r.matrix,
+                    r.matrixDetail,
+                    r.characteristics,
+                    r.resistance,
+                    r.id
                 );
             });
-            return Promise.resolve(result);
+            return Promise.resolve(createIsolateCollection(isolateArray));
         }),
     };
 }
@@ -452,9 +465,9 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            eae: '-',
-            stx2: '-',
-            stx1: '+',
+            eae: false,
+            stx2: false,
+            stx1: true,
             h_group: 'NT',
             o_group: '1',
         },
@@ -526,9 +539,9 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            eae: '-',
-            stx2: '-',
-            stx1: '+',
+            eae: false,
+            stx2: false,
+            stx1: true,
             h_group: 'NT',
             o_group: '1',
         },
@@ -600,9 +613,9 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            eae: '+',
-            stx2: '+',
-            stx1: '-',
+            eae: true,
+            stx2: true,
+            stx1: false,
             h_group: 'NT',
             o_group: '1',
         },
@@ -674,9 +687,9 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            eae: '-',
-            stx2: '-',
-            stx1: '+',
+            eae: false,
+            stx2: false,
+            stx1: true,
             h_group: 'NT',
             o_group: '1',
         },
@@ -748,9 +761,9 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            eae: '+',
-            stx2: '-',
-            stx1: '+',
+            eae: true,
+            stx2: false,
+            stx1: true,
             h_group: '2',
             o_group: '184',
         },
@@ -822,10 +835,10 @@ export const mockIsolates = [
         matrix: 'Sammelmilch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            e_hly: '+',
-            eae: '+',
-            stx2: '+',
-            stx1: '-',
+            e_hly: true,
+            eae: true,
+            stx2: true,
+            stx1: false,
             h_group: '\\[H25]',
             o_group: 'r',
         },
@@ -901,10 +914,10 @@ export const mockIsolates = [
         matrix: 'Sammelmilch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            e_hly: '+',
-            eae: '-',
-            stx2: '+',
-            stx1: '+',
+            e_hly: true,
+            eae: false,
+            stx2: true,
+            stx1: true,
             h_group: 'H25',
             o_group: 'NT',
         },
@@ -980,10 +993,10 @@ export const mockIsolates = [
         matrix: 'Sammelmilch',
         matrixDetail: 'gekühlt',
         characteristics: {
-            e_hly: '-',
-            eae: '-',
-            stx2: '-',
-            stx1: '+',
+            e_hly: false,
+            eae: false,
+            stx2: false,
+            stx1: true,
             h_group: '\\[H23]',
             o_group: 'r',
         },
@@ -1059,10 +1072,10 @@ export const mockIsolates = [
         matrix: 'Kot',
         matrixDetail: 'Einzeltierprobe',
         characteristics: {
-            e_hly: '+',
-            eae: '+',
-            stx2: '+',
-            stx1: '-',
+            e_hly: true,
+            eae: true,
+            stx2: true,
+            stx1: false,
             h_group: '\\[H11]',
             o_group: '26',
         },
@@ -1138,10 +1151,10 @@ export const mockIsolates = [
         matrix: 'Frisches Fleisch',
         matrixDetail: 'gekühlt oder tiefgekühlt',
         characteristics: {
-            e_hly: '-',
-            eae: '-',
-            stx2: '+',
-            stx1: '-',
+            e_hly: false,
+            eae: false,
+            stx2: true,
+            stx1: false,
             h_group: '\\[H30]',
             o_group: '27',
         },
@@ -1217,7 +1230,7 @@ export const mockIsolates = [
         matrix: '(Hals)haut',
         matrixDetail: 'Einzel(tier)probe',
         characteristics: {
-            spez: 'C. coli',
+            species: 'C. coli',
         },
         resistance: {
             GEN: {

@@ -1,19 +1,17 @@
 import { ContainerModule, interfaces } from 'inversify';
-import { IsolateService } from './query/model/isolate.model';
+import { ApplicationConfiguration } from './core/domain/configuration.model';
 import {
     ConfigurationService,
-    ApplicationConfiguration,
-} from './core/model/configuration.model';
-import { DefaultConfigurationService } from './core/application/configuration.service';
+    DefaultConfigurationService,
+} from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
-import { DefaultIsolateService } from './query/application/isolat.service';
-import { DefaultFilterResolutionService } from './query/application/filter-resolution.service';
 import {
-    FilterResolutionService,
-    FilterConfigurationProvider,
-} from './query/model/filter.model';
-import { GroupService } from './query/model/group.model';
-import { DefaultGroupService } from './query/application/group.service';
+    DefaultIsolateService,
+    IsolateService,
+} from './query/application/isolat.service';
+
+import { FilterConfigurationProvider } from './query/domain/filter.model';
+
 import { DefaultFilterConfigurationProvider } from './query/application/filter-configuration-provider.service';
 
 export function getApplicationContainerModule(
@@ -28,22 +26,12 @@ export function getApplicationContainerModule(
             DefaultConfigurationService
         );
 
-        bind<FilterResolutionService>(
-            APPLICATION_TYPES.FilterResolutionService
-        ).to(DefaultFilterResolutionService);
-
         bind<FilterConfigurationProvider>(
             APPLICATION_TYPES.FilterConfigurationProvider
         ).to(DefaultFilterConfigurationProvider);
 
-        bind<GroupService>(APPLICATION_TYPES.GroupService).to(
-            DefaultGroupService
-        );
-
         bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
             DefaultIsolateService
         );
-
-        bind(APPLICATION_TYPES.GroupingString).toConstantValue('group-by');
     });
 }

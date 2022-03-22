@@ -3,7 +3,3 @@ export interface ApplicationConfiguration {
     apiUrl: string;
     supportContact: string;
 }
-
-export interface ConfigurationService {
-    getApplicationConfiguration(): ApplicationConfiguration;
-}
