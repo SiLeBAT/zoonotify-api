@@ -1,7 +1,4 @@
-import { ConnectionInfo } from './infrastructure/ports';
 import { APIDocConfig } from './ui/ports';
-
-export type DataStoreConfiguration = ConnectionInfo;
 
 export interface ServerConfiguration {
     port: number;

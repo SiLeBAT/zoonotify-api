@@ -5,14 +5,6 @@ import {
     DefaultConfigurationService,
 } from './core/application/configuration.service';
 import { APPLICATION_TYPES } from './application.types';
-import {
-    DefaultIsolateService,
-    IsolateService,
-} from './query/application/isolat.service';
-
-import { FilterConfigurationProvider } from './query/domain/filter.model';
-
-import { DefaultFilterConfigurationProvider } from './query/application/filter-configuration-provider.service';
 
 export function getApplicationContainerModule(
     appConfiguration: ApplicationConfiguration
@@ -24,14 +16,6 @@ export function getApplicationContainerModule(
 
         bind<ConfigurationService>(APPLICATION_TYPES.ConfigurationService).to(
             DefaultConfigurationService
-        );
-
-        bind<FilterConfigurationProvider>(
-            APPLICATION_TYPES.FilterConfigurationProvider
-        ).to(DefaultFilterConfigurationProvider);
-
-        bind<IsolateService>(APPLICATION_TYPES.IsolateService).to(
-            DefaultIsolateService
         );
     });
 }

@@ -35,9 +35,7 @@
     "/info": {
       "get": {
         "operationId": "getSystemInfo",
-        "tags": [
-          "Util"
-        ],
+        "tags": ["Util"],
         "summary": "Retrieve server information",
         "description": "Returns current server version number as well as the date of the last server update.",
         "responses": {
@@ -50,103 +48,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "$ref": "#/components/responses/Standard500ErrorResponse"
-          }
-        }
-      }
-    },
-    "/database/status": {
-      "get": {
-        "operationId": "getDatabaseStatus",
-        "tags": [
-          "Util"
-        ],
-        "summary": "Retrieve information about database status",
-        "description": "Returns date of the last update of the database.",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/GetDatabaseStatusSuccessResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/Standard500ErrorResponse"
-          }
-        }
-      }
-    },
-    "/query-options": {
-      "get": {
-        "operationId": "getQueryOptions",
-        "tags": [
-          "Util"
-        ],
-        "summary": "Retrieve the query options",
-        "description": "Returns valid query options for the isolate endpoints. These queries can be formed by multiple key=value pairs.",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/GetQueryOptionsSuccessResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/Standard500ErrorResponse"
-          }
-        }
-      }
-    },
-    "/isolate": {
-      "get": {
-        "operationId": "getIsolate",
-        "tags": [
-          "Isolate"
-        ],
-        "summary": "Get the isolates",
-        "description": "Retrieve the isolate dataset",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/MicroorganismQuery"
-          },
-          {
-            "$ref": "#/components/parameters/MatrixQuery"
-          },
-          {
-            "$ref": "#/components/parameters/SamplingContextQuery"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/GetIsolatesSuccessResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/Standard500ErrorResponse"
-          }
-        }
-      }
-    },
-    "/isolate/counted": {
-      "get": {
-        "operationId": "getIsolateCount",
-        "tags": [
-          "Isolate"
-        ],
-        "summary": "Retrieve the count of isolates in the dataset",
-        "description": "Returns object with the total number of isolates and count distribution",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/MicroorganismQuery"
-          },
-          {
-            "$ref": "#/components/parameters/MatrixQuery"
-          },
-          {
-            "$ref": "#/components/parameters/SamplingContextQuery"
-          },
-          {
-            "$ref": "#/components/parameters/GroupBySettings"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/GetCountedIsolatesSuccessResponse"
           },
           "500": {
             "$ref": "#/components/responses/Standard500ErrorResponse"
@@ -168,11 +69,7 @@
       },
       "AntiBioticResistenceProfile": {
         "type": "object",
-        "required": [
-          "antibiotic",
-          "cutOff",
-          "active"
-        ],
+        "required": ["antibiotic", "cutOff", "active"],
         "properties": {
           "antibiotic": {
             "type": "string"
@@ -194,10 +91,7 @@
       "FilterValues": {
         "type": "string",
         "description": "Includes the appropriate selectable data values",
-        "enum": [
-          "alle Werte",
-          "<filter specific values>"
-        ],
+        "enum": ["alle Werte", "<filter specific values>"],
         "default": "alle Werte"
       },
       "GetIsolatesSuccessResponseData": {
@@ -255,9 +149,7 @@
       },
       "MicrobialProfile": {
         "type": "object",
-        "required": [
-          "microorganism"
-        ],
+        "required": ["microorganism"],
         "properties": {
           "microorganism": {
             "type": "string"
@@ -302,10 +194,7 @@
       },
       "Error": {
         "type": "object",
-        "required": [
-          "code",
-          "message"
-        ],
+        "required": ["code", "message"],
         "properties": {
           "message": {
             "type": "string"
@@ -318,16 +207,10 @@
       "ErrorCode": {
         "type": "number",
         "description": "- 1: Unknown error",
-        "enum": [
-          1
-        ]
+        "enum": [1]
       },
       "SystemInformation": {
-        "required": [
-          "lastChange",
-          "version",
-          "supportContact"
-        ],
+        "required": ["lastChange", "version", "supportContact"],
         "type": "object",
         "properties": {
           "version": {
@@ -347,9 +230,7 @@
       },
       "GetDatabaseStatusResponseDTO": {
         "type": "object",
-        "required": [
-          "lastUpdate"
-        ],
+        "required": ["lastUpdate"],
         "properties": {
           "lastUpdate": {
             "type": "string",
@@ -359,9 +240,7 @@
       },
       "GetQueryOptionsSuccessResponseData": {
         "type": "object",
-        "required": [
-          "queryOptions"
-        ],
+        "required": ["queryOptions"],
         "properties": {
           "queryOptions": {
             "$ref": "#/components/schemas/QueryOptionsList"
@@ -377,10 +256,7 @@
       "QueryOptionInformation": {
         "type": "object",
         "description": "Key for one query option",
-        "required": [
-          "id",
-          "values"
-        ],
+        "required": ["id", "values"],
         "properties": {
           "id": {
             "type": "string",
@@ -401,9 +277,7 @@
       },
       "GetCountedIsolatesSuccessResponseData": {
         "type": "object",
-        "required": [
-          "totalCount"
-        ],
+        "required": ["totalCount"],
         "properties": {
           "totalCount": {
             "type": "number"
@@ -418,9 +292,7 @@
       },
       "CountGroup": {
         "type": "object",
-        "required": [
-          "count"
-        ],
+        "required": ["count"],
         "properties": {
           "count": {
             "type": "number"
