@@ -9,15 +9,10 @@ import { logger, getContainer } from './aspects';
 import { getServerContainerModule, ROUTE } from './ui/ports';
 import { getApplicationContainerModule } from './app/ports';
 import {
-    getPersistenceContainerModule,
-    SequelizeDatabaseService,
-} from './infrastructure/ports';
-import {
     SystemConfigurationService,
     GeneralConfiguration,
     ServerConfiguration,
     AppConfiguration,
-    DataStoreConfiguration,
     APIConfiguration,
 } from './main.model';
 
@@ -39,10 +34,6 @@ export class DefaultConfigurationService implements SystemConfigurationService {
         const appConfiguration: AppConfiguration = config.get('application');
 
         return appConfiguration;
-    }
-
-    getDataStoreConfiguration(): DataStoreConfiguration {
-        return config.get('dataStore');
     }
 
     getGeneralConfiguration(): GeneralConfiguration {
@@ -71,8 +62,6 @@ async function init() {
         configurationService.getServerConfiguration();
     const generalConfig: GeneralConfiguration =
         configurationService.getGeneralConfiguration();
-    const dataStoreConfig: DataStoreConfiguration =
-        configurationService.getDataStoreConfiguration();
     const appConfiguration: AppConfiguration =
         configurationService.getApplicationConfiguration();
     const apiConfiguration: APIConfiguration =
@@ -81,15 +70,6 @@ async function init() {
     logger.info(`Starting ${appConfiguration.appName}.`);
     logger.info(`Log level: ${generalConfig.logLevel}.`);
 
-    const dbService = new SequelizeDatabaseService();
-    const dataStore = dbService.createDataStore(dataStoreConfig);
-
-    if (!(await dataStore.isConnectionEstablished())) {
-        throw new Error('Unable to connect to Database.');
-    }
-
-    const daoProvider = dbService.getDAOProvider();
-    const daos = daoProvider.getDAOHash();
     const container = getContainer({ defaultScope: 'Singleton' });
     container.load(
         getApplicationContainerModule({
@@ -101,8 +81,7 @@ async function init() {
             publicAPIDoc: apiConfiguration.publicAPIDoc,
             logLevel: generalConfig.logLevel,
             supportContact: generalConfig.supportContact,
-        }),
-        getPersistenceContainerModule(daos)
+        })
     );
 
     const expressServerConfiguration: ExpressServerConfiguration = {

@@ -8,38 +8,3 @@ export { APPLICATION_TYPES } from './application.types';
 export { BidirectionalMap } from './core/domain/bidirectional.map';
 export { Tree } from './core/domain/tree';
 export { TreeNode } from './core/domain/tree-node';
-
-/**
- * query exports
- */
-export { FederalState } from './query/domain/federal-state.enum';
-export {
-    DependentFilter,
-    SubfilterDefinition,
-    UIFilterType,
-    FilterConfigurationPort,
-    FilterDefinition,
-} from './query/domain/filter.model';
-
-export {
-    GeneSet,
-    Isolate,
-    IsolateCharacteristicSet,
-    IsolateResistanceSet,
-    IsolateViewGateway,
-    IsolateCollection,
-    IsolateCount,
-    IsolateCountGroup,
-} from './query/domain/isolate.model';
-
-export { createIsolateCollection } from './query/domain/isolate-collection.entity';
-export { createDataRequestCreatedEvent } from './query/domain/dataRequestCreated.event';
-export { IsolatePort } from './query/application/isolat.service';
-export { createQueryFilter } from './query/domain/query-filter.entity';
-export { createIsolate } from './query/domain/isolate.entity';
-export {
-    QueryFilter,
-    FilterValue,
-    DataRequestCreatedEvent,
-    GroupAttributes,
-} from './query/domain/shared.model';
