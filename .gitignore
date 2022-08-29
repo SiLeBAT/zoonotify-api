@@ -27,6 +27,7 @@
 npm-debug.log
 local/*
 coverage/
+/logs
 
 # System Files
 .DS_Store

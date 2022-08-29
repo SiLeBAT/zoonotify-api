@@ -4,10 +4,10 @@ source ./environment.sh
 
 LOG_FILE=$1
 if [ "$#" -ne 1 ]; then
-  LOG_FILE=./zoonotify.log
+  LOG_FILE=./logs/zoonotify.log
 fi
 
-BASE_NAME=`basename $LOG_FILE .log`
-DIR_NAME=`dirname $LOG_FILE`
+export ZN_LOG=$LOG_FILE
 
-NODE_ENV=$ZOONOTIFY_NODE_ENV HOST=$ZOONOTIFY_HOST forever -l $LOG_FILE -a start ./lib/main.js
+npx pm2 kill --no-daemon
+npx pm2 start pm2.config.js
