@@ -1,5 +1,9 @@
 {
-  "name": "zoonotify-server",
+  "name": "@SiLeBAT/zoonotify-api",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SiLeBAT/zoonotify-server.git"
+  },
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
