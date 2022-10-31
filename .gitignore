@@ -2,6 +2,7 @@
 
 # compiled output
 /lib
+/dist
 
 # dependencies
 /node_modules

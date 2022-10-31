@@ -8,17 +8,17 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "start": "node ./lib/main.js",
+    "start": "node ./lib/bundle.js",
     "serve": "npx nodemon -e ts --exec \"npm run serve:pipe\"",
     "debug": "npx nodemon -e ts --exec \"npm run debug:pipe\"",
-    "serve:pipe": "npm run build && npm run test && node ./lib/main.js",
-    "debug:pipe": "npm run build && node --inspect-brk ./lib/main.js",
-    "cp:json": "npx copyfiles -u 1 ./src/**/*.json ./lib",
+    "serve:pipe": "npm run build && npm run test && node ./lib/bundle.js",
+    "debug:pipe": "npm run build && node --inspect-brk ./lib/bundle.js",
+    "cp:json": "npx copyfiles -u 1 ./src/**/*.json ./dist",
     "cp:all": "npm run cp:json",
     "compile": "tsc --project tsconfig.json",
-    "build": "npm run compile && npm run cp:all",
+    "build": "npm run compile && npm run cp:all && ./node_modules/.bin/webpack",
     "prebuild": "npm run clean",
-    "clean": "npx rimraf lib/*",
+    "clean": "npx rimraf lib/* && npx rimraf dist/*",
     "lint": "npx eslint ./src --ext .js,.ts",
     "lint:fix": "npx eslint --fix ./src --ext .js,.ts",
     "format": "npx prettier --write \"src/**/*.ts\"",
@@ -30,7 +30,7 @@
   "resolutions": {
     "tar": "4.4.19"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@SiLeBAT/fg43-ne-server": "^1.0.3",
     "app-root-dir": "^1.0.2",
@@ -92,7 +92,10 @@
     "prettier": "^2.4.1",
     "rimraf": "^3.0.0",
     "ts-jest": "27.0.5",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-node-externals": "^3.0.0"
   },
   "eslintConfig": {
     "root": true,
