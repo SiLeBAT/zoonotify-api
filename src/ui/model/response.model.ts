@@ -45,6 +45,8 @@ export interface GetCountedIsolatesSuccessResponse {
 }
 
 export interface IsolateDTO {
+    isolateId: number;
+    bfrId: string;
     microorganism: string;
     samplingYear: string;
     federalState: string;

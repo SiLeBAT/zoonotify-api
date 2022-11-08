@@ -110,6 +110,42 @@ export class DefaultIsolateController
         }
     }
 
+    @httpGet('/:bfrId')
+    async getIsolateByBfrId(
+        @request() req: Request,
+        @response() res: Response
+    ) {
+        logger.trace(
+            `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
+        );
+        try {
+            // prepapare queryParameter
+            const convertedQuery = this.createIdentifierQueryParam(
+                req.params.bfrId
+            );
+            const dataRequestCreated = await this.createDataRequest(
+                convertedQuery
+            );
+
+            // request Data
+            const isolateCollection: IsolateCollection =
+                await this.isolateService.getIsolates(dataRequestCreated);
+
+            // create result
+            let dto: IsolateDTO | null = null;
+            if (
+                null != isolateCollection &&
+                isolateCollection.isolates.length === 1
+            ) {
+                dto = this.isolateToDTO(isolateCollection.isolates[0]);
+            }
+            this.ok(res, dto);
+        } catch (error) {
+            logger.error('Unable to send response: ', error);
+            this.handleError(res);
+        }
+    }
+
     private async createDataRequest(
         convertedQuery: ConvertedQuery
     ): Promise<DataRequestCreatedEvent> {
@@ -122,6 +158,15 @@ export class DefaultIsolateController
 
         return createDataRequestCreatedEvent(filter, grouping);
     }
+
+    private createIdentifierQueryParam(identifier: string) {
+        const result: Record<string, string[]> = {};
+        if (!_.isEmpty(identifier)) {
+            result['bfrId'] = [identifier];
+        }
+        return result;
+    }
+
     private handleError(res: Response) {
         this.fail(res);
     }
@@ -137,6 +182,8 @@ export class DefaultIsolateController
 
         const resistance = { ...isolate.getResistances() };
         return {
+            isolateId: isolate.isolateId,
+            bfrId: isolate.bfrId,
             microorganism: isolate.microorganism,
             samplingYear: isolate.samplingYear,
             federalState: isolate.federalState,

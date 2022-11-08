@@ -3,6 +3,7 @@ import { ModelStatic } from './shared.model';
 
 export interface IsolateViewAttributes {
     isolateId: number;
+    bfrId: string;
     microorganism: string;
     federalState: string;
     samplingYear: string;
@@ -32,14 +33,16 @@ export class IsolateViewDAO extends Model<
 export function isolateViewModelFactory(
     sequelize: Sequelize
 ): ModelStatic<IsolateViewModel> {
-    return sequelize.define(
+    const _isolateViewModel: ModelStatic<IsolateViewModel> = sequelize.define(
         'v_isolates',
         {
             isolateId: {
                 type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
                 field: 'isolate_id',
+            },
+            bfrId: {
+                type: DataTypes.STRING,
+                field: 'bfr_id',
             },
             microorganism: {
                 type: DataTypes.STRING,
@@ -101,4 +104,6 @@ export function isolateViewModelFactory(
             timestamps: false,
         }
     );
+    _isolateViewModel.removeAttribute('id');
+    return _isolateViewModel;
 }

@@ -32,7 +32,7 @@
   },
   "private": false,
   "dependencies": {
-    "@SiLeBAT/fg43-ne-server": "^1.0.3",
+
     "app-root-dir": "^1.0.2",
     "compression": "^1.7.3",
     "config": "^1.29.4",

@@ -15,7 +15,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
         findAll: jest.fn((dataRequestCreated) => {
             const resultArray = [
                 {
-                    id: 1,
+                    isolateId: 1,
+                    bfrId: '00000000-0000-0000-0000-000000000000',
                     microorganism: 'STEC',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -89,7 +90,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
                 {
-                    id: 2,
+                    isolateId: 2,
+                    bfrId: '7cea7890-dd95-4356-848d-5201950984e6',
                     microorganism: 'STEC',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -163,7 +165,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
                 {
-                    id: 3,
+                    isolateId: 3,
+                    bfrId: 'b97447f8-62d5-4894-878c-c90b1ff5c0ac',
                     microorganism: 'STEC',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -237,7 +240,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
                 {
-                    id: 4,
+                    isolateId: 4,
+                    bfrId: '5e51ffc1-26f6-43cc-8790-90b861388ed8',
                     microorganism: 'STEC',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -311,7 +315,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
                 {
-                    id: 5,
+                    isolateId: 5,
+                    bfrId: 'cc7bb307-466c-42d6-a629-9740aebe1467',
                     microorganism: 'STEC',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -385,7 +390,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     },
                 },
                 {
-                    id: 5,
+                    isolateId: 6,
+                    bfrId: 'f719dfa0-6779-48c5-998f-4b8f747910f4',
                     microorganism: 'Campylobacter spp.',
                     samplingYear: '1999',
                     federalState: FederalState.HH,
@@ -443,7 +449,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     r.matrixDetail,
                     r.characteristics,
                     r.resistance,
-                    r.id
+                    r.bfrId,
+                    r.isolateId
                 );
             });
             return Promise.resolve(createIsolateCollection(isolateArray));
@@ -453,7 +460,8 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
 
 export const mockIsolates = [
     {
-        id: 1,
+        isolateId: 1,
+        bfrId: '00000000-0000-0000-0000-000000000000',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -527,7 +535,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 2,
+        isolateId: 2,
+        bfrId: '00000000-0000-0000-0000-000000000001',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -601,7 +610,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 3,
+        isolateId: 3,
+        bfrId: '00000000-0000-0000-0000-000000000002',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -675,7 +685,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 4,
+        isolateId: 4,
+        bfrId: '00000000-0000-0000-0000-000000000003',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -749,7 +760,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 5,
+        isolateId: 5,
+        bfrId: '00000000-0000-0000-0000-000000000004',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -823,7 +835,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 6,
+        isolateId: 6,
+        bfrId: '00000000-0000-0000-0000-000000000005',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -902,7 +915,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 7,
+        isolateId: 7,
+        bfrId: '00000000-0000-0000-0000-000000000006',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -981,7 +995,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 8,
+        isolateId: 8,
+        bfrId: '00000000-0000-0000-0000-000000000007',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -1060,7 +1075,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 9,
+        isolateId: 9,
+        bfrId: '00000000-0000-0000-0000-000000000008',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -1139,7 +1155,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 10,
+        isolateId: 10,
+        bfrId: '00000000-0000-0000-0000-000000000009',
         microorganism: 'STEC',
         samplingYear: '1999',
         federalState: FederalState.HH,
@@ -1218,7 +1235,8 @@ export const mockIsolates = [
         },
     },
     {
-        id: 11,
+        isolateId: 11,
+        bfrId: '00000000-0000-0000-0000-000000000010',
         microorganism: 'Campylobacter spp.',
         samplingYear: '1999',
         federalState: FederalState.HH,
