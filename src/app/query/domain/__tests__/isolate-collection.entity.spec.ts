@@ -10,7 +10,8 @@ describe('Isolate-Collection Entity', () => {
     let mainFilter: QueryFilter;
     const resultArray = [
         {
-            id: 1,
+            isolateId: 1,
+            bfrId: '00000000-0000-0000-0000-000000000000',
             microorganism: 'STEC',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -84,7 +85,8 @@ describe('Isolate-Collection Entity', () => {
             },
         },
         {
-            id: 2,
+            isolateId: 2,
+            bfrId: '00000000-0000-0000-0000-000000000001',
             microorganism: 'STEC',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -158,7 +160,8 @@ describe('Isolate-Collection Entity', () => {
             },
         },
         {
-            id: 3,
+            isolateId: 3,
+            bfrId: '00000000-0000-0000-0000-000000000002',
             microorganism: 'STEC',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -232,7 +235,8 @@ describe('Isolate-Collection Entity', () => {
             },
         },
         {
-            id: 4,
+            isolateId: 4,
+            bfrId: '00000000-0000-0000-0000-000000000003',
             microorganism: 'STEC',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -306,7 +310,8 @@ describe('Isolate-Collection Entity', () => {
             },
         },
         {
-            id: 5,
+            isolateId: 5,
+            bfrId: '00000000-0000-0000-0000-000000000004',
             microorganism: 'STEC',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -380,7 +385,8 @@ describe('Isolate-Collection Entity', () => {
             },
         },
         {
-            id: 6,
+            isolateId: 6,
+            bfrId: '00000000-0000-0000-0000-000000000005',
             microorganism: 'Campylobacter spp.',
             samplingYear: '1999',
             federalState: FederalState.HH,
@@ -436,7 +442,8 @@ describe('Isolate-Collection Entity', () => {
             r.matrixDetail,
             r.characteristics,
             r.resistance,
-            r.id
+            r.bfrId,
+            r.isolateId
         );
     });
     let testFilter: FilterValue[] = [

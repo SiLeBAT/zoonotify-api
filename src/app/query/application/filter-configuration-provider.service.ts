@@ -34,6 +34,14 @@ export class DefaultFilterConfigurationProvider
     private readonly uiMainFilterDefinitionCollection: FilterDefinitionCollection =
         [
             {
+                id: 'isolateId',
+                attribute: 'isolateId',
+            },
+            {
+                id: 'bfrId',
+                attribute: 'bfrId',
+            },
+            {
                 id: 'samplingYear',
                 attribute: 'samplingYear',
             },

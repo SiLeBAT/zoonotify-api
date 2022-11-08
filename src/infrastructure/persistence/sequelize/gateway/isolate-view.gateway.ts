@@ -44,6 +44,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
             isolateViewModel.matrixDetail,
             characteristics,
             resistances,
+            isolateViewModel.bfrId,
             isolateViewModel.isolateId
         );
     }

@@ -29,7 +29,8 @@ class DefaultIsolate implements Isolate {
         public characteristics: Partial<IsolateCharacteristicSet> &
             GeneSet = {},
         private _resistance: Partial<IsolateResistanceSet> = {},
-        public id: number
+        public bfrId: string,
+        public isolateId: number
     ) {
         this._id = uuidv4();
         this.addCharacteristics(characteristics);
@@ -108,7 +109,8 @@ export function createIsolate(
     matrixDetail: string,
     characteristics: Partial<IsolateCharacteristicSet> & GeneSet,
     resistance: Partial<IsolateResistanceSet>,
-    id: number
+    bfrId: string,
+    isolateId: number
 ): Isolate {
     return new DefaultIsolate(
         federalState,
@@ -123,6 +125,7 @@ export function createIsolate(
         matrixDetail,
         characteristics,
         resistance,
-        id
+        bfrId,
+        isolateId
     );
 }

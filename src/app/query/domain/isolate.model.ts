@@ -16,7 +16,8 @@ export interface Isolate {
     productionType: string;
     matrix: string;
     matrixDetail: string;
-    id: number;
+    bfrId: string;
+    isolateId: number;
     hasGene(gene: string): boolean | undefined;
     getValueFor(key: keyof Isolate): string | undefined;
     getCharacteristicValue(
