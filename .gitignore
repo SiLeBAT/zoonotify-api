@@ -39,7 +39,3 @@ Thumbs.db
 !/config/custom-environment-variables.json
 !/config/generic.config.json
 !/config/default.json
-local.json
-.gitignore
-package.json
-.gitignore
