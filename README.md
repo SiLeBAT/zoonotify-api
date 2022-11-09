@@ -1,3 +1,3 @@
-# Zoonotify Server
+# Zoonotify API
 
-The Zoonotify Server
+The Zoonotify API
