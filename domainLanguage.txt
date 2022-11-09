@@ -1,0 +1,24 @@
+Mapping microorganisms to relevant characteristics:
+E. coli:
+None, as E. coli has none
+Campylobacter+spp.:
+  - species: string
+Enterococcus+spp.:
+  - species: string
+Salmonella spp.:
+  - serovar: string
+ESBL/AmpC-E. coli:
+  - ampc_carba_phenotype: string
+STEC:
+  - h_group: string
+  - o_group: string
+  - genes:
+    - stx_1: boolean | null
+    - stx_2: boolean | null
+    - eae: boolean | null
+    - e_hly: boolean | null
+Listeria monocytogenes:
+  - serotype: string
+MRSA:
+  - clonal_group: string
+  _ spa_type: string
