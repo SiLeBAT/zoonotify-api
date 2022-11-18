@@ -11,6 +11,7 @@ import {
     QueryFilter,
     Isolate,
     FederalState,
+    GeneSet,
     IsolateViewGateway,
     IsolateCollection,
     IsolateCharacteristicSet,
@@ -20,33 +21,87 @@ import {
     createIsolate,
 } from '../../../../app/ports';
 import { logger } from '../../../../aspects';
-import { characteristicMap } from '../service/utils.service';
+import { characteristicMap, geneMap } from '../service/utils.service';
 
 @injectable()
 export class SequelizeIsolateViewGateway implements IsolateViewGateway {
-    static toEntity(isolateViewModel: IsolateViewModel): Isolate {
-        const characteristics: Partial<IsolateCharacteristicSet> =
-            SequelizeIsolateViewGateway.getCharacteristic(isolateViewModel);
-
-        const resistances: IsolateResistanceSet =
-            SequelizeIsolateViewGateway.getResistance(isolateViewModel);
-
-        return createIsolate(
-            isolateViewModel.federalState as FederalState,
-            isolateViewModel.microorganism,
-            isolateViewModel.samplingYear,
-            isolateViewModel.samplingContext,
-            isolateViewModel.samplingStage,
-            isolateViewModel.origin,
-            isolateViewModel.category,
-            isolateViewModel.productionType,
-            isolateViewModel.matrix,
-            isolateViewModel.matrixDetail,
-            characteristics,
-            resistances,
-            isolateViewModel.bfrId,
-            isolateViewModel.isolateId
+    private static retrieveEntityFromPartials<
+        T extends GeneSet | IsolateCharacteristicSet | IsolateResistanceSet
+    >(
+        isolateViewModelArray: IsolateViewModel[],
+        retrievePartial: (isolate: IsolateViewModel) => Partial<T>
+    ): T {
+        let obj: T;
+        return isolateViewModelArray.reduce(
+            (_obj: any, isolate: IsolateViewModel) => {
+                const _tempSet: Partial<T> = retrievePartial(isolate);
+                if (Object.keys(_tempSet)) {
+                    obj = { ...obj, ..._tempSet };
+                }
+                return obj;
+            },
+            {}
         );
+    }
+
+    private static reduceArraytoEntity(
+        isolateViewModelArray: IsolateViewModel[]
+    ): Isolate | null {
+        let _isolate: Isolate | null = null;
+        let isolateViewModel: IsolateViewModel;
+        if (isolateViewModelArray && isolateViewModelArray.length > 0) {
+            isolateViewModel = isolateViewModelArray[0];
+            const _genes: GeneSet =
+                SequelizeIsolateViewGateway.retrieveEntityFromPartials<GeneSet>(
+                    isolateViewModelArray,
+                    SequelizeIsolateViewGateway.getGene
+                );
+
+            const _characteristics: IsolateCharacteristicSet =
+                SequelizeIsolateViewGateway.retrieveEntityFromPartials<IsolateCharacteristicSet>(
+                    isolateViewModelArray,
+                    SequelizeIsolateViewGateway.getCharacteristic
+                );
+            const _resistances: IsolateResistanceSet =
+                SequelizeIsolateViewGateway.retrieveEntityFromPartials<IsolateResistanceSet>(
+                    isolateViewModelArray,
+                    SequelizeIsolateViewGateway.getResistance
+                );
+
+            _isolate = createIsolate(
+                isolateViewModel.federalState as FederalState,
+                isolateViewModel.microorganism,
+                isolateViewModel.samplingYear,
+                isolateViewModel.samplingContext,
+                isolateViewModel.samplingStage,
+                isolateViewModel.origin,
+                isolateViewModel.category,
+                isolateViewModel.productionType,
+                isolateViewModel.matrix,
+                isolateViewModel.matrixDetail,
+                _characteristics,
+                _genes,
+                _resistances,
+                isolateViewModel.bfrId,
+                isolateViewModel.isolateId
+            );
+        }
+        return _isolate;
+    }
+
+    private static getGene(model: IsolateViewModel): Partial<GeneSet> {
+        const geneKey = geneMap.get(model.characteristic);
+        if (!_.isUndefined(geneKey)) {
+            let value: string | boolean = model.characteristicValue;
+            if (value === '+') {
+                value = true;
+            }
+            if (value === '-') {
+                value = false;
+            }
+            return { [geneKey]: value };
+        }
+        return {};
     }
 
     private static getCharacteristic(
@@ -121,25 +176,22 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
         modelCollection: IsolateViewModel[],
         filter: QueryFilter
     ): IsolateCollection {
-        const isolates = modelCollection.reduce((acc, current) => {
-            const entity: Isolate = acc[current.isolateId];
-            if (!entity) {
-                acc[current.isolateId] =
-                    SequelizeIsolateViewGateway.toEntity(current);
-            } else {
-                entity.addCharacteristics(
-                    SequelizeIsolateViewGateway.getCharacteristic(current)
-                );
-                entity.addResistances(
-                    SequelizeIsolateViewGateway.getResistance(current)
-                );
+        const isolateArray: Isolate[] = [];
+        const modelCollectionDict = _.groupBy(modelCollection, 'bfrId');
+        const bfrIdArray = Object.keys(modelCollectionDict);
+        for (let i = 0; i < bfrIdArray.length; i++) {
+            const bfrId = bfrIdArray[i];
+            const tempIsolateModelCollection = modelCollectionDict[bfrId];
+            const isolate = SequelizeIsolateViewGateway.reduceArraytoEntity(
+                tempIsolateModelCollection
+            );
+            if (null != isolate) {
+                isolateArray.push(isolate);
             }
-
-            return acc;
-        }, {} as { [key: number]: Isolate });
-
-        return createIsolateCollection(Object.values(isolates), filter);
+        }
+        return createIsolateCollection(Object.values(isolateArray), filter);
     }
+
     async getCount(
         dataRequestCreated: DataRequestCreatedEvent
     ): Promise<IsolateCollection> {

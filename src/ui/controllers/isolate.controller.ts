@@ -18,6 +18,8 @@ import {
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
+    IsolateDto,
+    IsolateGeneDto,
     IsolateDTO,
 } from '../model/response.model';
 import { ConvertedQuery, IsolateController } from '../model/controller.model';
@@ -171,31 +173,48 @@ export class DefaultIsolateController
         this.fail(res);
     }
 
+    hasKeys(obj: any): boolean {
+        return null != Object.keys(obj) && 0 < Object.keys(obj).length;
+    }
+
     private isolateToDTO(isolate: Isolate): IsolateDTO {
-        const characteristics: any = { ...isolate.getCharacteristics() };
+        const hasGenes = this.hasKeys(isolate.getGenes());
+        const hasCharacteristics = this.hasKeys(isolate.getCharacteristics());
+        const hasResistences = this.hasKeys(isolate.getResistances());
 
-        _.forEach(isolate.getGenes(), (v, gene: keyof GeneSet) => {
-            if (v) {
-                characteristics[gene] = '+';
-            }
-        });
+        let characteristics: any;
+        if (hasCharacteristics) {
+            characteristics = isolate.getCharacteristics();
+        }
 
-        const resistance = { ...isolate.getResistances() };
-        return {
-            isolateId: isolate.isolateId,
-            bfrId: isolate.bfrId,
-            microorganism: isolate.microorganism,
-            samplingYear: isolate.samplingYear,
-            federalState: isolate.federalState,
-            samplingContext: isolate.samplingContext,
-            samplingStage: isolate.samplingStage,
-            origin: isolate.origin,
-            category: isolate.category,
-            productionType: isolate.productionType,
-            matrix: isolate.matrix,
-            matrixDetail: isolate.matrixDetail,
-            characteristics: characteristics,
-            resistance: resistance,
-        };
+        if (hasGenes && hasCharacteristics) {
+            const geneDto = new IsolateGeneDto();
+            characteristics.genes = geneDto.build(isolate.getGenes());
+        }
+        if (hasGenes && !hasCharacteristics) {
+            characteristics = { genes: isolate.getGenes() };
+        }
+
+        let resistance: any;
+        if (hasResistences) {
+            resistance = isolate.getResistances();
+        }
+
+        return new IsolateDto(
+            isolate.isolateId,
+            isolate.bfrId,
+            isolate.microorganism,
+            isolate.samplingYear,
+            isolate.federalState,
+            isolate.samplingContext,
+            isolate.samplingStage,
+            isolate.origin,
+            isolate.category,
+            isolate.productionType,
+            isolate.matrix,
+            isolate.matrixDetail,
+            characteristics,
+            resistance
+        );
     }
 }

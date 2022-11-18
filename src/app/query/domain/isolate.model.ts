@@ -18,18 +18,14 @@ export interface Isolate {
     matrixDetail: string;
     bfrId: string;
     isolateId: number;
-    hasGene(gene: string): boolean | undefined;
+    hasGene(gene: string): boolean | null | undefined;
     getValueFor(key: keyof Isolate): string | undefined;
     getCharacteristicValue(
         key: keyof IsolateCharacteristicSet
     ): string | undefined;
     getResistances(): Partial<IsolateResistanceSet>;
     getCharacteristics(): Partial<IsolateCharacteristicSet>;
-    addCharacteristics(
-        characteristics: Partial<IsolateCharacteristicSet> & GeneSet
-    ): void;
-    addResistances(characteristics: Partial<IsolateResistanceSet>): void;
-    getGenes(): GeneSet;
+    getGenes(): Partial<GeneSet>;
     getResistancesProfileFor(
         resistance: keyof IsolateResistanceSet
     ): ResistanceProfile | undefined;
@@ -50,10 +46,18 @@ export interface IsolateCharacteristicSet {
 }
 
 export interface GeneSet {
-    stx1?: boolean;
-    stx2?: boolean;
-    eae?: boolean;
-    e_hly?: boolean;
+    stx1: boolean | null;
+    stx2: boolean | null;
+    eae: boolean | null;
+    e_hly: boolean | null;
+}
+export class GeneSet implements GeneSet {
+    constructor(
+        public stx1: boolean | null,
+        public stx2: boolean | null,
+        public eae: boolean | null,
+        public e_hly: boolean | null
+    ) {}
 }
 
 export type AllIsolateCharacteristics = Partial<IsolateCharacteristicSet> &

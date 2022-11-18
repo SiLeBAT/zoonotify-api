@@ -57,8 +57,26 @@ export interface IsolateDTO {
     productionType: string;
     matrix: string;
     matrixDetail: string;
-    characteristics: IsolateCharacteristicsDTO;
-    resistance: IsolateResistanceDTO;
+    characteristics?: IsolateCharacteristicsDTO;
+    resistance?: IsolateResistanceDTO;
+}
+export class IsolateDto implements IsolateDto {
+    constructor(
+        public isolateId: number,
+        public bfrId: string,
+        public microorganism: string,
+        public samplingYear: string,
+        public federalState: string,
+        public samplingContext: string,
+        public samplingStage: string,
+        public origin: string,
+        public category: string,
+        public productionType: string,
+        public matrix: string,
+        public matrixDetail: string,
+        public characteristics?: IsolateCharacteristicsDTO,
+        public resistance?: IsolateResistanceDTO
+    ) {}
 }
 
 interface ResistanceProfileDTO {
@@ -67,6 +85,36 @@ interface ResistanceProfileDTO {
 }
 
 type IsolateResistanceDTO = Partial<Record<string, ResistanceProfileDTO>>;
+
+interface IGeneSet {
+    stx1: boolean | null;
+    stx2: boolean | null;
+    eae: boolean | null;
+    e_hly: boolean | null;
+}
+export class IsolateGeneDto {
+    public stx1: boolean | null = null;
+    public stx2: boolean | null = null;
+    public eae: boolean | null = null;
+    public e_hly: boolean | null = null;
+
+    build(partialGeneSet: Partial<IGeneSet>): IsolateGeneDto {
+        if (null != partialGeneSet.stx1) {
+            this.stx1 = partialGeneSet.stx1;
+        }
+        if (null != partialGeneSet.stx2) {
+            this.stx2 = partialGeneSet.stx2;
+        }
+        if (null != partialGeneSet.eae) {
+            this.eae = partialGeneSet.eae;
+        }
+        if (null != partialGeneSet.e_hly) {
+            this.stx2 = partialGeneSet.e_hly;
+        }
+        return this;
+    }
+}
+
 interface IsolateCharacteristicsDTO {
     species?: string;
     serovar?: string;
@@ -79,4 +127,5 @@ interface IsolateCharacteristicsDTO {
     eae?: string;
     e_hly?: string;
     ampc_carba_phenotype?: string;
+    genes?: IsolateGeneDto;
 }

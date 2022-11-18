@@ -28,11 +28,14 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
+                        h_group: 'NT',
+                        o_group: '1',
+                    },
+                    genes: {
+                        e_hly: null,
                         eae: false,
                         stx2: false,
                         stx1: true,
-                        h_group: 'NT',
-                        o_group: '1',
                     },
                     resistance: {
                         GEN: {
@@ -103,11 +106,14 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
+                        h_group: 'NT',
+                        o_group: '1',
+                    },
+                    genes: {
+                        e_hly: null,
                         eae: false,
                         stx2: false,
                         stx1: true,
-                        h_group: 'NT',
-                        o_group: '1',
                     },
                     resistance: {
                         GEN: {
@@ -178,11 +184,14 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: true,
-                        stx2: true,
-                        stx1: false,
                         h_group: 'NT',
                         o_group: '1',
+                    },
+                    genes: {
+                        e_hly: null,
+                        eae: false,
+                        stx2: false,
+                        stx1: true,
                     },
                     resistance: {
                         GEN: {
@@ -253,11 +262,14 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
+                        h_group: 'NT',
+                        o_group: '1',
+                    },
+                    genes: {
+                        e_hly: null,
                         eae: false,
                         stx2: false,
                         stx1: true,
-                        h_group: 'NT',
-                        o_group: '1',
                     },
                     resistance: {
                         GEN: {
@@ -328,11 +340,14 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     matrix: 'Frisches Fleisch',
                     matrixDetail: 'gekühlt',
                     characteristics: {
-                        eae: true,
-                        stx2: false,
-                        stx1: true,
                         h_group: '2',
                         o_group: '184',
+                    },
+                    genes: {
+                        e_hly: null,
+                        eae: false,
+                        stx2: false,
+                        stx1: true,
                     },
                     resistance: {
                         GEN: {
@@ -431,6 +446,7 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                             value: '32',
                         },
                     },
+                    genes: {},
                 },
             ];
             const internalFilter =
@@ -448,6 +464,7 @@ export function getMockIsolateViewGateway(): IsolateViewGateway {
                     r.matrix,
                     r.matrixDetail,
                     r.characteristics,
+                    r.genes,
                     r.resistance,
                     r.bfrId,
                     r.isolateId
