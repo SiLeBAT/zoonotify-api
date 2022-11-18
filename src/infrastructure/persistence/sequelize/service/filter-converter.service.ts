@@ -4,7 +4,7 @@ import { injectable } from 'inversify';
 import * as _ from 'lodash';
 import { Op } from 'sequelize';
 import { QueryFilter, Tree } from '../../../../app/ports';
-import { characteristicMap } from './utils.service';
+import { characteristicAndGeneMap } from './utils.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MyWhere = any;
@@ -65,13 +65,15 @@ export class SequelizeFilterConverter implements FilterConverter {
             const childFV = child.value;
             const childEntry = {
                 [childFV.key]:
-                    characteristicMap.get(childFV.value) || childFV.value,
+                    characteristicAndGeneMap.get(childFV.value) ||
+                    childFV.value,
             };
 
             if (!_.isNull(parent)) {
                 childResult.push({
                     [parent.key]:
-                        characteristicMap.get(parent.value) || parent.value,
+                        characteristicAndGeneMap.get(parent.value) ||
+                        parent.value,
                 });
                 childResult.push(childEntry);
                 return { [Op.and]: childResult };

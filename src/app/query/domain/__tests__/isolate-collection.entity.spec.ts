@@ -441,6 +441,7 @@ describe('Isolate-Collection Entity', () => {
             r.matrix,
             r.matrixDetail,
             r.characteristics,
+            {},
             r.resistance,
             r.bfrId,
             r.isolateId

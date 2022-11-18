@@ -8,12 +8,13 @@ import {
 import * as _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { FederalState } from './federal-state.enum';
+import e = require('express');
 
 class DefaultIsolate implements Isolate {
     //TODO : Create Getters , make readonly
-    private _id: string;
-    private _geneSet: GeneSet = {};
-    private _characteristics: Partial<IsolateCharacteristicSet> = {};
+    // private _id: string;
+    // private _geneSet: GeneSet = {};
+    // private _characteristics: Partial<IsolateCharacteristicSet> = {};
 
     constructor(
         public federalState: FederalState,
@@ -26,17 +27,16 @@ class DefaultIsolate implements Isolate {
         public productionType: string,
         public matrix: string,
         public matrixDetail: string,
-        public characteristics: Partial<IsolateCharacteristicSet> &
-            GeneSet = {},
-        private _resistance: Partial<IsolateResistanceSet> = {},
+
+        public characteristics: Partial<IsolateCharacteristicSet>,
+        public geneSet: Partial<GeneSet>,
+        public resistance: Partial<IsolateResistanceSet>,
+
         public bfrId: string,
         public isolateId: number
-    ) {
-        this._id = uuidv4();
-        this.addCharacteristics(characteristics);
-    }
-    hasGene(gene: keyof GeneSet): boolean | undefined {
-        return this._geneSet[gene];
+    ) {}
+    hasGene(gene: keyof GeneSet): boolean | null | undefined {
+        return this.geneSet[gene];
     }
 
     getValueFor(key: keyof Isolate): string | undefined {
@@ -45,54 +45,24 @@ class DefaultIsolate implements Isolate {
     getCharacteristicValue(
         key: keyof IsolateCharacteristicSet
     ): string | undefined {
-        return this._characteristics[key];
+        return this.characteristics[key];
     }
     getResistances(): Partial<IsolateResistanceSet> {
-        return this._resistance;
+        return this.resistance;
     }
 
     getCharacteristics(): Partial<IsolateCharacteristicSet> {
-        return this._characteristics;
+        return this.characteristics;
     }
 
     getResistancesProfileFor(
         resistance: keyof IsolateResistanceSet
     ): ResistanceProfile | undefined {
-        return this._resistance[resistance];
+        return this.resistance[resistance];
     }
 
-    getGenes(): GeneSet {
-        return { ...this._geneSet };
-    }
-
-    addCharacteristics(
-        characteristics: Partial<IsolateCharacteristicSet> & GeneSet
-    ): void {
-        this._geneSet = {
-            ...this._geneSet,
-            ...{
-                stx1: characteristics['stx1'],
-                stx2: characteristics['stx2'],
-                eae: characteristics['eae'],
-                e_hly: characteristics['e_hly'],
-            },
-        };
-
-        this._characteristics = {
-            ...this._characteristics,
-            ...{
-                species: characteristics['species'],
-                serovar: characteristics['serovar'],
-                serotype: characteristics['serotype'],
-                spa_typ: characteristics['spa_typ'],
-                o_group: characteristics['o_group'],
-                h_group: characteristics['h_group'],
-                ampc_carba_phenotype: characteristics['ampc_carba_phenotype'],
-            },
-        };
-    }
-    addResistances(resistances: Partial<IsolateResistanceSet>): void {
-        this._resistance = { ...this._resistance, ...resistances };
+    getGenes(): Partial<GeneSet> {
+        return { ...this.geneSet };
     }
 }
 
@@ -107,7 +77,8 @@ export function createIsolate(
     productionType: string,
     matrix: string,
     matrixDetail: string,
-    characteristics: Partial<IsolateCharacteristicSet> & GeneSet,
+    characteristics: Partial<IsolateCharacteristicSet>,
+    geneSet: Partial<GeneSet>,
     resistance: Partial<IsolateResistanceSet>,
     bfrId: string,
     isolateId: number
@@ -124,6 +95,7 @@ export function createIsolate(
         matrix,
         matrixDetail,
         characteristics,
+        geneSet,
         resistance,
         bfrId,
         isolateId
