@@ -109,7 +109,7 @@ export class IsolateGeneDto {
             this.eae = partialGeneSet.eae;
         }
         if (null != partialGeneSet.e_hly) {
-            this.stx2 = partialGeneSet.e_hly;
+            this.e_hly = partialGeneSet.e_hly;
         }
         return this;
     }
