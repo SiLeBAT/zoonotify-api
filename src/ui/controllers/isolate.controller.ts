@@ -16,6 +16,8 @@ import {
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
+    IsolateDto,
+    IsolateGeneDto,
     IsolateDTO,
 } from '../model/response.model';
 import { ConvertedQuery, IsolateController } from '../model/controller.model';

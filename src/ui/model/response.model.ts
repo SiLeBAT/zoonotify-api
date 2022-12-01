@@ -115,6 +115,7 @@ export class IsolateGeneDto {
     }
 }
 
+
 export interface IIsolateCharacteristics {
     species?: string | null | undefined;
     serovar?: string | null | undefined;
