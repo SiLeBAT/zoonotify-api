@@ -1,4 +1,3 @@
-import { GeneSet } from './../../app/query/domain/isolate.model';
 import { Response, Request } from 'express';
 import {
     controller,
@@ -11,15 +10,12 @@ import {
     APPLICATION_TYPES,
     IsolatePort,
     IsolateCollection,
-    Isolate,
     DataRequestCreatedEvent,
     createDataRequestCreatedEvent,
 } from '../../app/ports';
 import {
     GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
-    IsolateDto,
-    IsolateGeneDto,
     IsolateDTO,
 } from '../model/response.model';
 import { ConvertedQuery, IsolateController } from '../model/controller.model';
@@ -30,8 +26,10 @@ import SERVER_TYPES from '../server.types';
 import {
     QueryParameterToGroupingConverter,
     QueryParameterToQueryFilterConverter,
+    IsolateConverter,
 } from '../model/converter.model';
 import _ = require('lodash');
+
 enum ISOLATE_ROUTE {
     ROOT = '/isolate',
 }
@@ -47,7 +45,9 @@ export class DefaultIsolateController
         @inject(SERVER_TYPES.QueryParameterToQueryFilterConverter)
         private parameterToFilterConverter: QueryParameterToQueryFilterConverter,
         @inject(SERVER_TYPES.QueryParameterToGroupingConverter)
-        private parameterToGroupingConverter: QueryParameterToGroupingConverter
+        private parameterToGroupingConverter: QueryParameterToGroupingConverter,
+        @inject(SERVER_TYPES.IsolateConverter)
+        private isolateConverter: IsolateConverter
     ) {
         super();
     }
@@ -71,7 +71,7 @@ export class DefaultIsolateController
 
             const dto: GetIsolatesSuccessResponse = {
                 isolates: isolateCollection.isolates.map((isolate) =>
-                    this.isolateToDTO(isolate)
+                    this.isolateConverter.createIsolateDTOViaIsolate(isolate)
                 ),
             };
             this.ok(res, dto);
@@ -139,7 +139,9 @@ export class DefaultIsolateController
                 null != isolateCollection &&
                 isolateCollection.isolates.length === 1
             ) {
-                dto = this.isolateToDTO(isolateCollection.isolates[0]);
+                dto = this.isolateConverter.createIsolateDTOViaIsolate(
+                    isolateCollection.isolates[0]
+                );
             }
             this.ok(res, dto);
         } catch (error) {
@@ -171,50 +173,5 @@ export class DefaultIsolateController
 
     private handleError(res: Response) {
         this.fail(res);
-    }
-
-    hasKeys(obj: any): boolean {
-        return null != Object.keys(obj) && 0 < Object.keys(obj).length;
-    }
-
-    private isolateToDTO(isolate: Isolate): IsolateDTO {
-        const hasGenes = this.hasKeys(isolate.getGenes());
-        const hasCharacteristics = this.hasKeys(isolate.getCharacteristics());
-        const hasResistences = this.hasKeys(isolate.getResistances());
-
-        let characteristics: any;
-        if (hasCharacteristics) {
-            characteristics = isolate.getCharacteristics();
-        }
-
-        if (hasGenes && hasCharacteristics) {
-            const geneDto = new IsolateGeneDto();
-            characteristics.genes = geneDto.build(isolate.getGenes());
-        }
-        if (hasGenes && !hasCharacteristics) {
-            characteristics = { genes: isolate.getGenes() };
-        }
-
-        let resistance: any;
-        if (hasResistences) {
-            resistance = isolate.getResistances();
-        }
-
-        return new IsolateDto(
-            isolate.isolateId,
-            isolate.bfrId,
-            isolate.microorganism,
-            isolate.samplingYear,
-            isolate.federalState,
-            isolate.samplingContext,
-            isolate.samplingStage,
-            isolate.origin,
-            isolate.category,
-            isolate.productionType,
-            isolate.matrix,
-            isolate.matrixDetail,
-            characteristics,
-            resistance
-        );
     }
 }

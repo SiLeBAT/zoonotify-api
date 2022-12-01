@@ -57,7 +57,7 @@ export interface IsolateDTO {
     productionType: string;
     matrix: string;
     matrixDetail: string;
-    characteristics?: IsolateCharacteristicsDTO;
+    characteristics?: IIsolateCharacteristics;
     resistance?: IsolateResistanceDTO;
 }
 export class IsolateDto implements IsolateDto {
@@ -115,17 +115,124 @@ export class IsolateGeneDto {
     }
 }
 
-interface IsolateCharacteristicsDTO {
-    species?: string;
-    serovar?: string;
-    serotype?: string;
-    spa_typ?: string;
-    o_group?: string;
-    h_group?: string;
-    stx1?: string;
-    stx2?: string;
-    eae?: string;
-    e_hly?: string;
-    ampc_carba_phenotype?: string;
-    genes?: IsolateGeneDto;
+export interface IIsolateCharacteristics {
+    species?: string | null | undefined;
+    serovar?: string | null | undefined;
+    serotype?: string | null | undefined;
+    spa_type?: string | null | undefined;
+    o_group?: string | null | undefined;
+    h_group?: string | null | undefined;
+    ampc_carba_phenotype?: string | null | undefined;
+    clonal_group?: string | null | undefined;
+    genes?: IsolateGeneDto | null | undefined;
+}
+export class IsolateCharacteristicsDTO implements IIsolateCharacteristics {
+    species?: string | null | undefined;
+    serovar?: string | null | undefined;
+    serotype?: string | null | undefined;
+    spa_type?: string | null | undefined;
+    o_group?: string | null | undefined;
+    h_group?: string | null | undefined;
+    ampc_carba_phenotype?: string | null | undefined;
+    clonal_group?: string | null | undefined;
+    genes?: IsolateGeneDto | null | undefined;
+}
+interface SpeciesCharacteristics extends IIsolateCharacteristics {
+    species: string | null;
+}
+export class SpeciesCharacteristicsDto implements SpeciesCharacteristics {
+    constructor(public species: string | null = null) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IIsolateCharacteristics {
+        if (null != partialCharacteristic.species) {
+            this.species = partialCharacteristic.species;
+        }
+        return this;
+    }
+}
+interface SerovarCharacteristics extends IIsolateCharacteristics {
+    serovar: string | null;
+}
+export class SerovarCharacteristicsDto implements SerovarCharacteristics {
+    constructor(public serovar: string | null = null) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): SerovarCharacteristics {
+        if (null != partialCharacteristic.serovar) {
+            this.serovar = partialCharacteristic.serovar;
+        }
+        return this;
+    }
+}
+interface SeroTypeCharacteristics extends IIsolateCharacteristics {
+    serotype: string | null;
+}
+export class SeroTypeCharacteristicsDto implements SeroTypeCharacteristics {
+    constructor(public serotype: string | null = null) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IIsolateCharacteristics {
+        if (null != partialCharacteristic.serotype) {
+            this.serotype = partialCharacteristic.serotype;
+        }
+        return this;
+    }
+}
+interface GenesCharacteristics extends IIsolateCharacteristics {
+    o_group?: string | null;
+    h_group?: string | null;
+}
+export class GenesCharacteristicsDto implements GenesCharacteristics {
+    constructor(
+        public o_group: string | null = null,
+        public h_group: string | null = null
+    ) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IIsolateCharacteristics {
+        if (null != partialCharacteristic.o_group) {
+            this.o_group = partialCharacteristic.o_group;
+        }
+        if (null != partialCharacteristic.h_group) {
+            this.h_group = partialCharacteristic.h_group;
+        }
+        return this;
+    }
+}
+interface PhenoTypeCharacteristics extends IIsolateCharacteristics {
+    ampc_carba_phenotype: string | null;
+}
+export class PhenoTypeCharacteristicsDto implements PhenoTypeCharacteristics {
+    constructor(public ampc_carba_phenotype: string | null = null) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IIsolateCharacteristics {
+        if (null != partialCharacteristic.ampc_carba_phenotype) {
+            this.ampc_carba_phenotype =
+                partialCharacteristic.ampc_carba_phenotype;
+        }
+        return this;
+    }
+}
+interface SpaTypeCharacteristics extends IIsolateCharacteristics {
+    spa_type: string | null;
+    clonal_group: string | null;
+}
+export class SpaTypeCharacteristicsDto implements SpaTypeCharacteristics {
+    constructor(
+        public spa_type: string | null = null,
+        public clonal_group: string | null = null
+    ) {}
+    create(
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IIsolateCharacteristics {
+        if (null != partialCharacteristic.spa_type) {
+            this.spa_type = partialCharacteristic.spa_type;
+        }
+        if (null != partialCharacteristic.clonal_group) {
+            this.clonal_group = partialCharacteristic.clonal_group;
+        }
+        return this;
+    }
 }

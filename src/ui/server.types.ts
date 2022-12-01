@@ -12,6 +12,7 @@ const SERVER_TYPES = {
     QueryParameterToGroupingConverter: Symbol.for(
         'QueryParameterToGroupingConverter'
     ),
+    IsolateConverter: Symbol.for('IsolateConverter'),
     GroupingString: Symbol.for('GroupingString'),
     SwaggerMW: Symbol.for('SwaggerMW'),
 };

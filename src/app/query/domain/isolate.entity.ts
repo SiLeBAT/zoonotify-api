@@ -52,7 +52,7 @@ class DefaultIsolate implements Isolate {
     }
 
     getCharacteristics(): Partial<IsolateCharacteristicSet> {
-        return this.characteristics;
+        return { ...this.characteristics };
     }
 
     getResistancesProfileFor(
