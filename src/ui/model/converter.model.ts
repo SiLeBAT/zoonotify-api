@@ -1,4 +1,9 @@
-import { GroupAttributes, QueryFilter } from './../../app/ports';
+import { GroupAttributes, Isolate, QueryFilter } from './../../app/ports';
+import {
+    IIsolateCharacteristics,
+    IsolateCharacteristicsDTO,
+    IsolateDto,
+} from './response.model';
 
 type QueryParametersValue = string[];
 
@@ -12,4 +17,22 @@ export interface QueryParameterToQueryFilterConverter {
 
 export interface QueryParameterToGroupingConverter {
     getGroupAttribute(query: QueryParameters): GroupAttributes;
+}
+
+export enum CharacteristicsType {
+    NONE,
+    SPECIES,
+    SEROVAR,
+    PHENOTYPE,
+    GENES,
+    SEROTYPE,
+    SPA,
+}
+export interface IsolateConverter {
+    createIsolateDTOViaIsolate(isolate: Isolate): IsolateDto;
+
+    createCharacteristicsViaCharacteristicsType(
+        characteristicType: CharacteristicsType,
+        partialCharacteristic: Partial<IIsolateCharacteristics>
+    ): IsolateCharacteristicsDTO;
 }
