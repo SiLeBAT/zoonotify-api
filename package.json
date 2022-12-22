@@ -42,7 +42,7 @@
     "helmet": "^3.23.3",
     "inversify": "^5.1.1",
     "inversify-express-utils": "^6.4.3",
-    "jsonwebtoken": "^8.1.0",
+    "jsonwebtoken": "^9.0.0",
     "linebyline": "^1.3.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
