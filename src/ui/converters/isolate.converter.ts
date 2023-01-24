@@ -1,6 +1,6 @@
 import _ = require('lodash');
 import { injectable } from 'inversify';
-import { Isolate } from 'src/app/ports';
+import { Isolate, IsolateCharacteristicSet } from 'src/app/ports';
 import {
     CharacteristicsType,
     IsolateConverter,
@@ -22,32 +22,48 @@ import {
 @injectable()
 export class DefaultIsolateConverter implements IsolateConverter {
     createIsolateDTOViaIsolate(isolate: Isolate): IsolateDTO {
-        const hasGenes = this.hasKeys(isolate.getGenes());
-        const hasCharacteristics = this.hasKeys(isolate.getCharacteristics());
-        const hasResistences = this.hasKeys(isolate.getResistances());
+        const hasCharacteristics = this.hasKeys(isolate.characteristics);
+        const hasResistences = this.hasKeys(isolate.resistance);
+
+        let hasGenes = false;
+        if (
+            !_.isUndefined(isolate.characteristics) &&
+            !_.isUndefined(isolate.characteristics.genes)
+        ) {
+            hasGenes = this.hasKeys(isolate.characteristics.genes);
+        }
 
         const microorganism: string = isolate.microorganism;
         let characteristics: IsolateCharacteristicsDTO | undefined;
         const characteristicType =
             this.getCharacteristicTypeViaMicroorganism(microorganism);
         if (hasCharacteristics && !_.isUndefined(characteristicType)) {
+            const tempCharacteristics = isolate.characteristics;
             characteristics = this.createCharacteristicsViaCharacteristicsType(
                 characteristicType,
-                isolate.getCharacteristics()
+                tempCharacteristics as IsolateCharacteristicSet
             );
         }
 
         const geneDto = new IsolateGeneDto();
         if (hasGenes) {
+            // if characteristics not present -> create an empty characteristics instance
             characteristics = _.isUndefined(characteristics)
                 ? new IsolateCharacteristicsDTO()
                 : characteristics;
-            characteristics.genes = geneDto.build(isolate.getGenes());
+            if (
+                !_.isUndefined(isolate.characteristics) &&
+                !_.isUndefined(isolate.characteristics.genes)
+            ) {
+                // put genes
+                const genes = isolate.characteristics.genes;
+                characteristics.genes = geneDto.build(genes);
+            }
         }
 
         let resistance: any;
         if (hasResistences) {
-            resistance = isolate.getResistances();
+            resistance = isolate.resistance;
         }
 
         return new IsolateDto(
@@ -70,38 +86,37 @@ export class DefaultIsolateConverter implements IsolateConverter {
 
     createCharacteristicsViaCharacteristicsType(
         characteristicType: CharacteristicsType,
-        partialCharacteristics: Partial<IIsolateCharacteristics>
+        characteristics: IsolateCharacteristicSet | undefined
     ): IsolateCharacteristicsDTO {
         let result: any = null;
+        const _characteristics = characteristics as IIsolateCharacteristics;
         switch (characteristicType) {
             case CharacteristicsType.SPECIES:
                 result = new SpeciesCharacteristicsDto().create(
-                    partialCharacteristics
+                    _characteristics
                 );
                 break;
             case CharacteristicsType.SEROVAR:
                 result = new SerovarCharacteristicsDto().create(
-                    partialCharacteristics
+                    _characteristics
                 );
                 break;
             case CharacteristicsType.SEROTYPE:
                 result = new SeroTypeCharacteristicsDto().create(
-                    partialCharacteristics
+                    _characteristics
                 );
                 break;
             case CharacteristicsType.GENES:
-                result = new GenesCharacteristicsDto().create(
-                    partialCharacteristics
-                );
+                result = new GenesCharacteristicsDto().create(_characteristics);
                 break;
             case CharacteristicsType.PHENOTYPE:
                 result = new PhenoTypeCharacteristicsDto().create(
-                    partialCharacteristics
+                    _characteristics
                 );
                 break;
             case CharacteristicsType.SPA:
                 result = new SpaTypeCharacteristicsDto().create(
-                    partialCharacteristics
+                    _characteristics
                 );
                 break;
             case CharacteristicsType.NONE:
@@ -148,6 +163,10 @@ export class DefaultIsolateConverter implements IsolateConverter {
     }
 
     private hasKeys(obj: any): boolean {
-        return null != Object.keys(obj) && 0 < Object.keys(obj).length;
+        return (
+            null != obj &&
+            null != Object.keys(obj) &&
+            0 < Object.keys(obj).length
+        );
     }
 }

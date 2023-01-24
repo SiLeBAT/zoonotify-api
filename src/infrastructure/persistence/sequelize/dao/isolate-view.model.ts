@@ -1,5 +1,6 @@
+import _ = require('lodash');
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { ModelStatic } from './shared.model';
+import { CompareOperator, ModelStatic } from './shared.model';
 
 export interface IsolateViewAttributes {
     isolateId: number;
@@ -14,11 +15,21 @@ export interface IsolateViewAttributes {
     matrix: string;
     origin: string;
     matrixDetail: string;
-    characteristic: string;
-    characteristicValue: string;
-    resistance: string;
-    resistanceActive: boolean;
-    resistanceValue: string;
+    clonalGroup: string;
+    spaType: string;
+    ampcCarbaPhenotype: string;
+    spez: string;
+    serovar: string;
+    serotype: string;
+    oGroup: string;
+    hGroup: string;
+    stx1: string;
+    stx2: string;
+    eae: string;
+    e_hly: string;
+    // resistance: string;
+    // resistanceActive: boolean;
+    // resistanceValue: string;
 }
 
 export interface IsolateViewModel
@@ -34,11 +45,11 @@ export function isolateViewModelFactory(
     sequelize: Sequelize
 ): ModelStatic<IsolateViewModel> {
     const _isolateViewModel: ModelStatic<IsolateViewModel> = sequelize.define(
-        'v_isolates',
+        'mvIsolate',
         {
             isolateId: {
-                type: DataTypes.INTEGER,
-                field: 'isolate_id',
+                type: DataTypes.BIGINT,
+                field: 'isolat_id',
             },
             bfrId: {
                 type: DataTypes.STRING,
@@ -80,27 +91,54 @@ export function isolateViewModelFactory(
                 type: DataTypes.STRING,
                 field: 'matrix_detail',
             },
-            characteristic: {
+            clonalGroup: {
+                type: DataTypes.STRING,
+                field: 'clonal_group',
+            },
+            spaType: {
+                type: DataTypes.STRING,
+                field: 'spa_type',
+            },
+            ampcCarbaPhenotype: {
+                type: DataTypes.STRING,
+                field: 'ampc_carba_phenotype',
+            },
+            spez: {
                 type: DataTypes.STRING,
             },
-            characteristicValue: {
-                type: DataTypes.STRING,
-                field: 'characteristic_value',
-            },
-            resistance: {
+            serovar: {
                 type: DataTypes.STRING,
             },
-            resistanceActive: {
-                type: DataTypes.BOOLEAN,
-                field: 'resistance_active',
-            },
-            resistanceValue: {
+            serotype: {
                 type: DataTypes.STRING,
-                field: 'resistance_value',
+            },
+            oGroup: {
+                type: DataTypes.STRING,
+                field: 'o_group',
+            },
+            hGroup: {
+                type: DataTypes.STRING,
+                field: 'h_group',
+            },
+            stx1: {
+                type: DataTypes.STRING,
+                field: 'stx1_gen',
+            },
+            stx2: {
+                type: DataTypes.STRING,
+                field: 'stx2_gen',
+            },
+            eae: {
+                type: DataTypes.STRING,
+                field: 'eae_gen',
+            },
+            e_hly: {
+                type: DataTypes.STRING,
+                field: 'e_hly_gen',
             },
         },
         {
-            tableName: 'v_isolat',
+            tableName: 'mv_isolat',
             timestamps: false,
         }
     );

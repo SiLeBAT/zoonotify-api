@@ -17,6 +17,7 @@ export interface FilterValue {
 }
 export interface EntityGateway<T> {
     findAll(datasetOperations?: DataRequestCreatedEvent): Promise<T>;
+    find(filter?: string[]): Promise<T>;
 }
 
 export interface QueryFilter {

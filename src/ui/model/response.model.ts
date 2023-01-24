@@ -115,12 +115,11 @@ export class IsolateGeneDto {
     }
 }
 
-
 export interface IIsolateCharacteristics {
     species?: string | null | undefined;
     serovar?: string | null | undefined;
     serotype?: string | null | undefined;
-    spa_type?: string | null | undefined;
+    spa_typ?: string | null | undefined;
     o_group?: string | null | undefined;
     h_group?: string | null | undefined;
     ampc_carba_phenotype?: string | null | undefined;
@@ -131,7 +130,7 @@ export class IsolateCharacteristicsDTO implements IIsolateCharacteristics {
     species?: string | null | undefined;
     serovar?: string | null | undefined;
     serotype?: string | null | undefined;
-    spa_type?: string | null | undefined;
+    spa_typ?: string | null | undefined;
     o_group?: string | null | undefined;
     h_group?: string | null | undefined;
     ampc_carba_phenotype?: string | null | undefined;
@@ -217,19 +216,19 @@ export class PhenoTypeCharacteristicsDto implements PhenoTypeCharacteristics {
     }
 }
 interface SpaTypeCharacteristics extends IIsolateCharacteristics {
-    spa_type: string | null;
+    spa_typ: string | null;
     clonal_group: string | null;
 }
 export class SpaTypeCharacteristicsDto implements SpaTypeCharacteristics {
     constructor(
-        public spa_type: string | null = null,
+        public spa_typ: string | null = null,
         public clonal_group: string | null = null
     ) {}
     create(
         partialCharacteristic: Partial<IIsolateCharacteristics>
     ): IIsolateCharacteristics {
-        if (null != partialCharacteristic.spa_type) {
-            this.spa_type = partialCharacteristic.spa_type;
+        if (null != partialCharacteristic.spa_typ) {
+            this.spa_typ = partialCharacteristic.spa_typ;
         }
         if (null != partialCharacteristic.clonal_group) {
             this.clonal_group = partialCharacteristic.clonal_group;

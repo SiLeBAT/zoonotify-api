@@ -112,7 +112,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Campylobacter spp.',
                 target: 'characteristic',
-                dbTargetValue: 'species',
+                dbTargetValue: 'spez',
             },
             {
                 id: 'entero_spez',
@@ -120,7 +120,7 @@ export class DefaultFilterConfigurationProvider
                 parent: 'microorganism',
                 trigger: 'Enterococcus spp.',
                 target: 'characteristic',
-                dbTargetValue: 'species',
+                dbTargetValue: 'spez',
             },
             {
                 id: 'serotype',
@@ -172,11 +172,11 @@ export class DefaultFilterConfigurationProvider
             attribute: 'matrixDetail',
             parent: 'matrix',
         },
-        {
-            id: 'resistance',
-            attribute: 'resistance',
-            parent: 'microorganism',
-        },
+        // {
+        //     id: 'resistance',
+        //     attribute: 'resistance',
+        //     parent: 'microorganism',
+        // },
     ];
 
     /* List of manually created Subfilters */
@@ -198,6 +198,12 @@ export class DefaultFilterConfigurationProvider
             parent: 'microorganism',
             trigger: 'STEC',
             values: ['stx1', 'stx2', 'eae', 'e_hly'],
+        },
+        {
+            id: 'characteristicValue',
+            parent: 'microorganism',
+            trigger: 'Salmonella spp.',
+            values: ['serovar'],
         },
     ];
 
@@ -295,6 +301,8 @@ export class DefaultFilterConfigurationProvider
     ): Promise<FilterConfiguration> {
         const isSubfilter = parent && trigger;
         const hasOwnEntry = target && targetValue;
+        const isCharacteristicAttribute: boolean =
+            attribute === 'characteristicValue';
 
         if (isSubfilter) {
             filter.addFilter({
@@ -330,14 +338,16 @@ export class DefaultFilterConfigurationProvider
             this.findByIdInCollection(id, [...this.manualFilterConfiguration]);
 
         if (!configuration) {
+            const param: string = isCharacteristicAttribute
+                ? _.isUndefined(targetValue)
+                    ? ''
+                    : targetValue
+                : attribute;
             const values =
-                await this.isolateViewGateway.getUniqueAttributeValues(
-                    attribute,
-                    {
-                        filter: filter,
-                        grouping: [],
-                    }
-                );
+                await this.isolateViewGateway.getUniqueAttributeValues(param, {
+                    filter: filter,
+                    grouping: [],
+                });
             configuration = {
                 id: id,
                 parent,
@@ -345,7 +355,9 @@ export class DefaultFilterConfigurationProvider
                 values,
             };
         }
-        if (!configuration) throw new Error();
+        if (!configuration) {
+            throw new Error();
+        }
         return configuration as FilterConfiguration;
     }
 

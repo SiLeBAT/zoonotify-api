@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import { ModelStatic, Sequelize } from 'sequelize/types';
 import { isolateViewModelFactory } from '../dao/isolate-view.model';
+import { resistanceViewModelFactory } from '../dao/resistance-view.model';
 import { Database } from '../datastore/database.model';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,9 +25,12 @@ export class SequelizeDAOProvider implements DAOProvider {
 
     private createDAOS() {
         const IsolateView = isolateViewModelFactory(this.db.getDatastore());
-
+        const ResistanceView = resistanceViewModelFactory(
+            this.db.getDatastore()
+        );
         return {
             isolateView: IsolateView,
+            resistanceView: ResistanceView,
         };
     }
 }

@@ -19,6 +19,8 @@ export {
     UIFilterType,
     FilterConfigurationPort,
     FilterDefinition,
+    IsolateQueryFilter,
+    PrefixInputParam,
 } from './query/domain/filter.model';
 
 export {
@@ -31,6 +33,12 @@ export {
     IsolateCount,
     IsolateCountGroup,
 } from './query/domain/isolate.model';
+
+export {
+    Resistance,
+    ResistanceViewGateway,
+    ResistanceCollection,
+} from './query/domain/resistance.model';
 
 export { createIsolateCollection } from './query/domain/isolate-collection.entity';
 export { createDataRequestCreatedEvent } from './query/domain/dataRequestCreated.event';

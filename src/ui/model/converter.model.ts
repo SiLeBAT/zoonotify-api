@@ -1,9 +1,13 @@
-import { GroupAttributes, Isolate, QueryFilter } from './../../app/ports';
+import { Request } from 'express';
 import {
-    IIsolateCharacteristics,
-    IsolateCharacteristicsDTO,
-    IsolateDto,
-} from './response.model';
+    GroupAttributes,
+    Isolate,
+    IsolateCharacteristicSet,
+    IsolateQueryFilter,
+    QueryFilter,
+} from './../../app/ports';
+
+import { IsolateCharacteristicsDTO, IsolateDto } from './response.model';
 
 type QueryParametersValue = string[];
 
@@ -30,9 +34,13 @@ export enum CharacteristicsType {
 }
 export interface IsolateConverter {
     createIsolateDTOViaIsolate(isolate: Isolate): IsolateDto;
-
     createCharacteristicsViaCharacteristicsType(
         characteristicType: CharacteristicsType,
-        partialCharacteristic: Partial<IIsolateCharacteristics>
+        characteristic: IsolateCharacteristicSet | undefined
     ): IsolateCharacteristicsDTO;
+}
+
+export interface QueryFilterConverter {
+    createIsolateQueryFilter(req: Request): IsolateQueryFilter;
+    convertRequestToFilterList(req: Request): any[];
 }

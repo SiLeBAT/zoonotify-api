@@ -1,4 +1,5 @@
 export const PERSISTENCE_TYPES = {
-    IsolateViewModel: Symbol.for('IsolateViewModel'),
     FilterConverterService: Symbol.for('FilterConverterService'),
+    IsolateViewModel: Symbol.for('IsolateViewModel'),
+    ResistanceViewModel: Symbol.for('ResistanceViewModel'),
 };
