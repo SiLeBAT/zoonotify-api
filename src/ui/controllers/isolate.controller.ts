@@ -14,10 +14,7 @@ import {
     createDataRequestCreatedEvent,
 } from '../../app/ports';
 import {
-    GetCountedIsolatesSuccessResponse,
     GetIsolatesSuccessResponse,
-    IsolateDto,
-    IsolateGeneDto,
     IsolateDTO,
 } from '../model/response.model';
 import { ConvertedQuery, IsolateController } from '../model/controller.model';
@@ -26,11 +23,13 @@ import { ROUTE } from '../model/enums';
 import { logger } from '../../aspects';
 import SERVER_TYPES from '../server.types';
 import {
+    QueryFilterConverter,
     QueryParameterToGroupingConverter,
     QueryParameterToQueryFilterConverter,
     IsolateConverter,
 } from '../model/converter.model';
 import _ = require('lodash');
+import { IsolateQueryFilter } from 'src/app/query/domain/filter.model';
 
 enum ISOLATE_ROUTE {
     ROOT = '/isolate',
@@ -49,7 +48,9 @@ export class DefaultIsolateController
         @inject(SERVER_TYPES.QueryParameterToGroupingConverter)
         private parameterToGroupingConverter: QueryParameterToGroupingConverter,
         @inject(SERVER_TYPES.IsolateConverter)
-        private isolateConverter: IsolateConverter
+        private isolateConverter: IsolateConverter,
+        @inject(SERVER_TYPES.QueryFilterConverter)
+        private queryFilterConverter: QueryFilterConverter
     ) {
         super();
     }
@@ -60,53 +61,18 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
         );
         try {
-            const convertedQuery = this.parseURLQueryParameters(
-                req.query as Record<string, string | string[]>
-            );
-
-            const dataRequestCreated = await this.createDataRequest(
-                convertedQuery
-            );
+            const filter: IsolateQueryFilter =
+                this.queryFilterConverter.createIsolateQueryFilter(req);
 
             const isolateCollection: IsolateCollection =
-                await this.isolateService.getIsolates(dataRequestCreated);
-
+                await this.isolateService.getIsolateListByIsolateQueryFilter(
+                    filter
+                );
             const dto: GetIsolatesSuccessResponse = {
-                isolates: isolateCollection.isolates.map((isolate) =>
+                isolates: ([] = isolateCollection.isolates.map((isolate) =>
                     this.isolateConverter.createIsolateDTOViaIsolate(isolate)
-                ),
+                )),
             };
-            this.ok(res, dto);
-        } catch (error) {
-            logger.error('Unable to send response: ', error);
-            this.handleError(res);
-        }
-    }
-
-    @httpGet('/counted')
-    async getIsolateCount(@request() req: Request, @response() res: Response) {
-        logger.trace(
-            `${this.constructor.name}.${this.getIsolateCount.name}, Received: ${req}`
-        );
-        try {
-            const convertedQuery: ConvertedQuery = this.parseURLQueryParameters(
-                req.query as Record<string, string | string[]>
-            );
-
-            const dataRequestCreated = await this.createDataRequest(
-                convertedQuery
-            );
-
-            const isolateCount = await this.isolateService.getIsolateCount(
-                dataRequestCreated
-            );
-
-            const dto: GetCountedIsolatesSuccessResponse = {
-                totalNumberOfIsolates: isolateCount.totalNumberOfIsolates,
-            };
-            if (isolateCount.groups) {
-                dto.groups = isolateCount.groups as any;
-            }
             this.ok(res, dto);
         } catch (error) {
             logger.error('Unable to send response: ', error);
@@ -123,7 +89,7 @@ export class DefaultIsolateController
             `${this.constructor.name}.${this.getIsolate.name}, Received: ${req}`
         );
         try {
-            // prepapare queryParameter
+            // prepare queryParameter
             const convertedQuery = this.createIdentifierQueryParam(
                 req.params.bfrId
             );
@@ -133,7 +99,7 @@ export class DefaultIsolateController
 
             // request Data
             const isolateCollection: IsolateCollection =
-                await this.isolateService.getIsolates(dataRequestCreated);
+                await this.isolateService.getIsolateById(dataRequestCreated);
 
             // create result
             let dto: IsolateDTO | null = null;
@@ -161,7 +127,6 @@ export class DefaultIsolateController
             await this.parameterToFilterConverter.convertParameterToFilter(
                 convertedQuery
             );
-
         return createDataRequestCreatedEvent(filter, grouping);
     }
 

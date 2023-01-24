@@ -4,4 +4,5 @@ export const APPLICATION_TYPES = {
     FilterConfigurationProvider: Symbol.for('FilterConfigurationProvider'),
     IsolateService: Symbol.for('IsolateService'),
     IsolateViewGateway: Symbol.for('IsolateViewGateway'),
+    ResistanceViewGateway: Symbol.for('ResistanceViewGateway'),
 };

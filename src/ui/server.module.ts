@@ -1,5 +1,6 @@
 import {
     IsolateConverter,
+    QueryFilterConverter,
     QueryParameterToGroupingConverter,
     QueryParameterToQueryFilterConverter,
 } from './model/converter.model';
@@ -21,6 +22,7 @@ import { DefaultIsolateController } from './controllers/isolate.controller';
 import { DefaultQueryParameterToQueryFilterConverter } from './converters/parameter-to-filter.converter';
 import { DefaultQueryParameterToGroupingConverter } from './converters/parameter-to-grouping.converter';
 import { DefaultIsolateConverter } from './converters/isolate.converter';
+import { DefaultQueryFilterConverter } from './converters/query-filter.converter';
 
 export function getServerContainerModule(
     serverCongfiguration: AppServerConfiguration
@@ -63,5 +65,9 @@ export function getServerContainerModule(
             .inSingletonScope();
 
         bind(SERVER_TYPES.GroupingString).toConstantValue('group-by');
+
+        bind<QueryFilterConverter>(SERVER_TYPES.QueryFilterConverter).to(
+            DefaultQueryFilterConverter
+        );
     });
 }

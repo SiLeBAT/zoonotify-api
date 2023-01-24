@@ -6,6 +6,8 @@ import {
 import { FederalState } from './federal-state.enum';
 
 export interface Isolate {
+    bfrId: string;
+    isolateId: number;
     federalState: FederalState;
     microorganism: string;
     samplingYear: string;
@@ -16,33 +18,79 @@ export interface Isolate {
     productionType: string;
     matrix: string;
     matrixDetail: string;
-    bfrId: string;
-    isolateId: number;
     hasGene(gene: string): boolean | null | undefined;
     getValueFor(key: keyof Isolate): string | undefined;
     getCharacteristicValue(
         key: keyof IsolateCharacteristicSet
     ): string | undefined;
     getResistances(): Partial<IsolateResistanceSet>;
-    getCharacteristics(): Partial<IsolateCharacteristicSet>;
+    getCharacteristics(): IsolateCharacteristicSet;
     getGenes(): Partial<GeneSet>;
     getResistancesProfileFor(
         resistance: keyof IsolateResistanceSet
     ): ResistanceProfile | undefined;
 }
 
-export type IsolateCollection = {
-    isolates: Isolate[];
-    getIsolateCount(grouping: GroupAttributes): IsolateCount;
-};
+export class Isolate implements Isolate {
+    constructor(
+        public bfrId: string,
+        public isolateId: number,
+        public federalState: FederalState,
+        public microorganism: string,
+        public samplingYear: string,
+        public samplingContext: string,
+        public samplingStage: string,
+        public origin: string,
+        public category: string,
+        public productionType: string,
+        public matrix: string,
+        public matrixDetail: string,
+        public characteristics?: IsolateCharacteristicSet,
+        public resistance?: IsolateResistanceSet
+    ) {}
+}
+
+export interface IIsolateContainer {
+    isolate: Isolate;
+    resistances: IsolateResistanceSet;
+    getResistancesProfileFor(
+        name: keyof IsolateResistanceSet
+    ): ResistanceProfile | undefined;
+}
+export class IsolateContainer implements IIsolateContainer {
+    constructor(
+        public isolate: Isolate,
+        public resistances: IsolateResistanceSet
+    ) {}
+    getResistancesProfileFor(name: string): ResistanceProfile | undefined {
+        return this.resistances[name];
+    }
+}
+
 export interface IsolateCharacteristicSet {
-    species: string;
-    serovar: string;
-    serotype: string;
-    spa_typ: string;
-    o_group: string;
-    h_group: string;
-    ampc_carba_phenotype: string;
+    species?: string;
+    serovar?: string;
+    serotype?: string;
+    spa_typ?: string;
+    o_group?: string;
+    h_group?: string;
+    ampc_carba_phenotype?: string;
+    clonal_group?: string;
+    genes?: GeneSet;
+}
+
+export class IsolateCharacteristicSet implements IsolateCharacteristicSet {
+    constructor(
+        public species?: string,
+        public serovar?: string,
+        public serotype?: string,
+        public spa_typ?: string,
+        public o_group?: string,
+        public h_group?: string,
+        public ampc_carba_phenotype?: string,
+        public clonal_group?: string,
+        public genes?: GeneSet
+    ) {}
 }
 
 export interface GeneSet {
@@ -64,14 +112,16 @@ export type AllIsolateCharacteristics = Partial<IsolateCharacteristicSet> &
     GeneSet;
 export interface ResistanceProfile {
     value: string;
-    active: boolean;
+    active?: boolean;
 }
-export type IsolateResistanceSet = Record<string, ResistanceProfile>;
+export type IsolateResistanceSet = Record<string, any>;
 
-export interface IsolateViewGateway extends EntityGateway<IsolateCollection> {
-    getCount(
-        datasetOperations: DataRequestCreatedEvent
-    ): Promise<IsolateCollection>;
+export type IsolateCollection = {
+    isolates: Isolate[];
+    //getIsolateCount(grouping: GroupAttributes): IsolateCount;
+};
+
+export interface IsolateViewGateway extends EntityGateway<Isolate[]> {
     getUniqueAttributeValues(
         property: string,
         datasetOperations?: DataRequestCreatedEvent
@@ -82,10 +132,4 @@ export interface IsolateCount {
     groups?: IsolateCountGroup[];
 }
 
-export type IsolateCountGroup =
-    | {
-          [key: string]: string;
-      }
-    | {
-          count: number;
-      };
+export type IsolateCountGroup = { [key: string]: string } | { count: number };

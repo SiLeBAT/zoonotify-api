@@ -1,6 +1,6 @@
+import _ = require('lodash');
 import { TreeNode } from '../../core/domain/tree-node';
 import { Tree } from '../../core/domain/tree';
-import _ = require('lodash');
 import { Isolate, IsolateCharacteristicSet } from './isolate.model';
 import { FilterValue, QueryFilter, ApplicationFilter } from './shared.model';
 
@@ -243,11 +243,19 @@ class CharacteristicApplicationFilter extends GenericApplicationFilter {
 
     //FIXME: Check for gene
     public applySpecificFilter(isolate: Isolate): boolean {
-        const characteristic = isolate.getCharacteristicValue(this._targetKey);
-        return Boolean(characteristic)
-            ? String(characteristic) === String(this._targetValue)
-                ? true
-                : false
-            : false;
+        let result = false;
+        if (
+            isolate.characteristics &&
+            isolate.characteristics.hasOwnProperty(this._targetKey)
+        ) {
+            const characteristic = isolate.characteristics[this._targetKey];
+            result = Boolean(characteristic)
+                ? String(characteristic) === String(this._targetValue)
+                    ? true
+                    : false
+                : false;
+        }
+
+        return result;
     }
 }

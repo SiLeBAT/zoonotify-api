@@ -11,11 +11,6 @@ import { FederalState } from './federal-state.enum';
 import e = require('express');
 
 class DefaultIsolate implements Isolate {
-    //TODO : Create Getters , make readonly
-    // private _id: string;
-    // private _geneSet: GeneSet = {};
-    // private _characteristics: Partial<IsolateCharacteristicSet> = {};
-
     constructor(
         public federalState: FederalState,
         public microorganism: string,
@@ -28,9 +23,9 @@ class DefaultIsolate implements Isolate {
         public matrix: string,
         public matrixDetail: string,
 
-        public characteristics: Partial<IsolateCharacteristicSet>,
+        public characteristics: IsolateCharacteristicSet,
         public geneSet: Partial<GeneSet>,
-        public resistance: Partial<IsolateResistanceSet>,
+        public resistance: IsolateResistanceSet,
 
         public bfrId: string,
         public isolateId: number
@@ -42,13 +37,11 @@ class DefaultIsolate implements Isolate {
     getValueFor(key: keyof Isolate): string | undefined {
         return _.isUndefined(this[key]) ? undefined : String(this[key]);
     }
-    getCharacteristicValue(
-        key: keyof IsolateCharacteristicSet
-    ): string | undefined {
+    getCharacteristicValue(key: keyof IsolateCharacteristicSet): any {
         return this.characteristics[key];
     }
     getResistances(): Partial<IsolateResistanceSet> {
-        return this.resistance;
+        return { ...this.resistance };
     }
 
     getCharacteristics(): Partial<IsolateCharacteristicSet> {
@@ -79,7 +72,7 @@ export function createIsolate(
     matrixDetail: string,
     characteristics: Partial<IsolateCharacteristicSet>,
     geneSet: Partial<GeneSet>,
-    resistance: Partial<IsolateResistanceSet>,
+    resistance: IsolateResistanceSet,
     bfrId: string,
     isolateId: number
 ): Isolate {
