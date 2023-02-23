@@ -19,4 +19,4 @@ export class Resistance implements IResistance {
 export type ResistanceCollection = {
     resistances: Resistance[];
 };
-export type ResistanceViewGateway = EntityGateway<Resistance[]>
+export type ResistanceViewGateway = EntityGateway<Resistance[]>;

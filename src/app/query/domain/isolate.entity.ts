@@ -6,9 +6,7 @@ import {
     ResistanceProfile,
 } from './isolate.model';
 import * as _ from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 import { FederalState } from './federal-state.enum';
-import e = require('express');
 
 class DefaultIsolate implements Isolate {
     constructor(
@@ -33,7 +31,6 @@ class DefaultIsolate implements Isolate {
     hasGene(gene: keyof GeneSet): boolean | null | undefined {
         return this.geneSet[gene];
     }
-
     getValueFor(key: keyof Isolate): string | undefined {
         return _.isUndefined(this[key]) ? undefined : String(this[key]);
     }
@@ -43,17 +40,14 @@ class DefaultIsolate implements Isolate {
     getResistances(): Partial<IsolateResistanceSet> {
         return { ...this.resistance };
     }
-
     getCharacteristics(): Partial<IsolateCharacteristicSet> {
         return { ...this.characteristics };
     }
-
     getResistancesProfileFor(
         resistance: keyof IsolateResistanceSet
     ): ResistanceProfile | undefined {
         return this.resistance[resistance];
     }
-
     getGenes(): Partial<GeneSet> {
         return { ...this.geneSet };
     }

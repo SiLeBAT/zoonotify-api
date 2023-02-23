@@ -7,13 +7,10 @@ import {
 } from '../domain/isolate.model';
 import { Resistance, ResistanceViewGateway } from '../domain/resistance.model';
 import { APPLICATION_TYPES } from '../../application.types';
-import { DataRequestCreatedEvent } from '../domain/shared.model';
 import { IsolateQueryFilter } from '../domain/filter.model';
 
 export interface IsolatePort {
-    getIsolateById(
-        dataRequestCreated: DataRequestCreatedEvent
-    ): Promise<IsolateCollection>;
+    getIsolateById(bfrId: string): Promise<IsolateCollection>;
     getIsolateListByIsolateQueryFilter(
         filter: IsolateQueryFilter
     ): Promise<IsolateCollection>;
@@ -30,18 +27,16 @@ export class DefaultIsolateService implements IsolateService {
         private resistanceGateway: ResistanceViewGateway
     ) {}
 
-    async getIsolateById(
-        dataRequestCreated: DataRequestCreatedEvent
-    ): Promise<IsolateCollection> {
-        const isolateList = await this.isolateGateway.findAll(dataRequestCreated);
-
+    async getIsolateById(bfrId: string): Promise<IsolateCollection> {
+        const isolateList = await this.isolateGateway.find([
+            ['bfrId', '=', bfrId],
+        ]);
         // reload resitances via the previously completed isolateIdList
         const isolateIdList = isolateList.map((iso) => iso.isolateId);
         const resistanceFilter: any = [['isolateId', 'IN', isolateIdList]];
         const vResistanceList = await this.resistanceGateway.find(
             resistanceFilter
         );
-
         const isolateCollection = this.createIsolateCollection(
             vResistanceList,
             isolateList

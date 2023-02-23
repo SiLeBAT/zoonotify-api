@@ -14,11 +14,6 @@ export { TreeNode } from './core/domain/tree-node';
  */
 export { FederalState } from './query/domain/federal-state.enum';
 export {
-    DependentFilter,
-    SubfilterDefinition,
-    UIFilterType,
-    FilterConfigurationPort,
-    FilterDefinition,
     IsolateQueryFilter,
     PrefixInputParam,
 } from './query/domain/filter.model';
@@ -30,8 +25,6 @@ export {
     IsolateResistanceSet,
     IsolateViewGateway,
     IsolateCollection,
-    IsolateCount,
-    IsolateCountGroup,
 } from './query/domain/isolate.model';
 
 export {
@@ -41,13 +34,5 @@ export {
 } from './query/domain/resistance.model';
 
 export { createIsolateCollection } from './query/domain/isolate-collection.entity';
-export { createDataRequestCreatedEvent } from './query/domain/dataRequestCreated.event';
 export { IsolatePort } from './query/application/isolat.service';
-export { createQueryFilter } from './query/domain/query-filter.entity';
 export { createIsolate } from './query/domain/isolate.entity';
-export {
-    QueryFilter,
-    FilterValue,
-    DataRequestCreatedEvent,
-    GroupAttributes,
-} from './query/domain/shared.model';

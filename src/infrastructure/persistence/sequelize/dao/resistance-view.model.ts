@@ -1,6 +1,5 @@
-import _ = require('lodash');
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { CompareOperator, ModelStatic } from './shared.model';
+import { ModelStatic } from './shared.model';
 
 export interface ResistanceViewAttributes {
     isolateId: number;

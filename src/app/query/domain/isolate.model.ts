@@ -1,8 +1,4 @@
-import {
-    DataRequestCreatedEvent,
-    EntityGateway,
-    GroupAttributes,
-} from './shared.model';
+import { EntityGateway } from './shared.model';
 import { FederalState } from './federal-state.enum';
 
 export interface Isolate {
@@ -30,7 +26,6 @@ export interface Isolate {
         resistance: keyof IsolateResistanceSet
     ): ResistanceProfile | undefined;
 }
-
 export class Isolate implements Isolate {
     constructor(
         public bfrId: string,
@@ -49,24 +44,6 @@ export class Isolate implements Isolate {
         public resistance?: IsolateResistanceSet
     ) {}
 }
-
-export interface IIsolateContainer {
-    isolate: Isolate;
-    resistances: IsolateResistanceSet;
-    getResistancesProfileFor(
-        name: keyof IsolateResistanceSet
-    ): ResistanceProfile | undefined;
-}
-export class IsolateContainer implements IIsolateContainer {
-    constructor(
-        public isolate: Isolate,
-        public resistances: IsolateResistanceSet
-    ) {}
-    getResistancesProfileFor(name: string): ResistanceProfile | undefined {
-        return this.resistances[name];
-    }
-}
-
 export interface IsolateCharacteristicSet {
     species?: string;
     serovar?: string;
@@ -78,7 +55,6 @@ export interface IsolateCharacteristicSet {
     clonal_group?: string;
     genes?: GeneSet;
 }
-
 export class IsolateCharacteristicSet implements IsolateCharacteristicSet {
     constructor(
         public species?: string,
@@ -92,7 +68,6 @@ export class IsolateCharacteristicSet implements IsolateCharacteristicSet {
         public genes?: GeneSet
     ) {}
 }
-
 export interface GeneSet {
     stx1: boolean | null;
     stx2: boolean | null;
@@ -107,7 +82,6 @@ export class GeneSet implements GeneSet {
         public e_hly: boolean | null
     ) {}
 }
-
 export type AllIsolateCharacteristics = Partial<IsolateCharacteristicSet> &
     GeneSet;
 export interface ResistanceProfile {
@@ -118,18 +92,6 @@ export type IsolateResistanceSet = Record<string, any>;
 
 export type IsolateCollection = {
     isolates: Isolate[];
-    //getIsolateCount(grouping: GroupAttributes): IsolateCount;
 };
 
-export interface IsolateViewGateway extends EntityGateway<Isolate[]> {
-    getUniqueAttributeValues(
-        property: string,
-        datasetOperations?: DataRequestCreatedEvent
-    ): Promise<(string | number | boolean)[]>;
-}
-export interface IsolateCount {
-    totalNumberOfIsolates: number;
-    groups?: IsolateCountGroup[];
-}
-
-export type IsolateCountGroup = { [key: string]: string } | { count: number };
+export type IsolateViewGateway = EntityGateway<Isolate[]>
