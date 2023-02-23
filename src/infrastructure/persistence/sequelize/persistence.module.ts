@@ -3,7 +3,7 @@ import { DAOHash } from './service/dao-provider.service';
 import { SequelizeIsolateViewGateway } from './gateway/isolate-view.gateway';
 import { APPLICATION_TYPES } from '../../../app/ports';
 import { PERSISTENCE_TYPES } from './persistence.types';
-import { SequelizeFilterConverter } from './service/filter-converter.service';
+//import { SequelizeFilterConverter } from './service/filter-converter.service';
 import { SequelizeResistanceViewGateway } from './gateway/resistance-view.gateway';
 
 export function getPersistenceContainerModule(
@@ -19,10 +19,6 @@ export function getPersistenceContainerModule(
 
         bind(APPLICATION_TYPES.IsolateViewGateway).to(
             SequelizeIsolateViewGateway
-        );
-
-        bind(PERSISTENCE_TYPES.FilterConverterService).to(
-            SequelizeFilterConverter
         );
 
         bind(APPLICATION_TYPES.ResistanceViewGateway).to(

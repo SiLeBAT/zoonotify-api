@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { injectable } from 'inversify';
 import * as _ from 'lodash';
 import { QueryFilterConverter } from '../model/converter.model';
@@ -7,29 +6,27 @@ import { IsolateQueryFilter, PrefixInputParam } from '../../app/ports';
 @injectable()
 export class DefaultQueryFilterConverter implements QueryFilterConverter {
     private RESISTANCE_TABLE_PREFIX = 'resistance.';
-    private REQUEST_PROPERTY_NAME_FILTER = 'filter';
 
-    createIsolateQueryFilter(req: Request): IsolateQueryFilter {
-        const filterList: any[] = this.convertRequestToFilterList(req);
-        let isolateFilter: any = [];
-        let resistanceFilter: any = [];
-        const isolatePrefixInputParam: PrefixInputParam = new PrefixInputParam(
+    createIsolateQueryFilter(filterValueString: string): IsolateQueryFilter {
+        this.validateCreateIsolateQueryFilter(filterValueString);
+        const isolateFilterOutput: any = [];
+        const resistanceFilterOutput: any = [];
+
+        // parse provided input into JSON array
+        const filterList: any[] =
+            this.convertInputFilterToList(filterValueString);
+
+        const prefixInputParam: PrefixInputParam = new PrefixInputParam(
             this.RESISTANCE_TABLE_PREFIX,
             false
         );
-        isolateFilter = this.prepareFilter(
-            isolatePrefixInputParam,
-            filterList,
-            isolateFilter
-        );
-        const resistancePrefixInputParam: PrefixInputParam = new PrefixInputParam(
-            this.RESISTANCE_TABLE_PREFIX,
-            true
-        );
-        resistanceFilter = this.prepareFilter(
+        this.prepareFilter(prefixInputParam, filterList, isolateFilterOutput);
+        const resistancePrefixInputParam: PrefixInputParam =
+            new PrefixInputParam(this.RESISTANCE_TABLE_PREFIX, true);
+        this.prepareFilter(
             resistancePrefixInputParam,
             filterList,
-            resistanceFilter
+            resistanceFilterOutput
         );
         const hasORCondition = !_.isUndefined(
             filterList.find(
@@ -38,19 +35,32 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         );
         return new IsolateQueryFilter(
             hasORCondition,
-            isolateFilter,
-            resistanceFilter
+            isolateFilterOutput,
+            resistanceFilterOutput
         );
     }
 
-    convertRequestToFilterList(req: Request): any[] {
-        let result: any[] = [];
-        if (req.query.hasOwnProperty(this.REQUEST_PROPERTY_NAME_FILTER)) {
-            const filterValueString = req.query[
-                this.REQUEST_PROPERTY_NAME_FILTER
-            ] as string;
-            result = JSON.parse(filterValueString);
+    validateCreateIsolateQueryFilter(filterValueString: string) {
+        const inputToValidate = filterValueString.trim();
+        if (_.isEmpty(inputToValidate)) {
+            throw Error(
+                'Validation failed! Cannot create isolate query filter. Filter is empty string.'
+            );
         }
+        const filterList: any[] =
+            this.convertInputFilterToList(filterValueString);
+        if (null == filterList.find((item) => Array.isArray(item))) {
+            throw Error(
+                'Validation failed! Cannot create isolate query filter. No conditions found.'
+            );
+        }
+    }
+
+    // parses the filter property of request into a JSON array
+    convertInputFilterToList(filterValueString: string): string[] {
+        const cleaner = (key: string, value: any) =>
+            key === '__proto__' ? undefined : value;
+        const result: string[] = JSON.parse(filterValueString, cleaner);
         return result;
     }
 
@@ -62,7 +72,7 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         const logicalOperatorList: string[] = [];
         let hasLogicalOperator = false;
         let logicalOperatorCount = 0;
-        filterList.forEach((item, idx) => {
+        filterList.forEach((item) => {
             const filterListItemType =
                 this.getFilterListItemTypeViaFilterListItem(item);
             switch (filterListItemType) {
@@ -79,6 +89,7 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
                     const isExclusiveQueryFilter =
                         !prefixInputParam.isInclusivePrefix &&
                         !item[0].startsWith(prefixInputParam.prefixValue);
+
                     if (isExclusiveQueryFilter || isInclusiveQueryFilter) {
                         const removePrefix =
                             isInclusiveQueryFilter && !isExclusiveQueryFilter;
@@ -143,7 +154,9 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
             hasLogicalOperator = true;
         }
 
-        const fieldName: string = removePrefix ? item[0].split('.')[1] : item[0];
+        const fieldName: string = removePrefix
+            ? item[0].split('.')[1]
+            : item[0];
         const compareOperator: string = item[1];
         const searchValue: any = item[2];
         const condition = [fieldName, compareOperator, searchValue];
@@ -185,9 +198,11 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         ];
         return comparatorList.includes(item);
     }
+
     private isInOperator(item: string): boolean {
         return _.isString(item) && ('IN' === item || 'NOT_IN' === item);
     }
+    // checks if we have a ..'WHERE ... IN' condition
     private isIncludeCondition(itemList: any[]): boolean {
         let result = itemList.length === 3;
         result =
@@ -196,6 +211,7 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
             Array.isArray(itemList[2]);
         return result;
     }
+    // checks if the provided item contains an array with a (partial) condition
     private isCondition(item: any) {
         let result = false;
         if (Array.isArray(item)) {
@@ -205,6 +221,8 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         }
         return result;
     }
+    // Retrieve the type of the partial fiter item.
+    // The type indicates which function the item will have in our Wherepart
     private getFilterListItemTypeViaFilterListItem(item: any): string {
         let isFound = false;
         let resultType = 'NOT_SET';

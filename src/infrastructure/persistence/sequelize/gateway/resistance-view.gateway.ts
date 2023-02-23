@@ -1,11 +1,7 @@
 import { inject, injectable } from 'inversify';
 import * as _ from 'lodash';
 import { ResistanceViewModel } from '../dao/resistance-view.model';
-import {
-    DataRequestCreatedEvent,
-    ResistanceViewGateway,
-    Resistance,
-} from '../../../../app/ports';
+import { ResistanceViewGateway, Resistance } from '../../../../app/ports';
 import { createWherePart, ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
 import { logger } from '../../../../aspects';
@@ -16,12 +12,6 @@ export class SequelizeResistanceViewGateway implements ResistanceViewGateway {
         @inject(PERSISTENCE_TYPES.ResistanceViewModel)
         private ResistanceView: ModelStatic<ResistanceViewModel>
     ) {}
-
-    findAll(
-        datasetOperations?: DataRequestCreatedEvent | undefined
-    ): Promise<Resistance[]> {
-        throw new Error('Method not implemented.');
-    }
 
     find(queryFilter: string[]): Promise<Resistance[]> {
         logger.trace(`${this.constructor.name}.${this.find.name}, Executing`);

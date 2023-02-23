@@ -4,18 +4,15 @@ import {
     IsolateViewAttributes,
     IsolateViewModel,
 } from '../dao/isolate-view.model';
-import { FilterConverter } from '../service/filter-converter.service';
 import { createWherePart, ModelStatic } from '../dao/shared.model';
 import { PERSISTENCE_TYPES } from '../persistence.types';
 import {
-    QueryFilter,
     Isolate,
     FederalState,
     GeneSet,
     IsolateViewGateway,
     IsolateCharacteristicSet,
     IsolateResistanceSet,
-    DataRequestCreatedEvent,
 } from '../../../../app/ports';
 import { logger } from '../../../../aspects';
 import { ERROR_MESSAGE } from '../../../server.fault';
@@ -24,63 +21,8 @@ import { ERROR_MESSAGE } from '../../../server.fault';
 export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     constructor(
         @inject(PERSISTENCE_TYPES.IsolateViewModel)
-        private IsolateView: ModelStatic<IsolateViewModel>,
-        @inject(PERSISTENCE_TYPES.FilterConverterService)
-        private filterConverter: FilterConverter
+        private IsolateView: ModelStatic<IsolateViewModel>
     ) {}
-
-    async findAll(
-        dataRequestCreated: DataRequestCreatedEvent,
-        options = {}
-    ): Promise<Isolate[]> {
-        logger.trace(
-            `${this.constructor.name}.${this.findAll.name}, Executing`
-        );
-        const filter = dataRequestCreated.filter.getPersistenceFilter();
-        const whereClause = this.filterConverter.convertFilter(filter);
-        options = {
-            ...options,
-            ...whereClause,
-        };
-
-        return this.IsolateView.findAll(options)
-            .then((vIsolateList) => this.convertToIsolateList(vIsolateList))
-            .catch((error) => {
-                logger.error(error);
-                throw error;
-            });
-    }
-
-    // Obsolete? Application Filters?
-    getUniqueAttributeValues(
-        property: keyof IsolateViewAttributes,
-        dataRequestCreated: DataRequestCreatedEvent
-    ): Promise<(string | number | boolean)[]> {
-        let options = {
-            attributes: [property],
-            group: property,
-        };
-        const filter = dataRequestCreated.filter.getPersistenceFilter();
-        const whereClause = this.filterConverter.convertFilter(filter);
-        options = {
-            ...options,
-            ...whereClause,
-        };
-
-        // Here we need to filter out null values due to the way the IsolatView is constructed (via multiple joins)
-        return this.IsolateView.findAll(options)
-            .then((data) => {
-                return data
-                    .map((d) => {
-                        return d[property];
-                    })
-                    .filter((d) => !_.isNil(d))
-                    .sort();
-            })
-            .catch((error) => {
-                throw this.handleException(error);
-            });
-    }
 
     find(filter: string[], options = {}): Promise<Isolate[]> {
         logger.trace(`${this.constructor.name}.${this.find.name}, Executing`);
@@ -96,8 +38,7 @@ export class SequelizeIsolateViewGateway implements IsolateViewGateway {
     }
 
     private convertToIsolateList(
-        modelCollection: IsolateViewModel[],
-        filter?: QueryFilter
+        modelCollection: IsolateViewModel[]
     ): Isolate[] {
         const isolateArray: any[] = [];
         for (let i = 0; i < modelCollection.length; i++) {
