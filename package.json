@@ -53,7 +53,7 @@
     "reflect-metadata": "^0.1.13",
     "request-promise-native": "^1.0.9",
     "rxjs": "^6.6.7",
-    "sequelize": "^6.6.5",
+    "sequelize": "^6.28.2",
     "swagger-ui-express": "^4.2.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
