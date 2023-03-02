@@ -1,8 +1,11 @@
+import { LogicalOperator } from 'src/app/general.enums';
+import { FilterCondition } from 'src/ui/model/filter.model';
+
 export class IsolateQueryFilter {
     constructor(
         public hasORCondition: boolean,
-        public isolateFilter: any[],
-        public resistanceFilter: any[]
+        public isolateFilter: (LogicalOperator | FilterCondition)[],
+        public resistanceFilter: (LogicalOperator | FilterCondition)[]
     ) {}
 }
 export interface PrefixInputParam {

@@ -82,16 +82,11 @@ export class GeneSet implements GeneSet {
         public e_hly: boolean | null
     ) {}
 }
-export type AllIsolateCharacteristics = Partial<IsolateCharacteristicSet> &
-    GeneSet;
+
 export interface ResistanceProfile {
     value: string;
     active?: boolean;
 }
 export type IsolateResistanceSet = Record<string, any>;
 
-export type IsolateCollection = {
-    isolates: Isolate[];
-};
-
-export type IsolateViewGateway = EntityGateway<Isolate[]>
+export type IsolateViewGateway = EntityGateway<Isolate[]>;
