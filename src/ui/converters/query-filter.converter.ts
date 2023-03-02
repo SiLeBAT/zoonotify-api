@@ -1,35 +1,38 @@
 import { injectable } from 'inversify';
 import * as _ from 'lodash';
 import { QueryFilterConverter } from '../model/converter.model';
-import { IsolateQueryFilter, PrefixInputParam } from '../../app/ports';
+import {
+    IsolateQueryFilter,
+    PrefixInputParam,
+    FilterComponentType,
+    LogicalOperator,
+} from '../../app/ports';
+import { FilterCondition } from '../model/filter.model';
 
 @injectable()
 export class DefaultQueryFilterConverter implements QueryFilterConverter {
     private RESISTANCE_TABLE_PREFIX = 'resistance.';
 
-    createIsolateQueryFilter(filterValueString: string): IsolateQueryFilter {
-        this.validateCreateIsolateQueryFilter(filterValueString);
+    createIsolateQueryFilter(filterArray: any[]): IsolateQueryFilter {
+        // Prefix used as differentiator between paramters that
+        // correspond to isolates and paramters that correspond to resistances
         const isolateFilterOutput: any = [];
-        const resistanceFilterOutput: any = [];
-
-        // parse provided input into JSON array
-        const filterList: any[] =
-            this.convertInputFilterToList(filterValueString);
-
+        let resistanceFilterOutput: any = [];
         const prefixInputParam: PrefixInputParam = new PrefixInputParam(
             this.RESISTANCE_TABLE_PREFIX,
             false
         );
-        this.prepareFilter(prefixInputParam, filterList, isolateFilterOutput);
+        this.prepareFilter(prefixInputParam, filterArray, isolateFilterOutput);
         const resistancePrefixInputParam: PrefixInputParam =
             new PrefixInputParam(this.RESISTANCE_TABLE_PREFIX, true);
-        this.prepareFilter(
+        resistanceFilterOutput = this.prepareFilter(
             resistancePrefixInputParam,
-            filterList,
+            filterArray,
             resistanceFilterOutput
         );
+
         const hasORCondition = !_.isUndefined(
-            filterList.find(
+            filterArray.find(
                 (x) => !Array.isArray(x) && _.isString(x) && 'OR' === x
             )
         );
@@ -40,49 +43,28 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         );
     }
 
-    validateCreateIsolateQueryFilter(filterValueString: string) {
-        const inputToValidate = filterValueString.trim();
-        if (_.isEmpty(inputToValidate)) {
-            throw Error(
-                'Validation failed! Cannot create isolate query filter. Filter is empty string.'
-            );
-        }
-        const filterList: any[] =
-            this.convertInputFilterToList(filterValueString);
-        if (null == filterList.find((item) => Array.isArray(item))) {
-            throw Error(
-                'Validation failed! Cannot create isolate query filter. No conditions found.'
-            );
-        }
-    }
-
-    // parses the filter property of request into a JSON array
-    convertInputFilterToList(filterValueString: string): string[] {
-        const cleaner = (key: string, value: any) =>
-            key === '__proto__' ? undefined : value;
-        const result: string[] = JSON.parse(filterValueString, cleaner);
-        return result;
-    }
-
     private prepareFilter(
         prefixInputParam: PrefixInputParam,
         filterList: any[],
         resultListOutput: any[]
     ): any[] {
-        const logicalOperatorList: string[] = [];
+        const logicalOperatorList: LogicalOperator[] = [];
         let hasLogicalOperator = false;
         let logicalOperatorCount = 0;
         filterList.forEach((item) => {
-            const filterListItemType =
-                this.getFilterListItemTypeViaFilterListItem(item);
-            switch (filterListItemType) {
-                case 'LOGICAL_OPERATOR':
-                    logicalOperatorList.push(item);
-                    logicalOperatorCount++;
+            const filterComponentType =
+                this.getFilterComponentTypeViaFilterListItem(item);
+            switch (filterComponentType) {
+                case FilterComponentType.LOGICAL_OPERATOR:
+                    // carry over the logical operator
+                    const tempOperator =
+                        LogicalOperator[item as keyof typeof LogicalOperator];
+                    if (!_.isUndefined(tempOperator)) {
+                        logicalOperatorList.push(tempOperator);
+                        logicalOperatorCount++;
+                    }
                     break;
-                case 'COMPARE_OPERATOR':
-                    break;
-                case 'SIMPLE_CONDITION':
+                case FilterComponentType.FILTER_CONDITION:
                     const isInclusiveQueryFilter =
                         prefixInputParam.isInclusivePrefix &&
                         item[0].startsWith(prefixInputParam.prefixValue);
@@ -101,24 +83,36 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
                             logicalOperatorList,
                             resultListOutput
                         );
+                        if (hasLogicalOperator) {
+                            logicalOperatorCount--;
+                        }
                     }
                     break;
-                case 'CHILD_FILTER_LIST':
-                    if (1 === logicalOperatorCount) {
+                case FilterComponentType.CHILD_FILTER_LIST:
+                    // look for previously collected operator
+                    if (
+                        1 === logicalOperatorCount &&
+                        logicalOperatorList.length > 0
+                    ) {
                         resultListOutput.push(logicalOperatorList[0]);
+                        // cleanup
                         logicalOperatorList.length = 0;
                         logicalOperatorCount = 0;
                     }
+                    // call self
                     this.prepareFilter(
                         prefixInputParam,
                         item,
                         resultListOutput
                     );
                     break;
-                case 'NOT_SET':
+                case FilterComponentType.COMPARE_OPERATOR:
+                    // nothing todo here, but still valid
+                    break;
+                case FilterComponentType.NOT_SET:
                 default:
                     throw Error(
-                        'Unexpected Value detected: ' + filterListItemType
+                        'Unexpected enum value detected: ' + filterComponentType
                     );
             }
         });
@@ -127,18 +121,36 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         )
             ? resultListOutput
             : [];
+        // TODO: fix behavior that introduces the used opertor again (per Table)
+        // the operator should be marked as used and/or removed from the data we process
         if (_.isString(resultListOutput[resultListOutput.length - 1])) {
+            // per definition we should not have any logicalOperators in the end of our resultList;
+            // as this might happen when we use sub-filters for resistances here is a simple workaround!
+            // example filter:
+            // [
+            //  ["microorganism" , "=" , "STEC"],
+            //  ["OR" ,
+            //      ["AND",
+            //          ["resistance.name", "=", "AMR"],
+            //          ["resistance.active","=","true"]],
+            //      ["AND",
+            //          ["resistance.name","=","AZI"],
+            //          ["resistance.active","=","true"],
+            //          ["resistance.resistanceValue",">",100]
+            //      ]
+            //  ]
+            // ]
             resultListOutput.pop();
         }
         return resultListOutput;
     }
 
     private addConditionToFilter(
-        item: any[],
+        item: [string, string, string | (number | string)[]],
         removePrefix: boolean,
         hasLogicalOperator: boolean,
         logicalOperatorCount: number,
-        logicalOperatorList: any[],
+        logicalOperatorList: LogicalOperator[],
         resultListOutput: any[]
     ): boolean {
         while (logicalOperatorCount > 0) {
@@ -159,9 +171,14 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
             : item[0];
         const compareOperator: string = item[1];
         const searchValue: any = item[2];
-        const condition = [fieldName, compareOperator, searchValue];
+        const condition: FilterCondition = [
+            fieldName,
+            compareOperator,
+            searchValue,
+        ];
         if (hasLogicalOperator) {
-            // the last item is always an array
+            // if there has any logical operator been processed in the upper loop
+            // then the latest item is expected to always contain an array
             resultListOutput[resultListOutput.length - 1].push(condition);
         } else {
             resultListOutput.push(condition);
@@ -170,8 +187,7 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
     }
 
     private isLogicOperator(item: string): boolean {
-        const logicOperatorList = ['OR', 'AND'];
-        return logicOperatorList.includes(item);
+        return null != LogicalOperator[item as keyof typeof LogicalOperator];
     }
     private isCompareOperator(item: string): boolean {
         if (!_.isString(item)) {
@@ -221,11 +237,12 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
         }
         return result;
     }
-    // Retrieve the type of the partial fiter item.
+    // Retrieve the type of the partial filter item.
     // The type indicates which function the item will have in our Wherepart
-    private getFilterListItemTypeViaFilterListItem(item: any): string {
-        let isFound = false;
-        let resultType = 'NOT_SET';
+    private getFilterComponentTypeViaFilterListItem(
+        item: any
+    ): FilterComponentType {
+        let resultType: FilterComponentType;
 
         const isLogicOperator = _.isString(item) && this.isLogicOperator(item);
         const isCompareOperator =
@@ -233,8 +250,8 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
             _.isString(item) &&
             this.isCompareOperator(item);
         const isOperator = isLogicOperator || isCompareOperator;
-
         const isSimpleCondition = !isOperator && this.isCondition(item);
+
         const isChildFilterList =
             !isSimpleCondition &&
             Array.isArray(item) &&
@@ -242,20 +259,15 @@ export class DefaultQueryFilterConverter implements QueryFilterConverter {
             item.filter((i) => Array.isArray(i)).length >= 1;
 
         if (isLogicOperator) {
-            resultType = 'LOGICAL_OPERATOR';
-            isFound = true;
-        }
-        if (isCompareOperator && !isFound) {
-            resultType = 'COMPARE_OPERATOR';
-            isFound = true;
-        }
-        if (isSimpleCondition && !isFound) {
-            resultType = 'SIMPLE_CONDITION';
-            isFound = true;
-        }
-        if (isChildFilterList && !isFound) {
-            resultType = 'CHILD_FILTER_LIST';
-            isFound = true;
+            resultType = FilterComponentType.LOGICAL_OPERATOR;
+        } else if (isCompareOperator) {
+            resultType = FilterComponentType.COMPARE_OPERATOR;
+        } else if (isSimpleCondition) {
+            resultType = FilterComponentType.FILTER_CONDITION;
+        } else if (isChildFilterList) {
+            resultType = FilterComponentType.CHILD_FILTER_LIST;
+        } else {
+            resultType = FilterComponentType.NOT_SET;
         }
         return resultType;
     }

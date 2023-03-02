@@ -36,46 +36,63 @@ describe('Create Query Filter Use Case', () => {
     afterEach(() => {
         container = null;
     });
-    it('should fail because the filter is an empty string', () => {
-        const filterString: string = '';
-        try {
-            service.createIsolateQueryFilter(filterString);
-            // Fail
-            expect(true).toBe(false);
-        } catch (e) {
-            expect(e.message).toBe(
-                'Validation failed! Cannot create isolate query filter. Filter is empty string.'
-            );
-        }
-    });
-    it('should fail because the filter has no conditions provided ', () => {
+    it('should should return empty filter', () => {
         const filterString: string = '[]';
-        try {
-            service.createIsolateQueryFilter(filterString);
-            // Fail
-            expect(true).toBe(false);
-        } catch (e) {
-            expect(e.message).toBe(
-                'Validation failed! Cannot create isolate query filter. No conditions found.'
-            );
-        }
+        const filterArray: any[] = JSON.parse(filterString);
+        const result = service.createIsolateQueryFilter(filterArray);
+        expect(result).toBeDefined;
+        expect(result).toBeInstanceOf(IsolateQueryFilter);
+        expect(result.hasORCondition).toBe(false);
+        expect(result.isolateFilter.length).toBe(0);
+        expect(result.resistanceFilter.length).toBe(0);
     });
     it('should return a simple filter', async () => {
         const filterString: string = '[["microorganism", "=", "STEC"]]';
-        const result = service.createIsolateQueryFilter(filterString);
+        const filterArray: any[] = JSON.parse(filterString);
+        const result = service.createIsolateQueryFilter(filterArray);
         expect(result).toBeDefined;
         expect(result).toBeInstanceOf(IsolateQueryFilter);
+        expect(result.hasORCondition).toBe(false);
+        expect(result.isolateFilter.length).toBe(1);
+        expect(Array.isArray(result.isolateFilter[0][0])).toBeTruthy;
+        expect(result.isolateFilter[0][0]).toEqual('microorganism');
+        expect(result.isolateFilter[0][1]).toEqual('=');
+        expect(result.isolateFilter[0][2]).toEqual('STEC');
     });
     it('should return a isolate filter with AND', async () => {
         const filterString =
             '["AND", ["microorganism", "=", "STEC"],["stx1","=","%2b"]]';
-        const result = service.createIsolateQueryFilter(filterString);
+        const filterArray: any[] = JSON.parse(filterString);
+        const result = service.createIsolateQueryFilter(filterArray);
         expect(result).toBeInstanceOf(IsolateQueryFilter);
+        expect(result.hasORCondition).toBe(false);
+        expect(result.isolateFilter.length).toBe(1);
+        expect(result.isolateFilter[0].length).toBe(3);
+        expect(Array.isArray(result.isolateFilter[0][0])).toBeFalsy;
+        expect(result.isolateFilter[0][0]).toEqual('AND');
+        expect(Array.isArray(result.isolateFilter[0][1])).toBeTruthy;
+        expect(result.isolateFilter[0][1].length).toBe(3);
+        expect(Array.isArray(result.isolateFilter[0][2])).toBeTruthy;
+        expect(result.isolateFilter[0][2].length).toBe(3);
+        expect(result.resistanceFilter.length).toBe(0);
     });
     it('should return a resistance filter', async () => {
         const filterString =
             '["AND",["microorganism","=","STEC"],["resistance.name","=","AMP"],["resistance.active","=","true"]]';
-        const result = service.createIsolateQueryFilter(filterString);
+        const filterArray: any[] = JSON.parse(filterString);
+        const result = service.createIsolateQueryFilter(filterArray);
         expect(result).toBeInstanceOf(IsolateQueryFilter);
+        expect(result.hasORCondition).toBe(false);
+        expect(result.isolateFilter.length).toBe(1);
+        expect(result.isolateFilter[0].length).toBe(2);
+        expect(Array.isArray(result.isolateFilter[0][0])).toBeFalsy;
+        expect(result.isolateFilter[0][0]).toEqual('AND');
+        expect(result.isolateFilter[0][1].length).toBe(3);
+        expect(result.resistanceFilter.length).toBe(1);
+        expect(result.resistanceFilter[0].length).toBe(3);
+        expect(Array.isArray(result.resistanceFilter[0][0])).toBeFalsy;
+        expect(result.resistanceFilter[0][0]).toEqual('AND');
+        expect(result.resistanceFilter[0][1].length).toBe(3);
+        expect(result.resistanceFilter[0][2].length).toBe(3);
     });
 });

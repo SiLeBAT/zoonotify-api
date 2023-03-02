@@ -24,5 +24,5 @@ export interface IsolateConverter {
 }
 
 export interface QueryFilterConverter {
-    createIsolateQueryFilter(filterValueString: string): IsolateQueryFilter;
+    createIsolateQueryFilter(filterValueString: any[]): IsolateQueryFilter;
 }

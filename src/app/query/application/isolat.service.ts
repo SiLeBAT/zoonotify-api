@@ -1,19 +1,20 @@
 import { inject, injectable } from 'inversify';
 import {
     IsolateViewGateway,
-    IsolateCollection,
     Isolate,
     IsolateResistanceSet,
 } from '../domain/isolate.model';
 import { Resistance, ResistanceViewGateway } from '../domain/resistance.model';
 import { APPLICATION_TYPES } from '../../application.types';
 import { IsolateQueryFilter } from '../domain/filter.model';
+import { validate as uuidValidate } from 'uuid';
+import * as _ from 'lodash';
 
 export interface IsolatePort {
-    getIsolateById(bfrId: string): Promise<IsolateCollection>;
+    getIsolateById(bfrId: string): Promise<Isolate[]>;
     getIsolateListByIsolateQueryFilter(
         filter: IsolateQueryFilter
-    ): Promise<IsolateCollection>;
+    ): Promise<Isolate[]>;
 }
 
 export type IsolateService = IsolatePort;
@@ -22,45 +23,57 @@ export type IsolateService = IsolatePort;
 export class DefaultIsolateService implements IsolateService {
     constructor(
         @inject(APPLICATION_TYPES.IsolateViewGateway)
-        private isolateGateway: IsolateViewGateway,
+        private vIsolateGateway: IsolateViewGateway,
         @inject(APPLICATION_TYPES.ResistanceViewGateway)
-        private resistanceGateway: ResistanceViewGateway
+        private vResistanceGateway: ResistanceViewGateway
     ) {}
 
-    async getIsolateById(bfrId: string): Promise<IsolateCollection> {
-        const isolateList = await this.isolateGateway.find([
-            ['bfrId', '=', bfrId],
-        ]);
-        // reload resitances via the previously completed isolateIdList
-        const isolateIdList = isolateList.map((iso) => iso.isolateId);
+    async getIsolateById(bfrId: string): Promise<Isolate[]> {
+        this.validateGetIsolateById(bfrId);
+        // load isolates
+        const idFilter: [[string, string, string]] = [
+            ['bfrId', '=', bfrId.trim()],
+        ];
+        const vIsolateList = await this.vIsolateGateway.find(idFilter);
+        // load the corresponding resitances for the loaded isolates
+        const isolateIdList = vIsolateList.map((iso) => iso.isolateId);
         const resistanceFilter: any = [['isolateId', 'IN', isolateIdList]];
-        const vResistanceList = await this.resistanceGateway.find(
+        const vResistanceList = await this.vResistanceGateway.find(
             resistanceFilter
         );
-        const isolateCollection = this.createIsolateCollection(
-            vResistanceList,
-            isolateList
-        );
-        return isolateCollection;
+        return this.createIsolateList(vResistanceList, vIsolateList);
+    }
+
+    validateGetIsolateById(bfrId: string) {
+        if (_.isUndefined(bfrId)) {
+            throw Error('error: bfrId is undefined.');
+        }
+        if (_.isString(bfrId) && _.isEmpty(bfrId.trim())) {
+            throw Error('error: bfrId is empty');
+        }
+        //regex test: /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i
+        if (!uuidValidate(bfrId.trim())) {
+            throw Error('error: bfrId is not a valid uuid.');
+        }
     }
 
     async getIsolateListByIsolateQueryFilter(
         filter: IsolateQueryFilter
-    ): Promise<IsolateCollection> {
-        const isolateFilter: any[] = filter.isolateFilter;
-        let resistanceFilter: any[] = filter.resistanceFilter;
-        let hasORCondition: boolean = filter.hasORCondition;
-
+    ): Promise<Isolate[]> {
         let isolateIdList: number[] = [];
         let vResistanceList: Resistance[] = [];
+        let resistanceFilter: any[] = filter.resistanceFilter;
+        let hasORCondition: boolean = filter.hasORCondition;
+        const isolateFilter: any[] = filter.isolateFilter;
+
         const hasIsolateFilter: boolean = isolateFilter.length > 0;
         const hasResistanceFilter: boolean = resistanceFilter.length > 0;
         const isCombinedSearch = hasResistanceFilter && hasIsolateFilter;
         if (hasResistanceFilter) {
-            vResistanceList = await this.resistanceGateway.find(
+            vResistanceList = await this.vResistanceGateway.find(
                 resistanceFilter
             );
-            // retrieve distinct set of isolateIds from loaded resistances
+            // distinct set of isolateIds from loaded resistances
             isolateIdList = [
                 ...new Set(vResistanceList.map((r) => r.isolateId)),
             ];
@@ -71,8 +84,8 @@ export class DefaultIsolateService implements IsolateService {
                     isolateFilter.unshift('OR');
                 } else {
                     // AND
-                    // excludes isolates not contained in loaded resistances
-                    // excludes resistances not contained in loaded isolates
+                    // excludes isolates not corresponding to loaded resistances
+                    // excludes resistances not corresponding to loaded isolates
                     isolateFilter.unshift('AND');
                 }
             }
@@ -80,21 +93,20 @@ export class DefaultIsolateService implements IsolateService {
             isolateFilter.push(['isolateId', 'IN', isolateIdList]);
         }
         // load isolates
-        const isolateList = await this.isolateGateway.find(isolateFilter);
-        // load resitances
-        isolateIdList = isolateList.map((iso) => iso.isolateId);
+        const vIsolateList = await this.vIsolateGateway.find(isolateFilter);
+        // load corresponding resistances
+        isolateIdList = vIsolateList.map((iso) => iso.isolateId);
         resistanceFilter = [['isolateId', 'IN', isolateIdList]];
-        vResistanceList = await this.resistanceGateway.find(resistanceFilter);
+        vResistanceList = await this.vResistanceGateway.find(resistanceFilter);
         // create result
-        return this.createIsolateCollection(vResistanceList, isolateList);
+        return this.createIsolateList(vResistanceList, vIsolateList);
     }
 
-    private createIsolateCollection(
+    private createIsolateList(
         resistanceList: Resistance[],
         isolateList: Isolate[]
-    ): IsolateCollection {
+    ): Isolate[] {
         this.validateCreateIsolateCollection(resistanceList, isolateList);
-
         const resultList: Isolate[] = [];
         isolateList.forEach((isolate) => {
             const loadedResistanceList: Resistance[] = resistanceList.filter(
@@ -110,7 +122,7 @@ export class DefaultIsolateService implements IsolateService {
             isolate.resistance = resistanceSet;
             resultList.push(isolate);
         });
-        return { isolates: resultList };
+        return resultList;
     }
 
     private validateCreateIsolateCollection(

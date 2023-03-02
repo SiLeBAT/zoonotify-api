@@ -24,7 +24,6 @@ export {
     IsolateCharacteristicSet,
     IsolateResistanceSet,
     IsolateViewGateway,
-    IsolateCollection,
 } from './query/domain/isolate.model';
 
 export {
@@ -33,6 +32,10 @@ export {
     ResistanceCollection,
 } from './query/domain/resistance.model';
 
-export { createIsolateCollection } from './query/domain/isolate-collection.entity';
 export { IsolatePort } from './query/application/isolat.service';
 export { createIsolate } from './query/domain/isolate.entity';
+export {
+    FilterComponentType,
+    LogicalOperator,
+    CompareOperator,
+} from './general.enums';
